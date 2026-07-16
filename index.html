@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学生団体ココカラ｜新しい就活、ココカラ始まる。</title>
+  <meta name="description" content="学生団体ココカラは、新しい就活の形を提案する学生団体です。企業と学生をつなぐ場をつくり、就活を等身大で応援します。京都・大阪を中心に活動中。" />
+  <meta property="og:title" content="学生団体ココカラ｜新しい就活、ココカラ始まる。" />
+  <meta property="og:description" content="企業と学生が本音で出会い、等身大でつながる場をつくります。" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,800;0,900;1,900&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.png" alt="学生団体ココカラ ロゴ" />
+        <span class="brand-name">学生団体ココカラ</span>
+      </a>
+      <div class="header-right">
+        <nav class="nav-inline" aria-label="ナビゲーション">
+          <a href="index.html" class="active">HOME</a>
+          <a href="events.html">EVENT</a>
+          <a href="sponsors.html">SPONSOR</a>
+        </nav>
+        <button class="menu-btn" aria-label="メニュー" aria-expanded="false">
+          <span class="bars"><span></span><span></span></span>
+          <span class="txt-open">MENU</span><span class="txt-close">CLOSE</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- フルスクリーンメニュー -->
+  <div class="menu-overlay" id="menu">
+    <div class="container">
+      <ul class="menu-list">
+        <li><a href="index.html"><span class="idx">01</span><span class="en-lbl">HOME</span><span class="jp-lbl">ホーム</span></a></li>
+        <li><a href="events.html"><span class="idx">02</span><span class="en-lbl">EVENT</span><span class="jp-lbl">イベント申込</span></a></li>
+        <li><a href="sponsors.html"><span class="idx">03</span><span class="en-lbl">SPONSOR</span><span class="jp-lbl">協賛企業</span></a></li>
+        <li><a href="https://line.me/R/ti/p/@113crihp"><span class="idx">04</span><span class="en-lbl">CONTACT</span><span class="jp-lbl">公式LINEで問い合わせ</span></a></li>
+      </ul>
+      <div class="menu-foot">
+        <span class="en">STUDENT COMMUNITY KOKOKARA — KYOTO / OSAKA</span>
+        <span>お問い合わせは <a href="https://line.me/R/ti/p/@113crihp">公式LINE</a> から</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- ヒーロー -->
+    <section class="hero">
+      <canvas id="hero-canvas"></canvas>
+      <div class="container hero-marks">
+        <span class="l">Student Community<br />Kyoto / Osaka</span>
+        <span class="r">新しい就活の、はじまり<br />Est. 2026</span>
+      </div>
+      <div class="hero-center">
+        <h1 class="hero-wordmark">KOKOKARA</h1>
+        <p class="hero-tagline">新しい就活、<span class="accent">ココカラ</span>始まる。</p>
+      </div>
+      <div class="container hero-foot">
+        <div class="hero-actions">
+          <a class="btn" href="events.html">開催中のイベントを見る <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="https://line.me/R/ti/p/@113crihp">公式LINEに相談する</a>
+        </div>
+        <span class="hero-scroll">SCROLL</span>
+      </div>
+    </section>
+
+    <!-- マーキー -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>KOKOKARA</span><span>新しい就活、ココカラ始まる</span><span>STUDENTS × COMPANIES</span><span>KYOTO / OSAKA</span>
+        <span>KOKOKARA</span><span>新しい就活、ココカラ始まる</span><span>STUDENTS × COMPANIES</span><span>KYOTO / OSAKA</span>
+      </div>
+    </div>
+
+    <!-- 01 ステートメント -->
+    <section class="section statement" id="about">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-tag"><span class="num">01</span> — About</span>
+          <h2 class="statement-title">就活を、もっと<br />自分らしく。<br /><em>ここから、始まる。</em></h2>
+        </div>
+        <div class="statement-grid">
+          <div class="statement-copy reveal d1">
+            <p>ココカラは、これまでの「かたい就活」ではなく、<strong>新しい就活の形</strong>を提案する学生団体です。</p>
+            <p>企業と学生をつなぐ場をつくり、お互いが本音で語り合える出会いを届けます。就活をもっと前向きに、等身大で。その第一歩を、ここから始めましょう。</p>
+            <div class="stats">
+              <div><div class="stat-num">2<small>つ</small></div><div class="stat-label">毎月とどける出会い</div></div>
+              <div><div class="stat-num">月1<small>回</small></div><div class="stat-label">イベント開催ペース</div></div>
+              <div><div class="stat-num">100<small>%</small></div><div class="stat-label">等身大の応援</div></div>
+            </div>
+          </div>
+          <div class="statement-visual reveal d2">
+            <div class="stmt-card">
+              <span class="glow" aria-hidden="true"></span>
+              <span class="watermark" aria-hidden="true">KOKOKARA</span>
+              <div class="stmt-top">
+                <span class="stmt-index">01</span>
+                <span class="stmt-tag">About</span>
+              </div>
+              <div class="stmt-mid">
+                <span class="stmt-eyebrow">Real Connection</span>
+                <p class="stmt-big">企業と学生を、<br />まっすぐ<span class="x">つなぐ</span>。</p>
+              </div>
+              <div class="stmt-bottom">
+                <span>KOKOKARA</span>
+                <span>Kyoto / Osaka</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 活動内容 -->
+    <section class="section section-alt" id="activities">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-tag"><span class="num">02</span> — Activity</span>
+          <h2 class="sec-title">毎月とどける、2つの出会い。</h2>
+          <p class="sec-lead">就活を等身大で応援するため、学生と企業それぞれに向けた2つの機会を毎月お届けしています。</p>
+        </div>
+        <div class="activities">
+          <div class="activity-card reveal d1">
+            <span class="activity-num">01</span>
+            <span class="activity-badge">Monthly</span>
+            <h3>学生向けイベント</h3>
+            <p>就活に役立つ学びや、同じ想いを持つ仲間との出会いの場。月に1回、学生のためのイベントを開催しています。</p>
+          </div>
+          <div class="activity-card reveal d2">
+            <span class="activity-num">02</span>
+            <span class="activity-badge">Monthly</span>
+            <h3>協賛企業と学生の交流会</h3>
+            <p>協賛企業と学生が直接出会い、本音で語り合える交流会。月に1回、フラットにつながる機会をつくっています。</p>
+          </div>
+        </div>
+        <p class="activities-note reveal">わたしたちは、就活を<span class="hl">「等身大」</span>で応援します。</p>
+      </div>
+    </section>
+
+    <!-- 03 イベント -->
+    <section class="section" id="events">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-tag"><span class="num">03</span> — Events</span>
+          <h2 class="sec-title">まずは、遊びに来てください。</h2>
+          <p class="sec-lead">はじめましての人も大歓迎。ゆる〜く楽しめる交流イベントを開催中です。</p>
+        </div>
+        <div class="event-preview">
+          <a href="events.html" class="reveal d1"><img src="assets/event_20260710_pizza.jpg" alt="7/10 ピザパーティ" loading="lazy" /></a>
+          <a href="events.html" class="reveal d2"><img src="assets/event_20260724_takoyaki.jpg" alt="7/24 たこ焼きパーティ" loading="lazy" /></a>
+        </div>
+        <div class="event-preview-cta reveal">
+          <a class="btn" href="events.html">イベント申込はこちら <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 運営メンバー -->
+    <section class="section section-alt" id="members">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-tag"><span class="num">04</span> — Members</span>
+          <h2 class="sec-title">運営メンバー</h2>
+        </div>
+        <div class="members">
+          <div class="member-card reveal d1">
+            <div class="member-avatar">坂</div>
+            <span class="member-role">Co-Representative</span>
+            <p class="member-name">坂口 慶成</p>
+          </div>
+          <div class="member-card reveal d2">
+            <div class="member-avatar">田</div>
+            <span class="member-role">Co-Representative</span>
+            <p class="member-name">田原 明日翔</p>
+          </div>
+          <div class="member-card reveal d3">
+            <div class="member-avatar">門</div>
+            <span class="member-role">Vice-Representative</span>
+            <p class="member-name">門田 寛大</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 協賛CTA -->
+    <section class="section" id="sponsors-cta">
+      <div class="container">
+        <div class="cta-band reveal">
+          <span class="cta-eyebrow">05 — Sponsor</span>
+          <h2>「新しい就活の形」を、<br />一緒につくりませんか。</h2>
+          <p>ココカラは、企業と学生をつなぐ交流会を毎月開催しています。学生と本音で出会いたい企業さまを募集しています。</p>
+          <a class="btn" href="sponsors.html">協賛企業一覧を見る <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 お問い合わせ -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <div class="sec-head reveal">
+          <span class="sec-tag"><span class="num">06</span> — Contact</span>
+          <h2 class="sec-title">お問い合わせ</h2>
+        </div>
+        <div class="contact-card reveal d1">
+          <p>ご質問・ご相談・協賛のお申し込みなど、お気軽にご連絡ください。<br />公式LINEよりご連絡いただけます。</p>
+          <a class="btn" href="https://line.me/R/ti/p/@113crihp">公式LINEで問い合わせる <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-word" aria-hidden="true">KOKOKARA</div>
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">
+            <img src="assets/logo.png" alt="学生団体ココカラ ロゴ" />
+            <span class="brand-name">学生団体ココカラ</span>
+          </div>
+          <p class="footer-tagline">新しい就活、ココカラ始まる。</p>
+        </div>
+        <nav class="footer-nav" aria-label="フッターナビゲーション">
+          <a href="index.html">HOME</a>
+          <a href="events.html">EVENT</a>
+          <a href="sponsors.html">SPONSOR</a>
+          <a href="https://line.me/R/ti/p/@113crihp">LINE</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <span class="en">&copy; <span data-year>2026</span> KOKOKARA. All Rights Reserved.</span>
+        <span>学生団体ココカラ / Kyoto · Osaka</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>

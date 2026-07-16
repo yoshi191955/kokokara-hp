@@ -1,0 +1,11 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# セットアップ補助（公開リポジトリには含めない）
+setup_git_push.bat
+.git_broken/
+_t2
+
+# 内部向け引き継ぎメモ（メールアドレス等を含むため公開リポジトリから除外）
+引き継ぎ_自動デプロイ設定.md
