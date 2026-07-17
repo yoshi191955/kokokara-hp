@@ -127,26 +127,51 @@
       <div class="container">
         <div class="sec-head reveal">
           <span class="sec-tag"><span class="num">02</span> — Activity</span>
-          <h2 class="sec-title">毎月とどける、2つの出会い。</h2>
-          <p class="sec-lead">就活を等身大で応援するため、学生と企業それぞれに向けた2つの機会を毎月お届けしています。</p>
+          <h2 class="sec-title">ニーズに合わせた、2つのイベント。</h2>
+          <p class="sec-lead">企業と学生、そのどちらにも最大限の価値を届けたい。だからこそ私たちは“質”にこだわり、毎回の内容を見直しながら改善を重ねています。</p>
         </div>
         <div class="activities">
-          <div class="activity-card reveal d1">
+          <div class="activity-card reveal d1" data-modal-open="modal-event" role="button" tabindex="0" aria-label="新しい就活イベントの詳細を見る">
             <span class="activity-num">01</span>
-            <span class="activity-badge">Monthly</span>
-            <h3>学生向けイベント</h3>
-            <p>就活に役立つ学びや、同じ想いを持つ仲間との出会いの場。月に1回、学生のためのイベントを開催しています。</p>
+            <span class="activity-badge">Event</span>
+            <h3>新しい就活イベント</h3>
+            <p>協賛企業と学生が肩書きを取り払い、本音で語り合える交流会。月に1度、人柄でつながる新しい就活の場です。</p>
+            <span class="activity-more">くわしく見る →</span>
           </div>
-          <div class="activity-card reveal d2">
+          <div class="activity-card reveal d2" data-modal-open="modal-program" role="button" tabindex="0" aria-label="育成プログラムの詳細を見る">
             <span class="activity-num">02</span>
-            <span class="activity-badge">Monthly</span>
-            <h3>協賛企業と学生の交流会</h3>
-            <p>協賛企業と学生が直接出会い、本音で語り合える交流会。月に1回、フラットにつながる機会をつくっています。</p>
+            <span class="activity-badge">Program</span>
+            <h3>育成プログラム</h3>
+            <p>学生と企業が一方通行ではなく、双方向に成長し合う継続型のプログラム。実践を通じて、社会で活きる力を育みます。</p>
+            <span class="activity-more">くわしく見る →</span>
           </div>
         </div>
-        <p class="activities-note reveal">わたしたちは、就活を<span class="hl">「等身大」</span>で応援します。</p>
+        <p class="activities-note reveal">私たちは<span class="hl">「新しい就活」</span>をデザインします。</p>
       </div>
     </section>
+
+    <!-- 活動内容の詳細モーダル -->
+    <div class="modal" id="modal-event" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+      <div class="modal-panel">
+        <button class="modal-close" data-modal-close aria-label="閉じる">&times;</button>
+        <span class="modal-eyebrow">01 — Event</span>
+        <h3 id="modal-event-title">新しい就活イベント</h3>
+        <p>協賛企業と学生が肩書きを取り払い、本音で語り合える交流会を月に1度開催しています。堅い説明会ではなく、人柄と人柄でつながることを大切にした、新しい形の就活イベントです。</p>
+        <p>学生にとっては、飾らない自分のままで企業の“中の人”と出会える場所。企業にとっては、エントリーシートだけでは見えない学生の魅力に出会える場所です。</p>
+        <a class="btn" href="events.html">開催中のイベントを見る <span class="arrow">→</span></a>
+      </div>
+    </div>
+    <div class="modal" id="modal-program" role="dialog" aria-modal="true" aria-labelledby="modal-program-title">
+      <div class="modal-panel">
+        <button class="modal-close" data-modal-close aria-label="閉じる">&times;</button>
+        <span class="modal-eyebrow">02 — Program</span>
+        <h3 id="modal-program-title">育成プログラム</h3>
+        <p>「育成プログラム」は、学生と企業がともに成長することを目指した継続型のプログラムです。一度きりのイベントで終わらせず、関わる全員が伸び続けられる関係づくりを大切にしています。</p>
+        <p>学生は、実践的なワークや企業との協働を通じて、就活のテクニックだけでなく、社会に出てから本当に必要になる力を段階的に育てていきます。</p>
+        <p>企業にとっても、次世代の価値観に触れながら、採用や育成の視点をアップデートできる機会になります。</p>
+        <a class="btn" href="https://line.me/R/ti/p/@113crihp">公式LINEで相談する <span class="arrow">→</span></a>
+      </div>
+    </div>
 
     <!-- 03 イベント -->
     <section class="section" id="events">
@@ -154,11 +179,10 @@
         <div class="sec-head reveal">
           <span class="sec-tag"><span class="num">03</span> — Events</span>
           <h2 class="sec-title">まずは、遊びに来てください。</h2>
-          <p class="sec-lead">はじめましての人も大歓迎。ゆる〜く楽しめる交流イベントを開催中です。</p>
+          <p class="sec-lead">はじめましての人も、ひとりでの参加も大歓迎。服装は自由、手ぶらでOK。まるで友だちの家に遊びに行くような感覚で、気軽に楽しめる交流イベントです。</p>
         </div>
-        <div class="event-preview">
-          <a href="events.html" class="reveal d1"><img src="assets/event_20260710_pizza.jpg" alt="7/10 ピザパーティ" loading="lazy" /></a>
-          <a href="events.html" class="reveal d2"><img src="assets/event_20260724_takoyaki.jpg" alt="7/24 たこ焼きパーティ" loading="lazy" /></a>
+        <div class="event-preview" data-event-preview data-limit="2">
+          <a href="events.html" class="reveal d1"><img src="assets/event_20260724_takoyaki.jpg" alt="たこ焼きパーティ" loading="lazy" /></a>
         </div>
         <div class="event-preview-cta reveal">
           <a class="btn" href="events.html">イベント申込はこちら <span class="arrow">→</span></a>
