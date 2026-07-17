@@ -92,37 +92,55 @@
   var fwT;
   window.addEventListener("resize", function () { clearTimeout(fwT); fwT = setTimeout(fitFooterWord, 150); });
 
-  /* ---- 開催予定イベントのポスター（データ駆動・開催日フィルタ） ----
-     データ元は既定で events.json。将来 GAS の公開URLを ENDPOINT に入れれば
-     そのまま切り替えできる。開催日を過ぎたものは自動で表示から外れる。 */
+  /* ---- サイトデータ（イベント／メンバー数／協賛企業数）の読み込み ----
+     ENDPOINT が空なら events.json（イベントのみ）を読む。
+     GAS の公開URL(/exec)を ENDPOINT に入れると
+     {members, sponsors, events:[...]} をまとめて取得し、
+     ステートメント欄の数値（活動メンバー・協賛企業）も自動反映する。
+     開催日を過ぎたイベントは自動で表示から外れる。
+     イベントに "square"（1:1画像パス）があればそれを正方形で表示する。 */
   (function () {
     var box = document.querySelector("[data-event-preview]");
-    if (!box) return;
-    var ENDPOINT = "";
-    var LIMIT = parseInt(box.getAttribute("data-limit") || "2", 10);
+    var ENDPOINT = ""; // ← ここに GAS の /exec URL を入れると全て動的化
+    var LIMIT = box ? parseInt(box.getAttribute("data-limit") || "2", 10) : 2;
     function esc(s) {
       return String(s).replace(/[&<>"']/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
     }
+    function setStat(key, val) {
+      if (val === null || val === undefined || val === "") return;
+      var el = document.querySelector('[data-stat="' + key + '"]');
+      if (el) el.textContent = String(val);
+    }
+    function renderEvents(list) {
+      if (!box || !Array.isArray(list)) return;
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var up = list
+        .filter(function (e) { var d = new Date(e.date); return !isNaN(d) && d >= today; })
+        .sort(function (a, b) { return new Date(a.date) - new Date(b.date); })
+        .slice(0, LIMIT);
+      if (!up.length) {
+        box.classList.add("is-empty");
+        box.innerHTML = '<p class="event-empty">次回イベントは近日公開予定です。お楽しみに！</p>';
+        return;
+      }
+      box.innerHTML = up.map(function (e, i) {
+        var img = e.square || e.poster;            // square(1:1)があれば優先
+        var sq = e.square ? " is-square" : "";       // 1:1表示用クラス
+        return '<a href="' + esc(e.url || "events.html") + '" class="reveal d' + (i + 1) + ' in' + sq + '">' +
+               '<img src="' + esc(img) + '" alt="' + esc(e.title || "イベントポスター") + '" loading="lazy" /></a>';
+      }).join("");
+    }
     fetch(ENDPOINT || "events.json", { cache: "no-store" })
       .then(function (r) { return r.json(); })
-      .then(function (list) {
-        if (!Array.isArray(list)) return;
-        var today = new Date(); today.setHours(0, 0, 0, 0);
-        var up = list
-          .filter(function (e) { var d = new Date(e.date); return !isNaN(d) && d >= today; })
-          .sort(function (a, b) { return new Date(a.date) - new Date(b.date); })
-          .slice(0, LIMIT);
-        if (!up.length) {
-          box.classList.add("is-empty");
-          box.innerHTML = '<p class="event-empty">次回イベントは近日公開予定です。お楽しみに！</p>';
-          return;
+      .then(function (data) {
+        var events = Array.isArray(data) ? data : (data && data.events) || [];
+        renderEvents(events);
+        if (data && !Array.isArray(data)) {
+          setStat("members", data.members);
+          setStat("sponsors", data.sponsors);
         }
-        box.innerHTML = up.map(function (e, i) {
-          return '<a href="' + esc(e.url || "events.html") + '" class="reveal d' + (i + 1) + ' in">' +
-                 '<img src="' + esc(e.poster) + '" alt="' + esc(e.title || "イベントポスター") + '" loading="lazy" /></a>';
-        }).join("");
       })
       .catch(function () { /* 取得失敗時はHTMLの静的フォールバックを維持 */ });
   })();
