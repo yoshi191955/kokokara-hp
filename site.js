@@ -146,47 +146,68 @@
   })();
 
   /* =====================================================
-     ヒーロー: 流体シミュレーション風の渦（マーブリング）
-     ストリーム関数の解析微分から非圧縮の速度場をつくり、
-     5色の絵具粒子を流し続けて混ざり合う軌跡を描く。
+     ヒーロー: 色水を混ぜるマーブリング
+     非圧縮の速度場で色玉を流し、乗算合成で重ねて混色させる。
+     背面の明るさを実測して KOKOKARA の文字色を自動反転する。
      ===================================================== */
   var canvas = document.getElementById("hero-canvas");
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
   var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
-  var tFlow = 0, fvx = 0, fvy = 0;
-  var vortices = [], waves = [], groups = [];
+  var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
+  var vortices = [], waves = [], drops = [], sprites = [];
 
-  var PAINTS = [
-    { c: "hsla(188,92%,40%,0.10)", w: 1.1 },
-    { c: "hsla(197,90%,52%,0.09)", w: 0.9 },
-    { c: "hsla(177,78%,36%,0.10)", w: 1.3 },
-    { c: "hsla(204,88%,62%,0.07)", w: 0.8 },
-    { c: "hsla(186,68%,26%,0.08)", w: 1.5 }
+  var INKS = [
+    "rgba(0,168,196,A)",
+    "rgba(11,124,147,A)",
+    "rgba(20,200,170,A)",
+    "rgba(44,132,216,A)",
+    "rgba(104,72,224,A)"
   ];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function makeSprites() {
+    sprites = INKS.map(function (tpl) {
+      var c = document.createElement("canvas"), S = 128;
+      c.width = S; c.height = S;
+      var g = c.getContext("2d");
+      var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+      gr.addColorStop(0, tpl.replace("A", "0.26"));
+      gr.addColorStop(0.40, tpl.replace("A", "0.13"));
+      gr.addColorStop(0.75, tpl.replace("A", "0.04"));
+      gr.addColorStop(1, tpl.replace("A", "0"));
+      g.fillStyle = gr; g.fillRect(0, 0, S, S);
+      return c;
+    });
+  }
+
+  function paintWhite() {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, W, H);
+  }
 
   function resize() {
     var r = canvas.getBoundingClientRect();
     W = r.width; H = r.height;
     canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
+    paintWhite();
     if (!pullOn) { ptrX = W * 0.5; ptrY = H * 0.5; smX = ptrX; smY = ptrY; }
   }
 
-  function spawn(p) {
-    p.x = Math.random() * W; p.y = Math.random() * H;
-    p.px = p.x; p.py = p.y;
-    p.life = rnd(140, 520);
-    return p;
+  function spawn(d) {
+    d.x = Math.random() * W; d.y = Math.random() * H;
+    d.r = rnd(46, 132);
+    d.life = rnd(220, 700);
+    d.s = (Math.random() * INKS.length) | 0;
+    return d;
   }
 
   function build() {
     var base = Math.min(W, H);
-    /* 渦の核を左右いっぱいに配置して画面全体を巻き込む */
     vortices = [
       { x: W * 0.10, y: H * 0.32, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
       { x: W * 0.30, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
@@ -194,7 +215,6 @@
       { x: W * 0.70, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
       { x: W * 0.90, y: H * 0.34, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) }
     ];
-    /* 大きなうねり */
     waves = [];
     for (var w = 0; w < 3; w++) {
       waves.push({
@@ -205,14 +225,9 @@
         ph: rnd(0, Math.PI * 2)
       });
     }
-    /* 絵具ごとに粒子を分けて保持（描画をまとめて高速化） */
-    var total = W < 760 ? 480 : 900;
-    groups = [];
-    for (var g = 0; g < PAINTS.length; g++) {
-      var arr = [];
-      for (var i = 0; i < Math.round(total / PAINTS.length); i++) arr.push(spawn({}));
-      groups.push(arr);
-    }
+    drops.length = 0;
+    var n = W < 760 ? 90 : 210;
+    for (var i = 0; i < n; i++) drops.push(spawn({}));
   }
 
   function field(x, y) {
@@ -242,8 +257,48 @@
     fvx = vx; fvy = vy;
   }
 
+  /* ---- 背面の明るさを見て文字色を反転 ---- */
+  var wordmark = document.querySelector(".hero-wordmark");
+  var tagline = document.querySelector(".hero-tagline");
+  var probe = document.createElement("canvas");
+  probe.width = 24; probe.height = 8;
+  var pctx = probe.getContext("2d", { willReadFrequently: true });
+
+  function luminanceBehind(el) {
+    var cr = canvas.getBoundingClientRect(), er = el.getBoundingClientRect();
+    var sx = (er.left - cr.left) * dpr, sy = (er.top - cr.top) * dpr;
+    var sw = er.width * dpr, sh = er.height * dpr;
+    if (sw < 2 || sh < 2) return -1;
+    sx = Math.max(0, Math.min(sx, canvas.width - 2));
+    sy = Math.max(0, Math.min(sy, canvas.height - 2));
+    sw = Math.min(sw, canvas.width - sx);
+    sh = Math.min(sh, canvas.height - sy);
+    try {
+      pctx.clearRect(0, 0, 24, 8);
+      pctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, 24, 8);
+      var d = pctx.getImageData(0, 0, 24, 8).data, sum = 0, n = 0;
+      for (var i = 0; i < d.length; i += 4) {
+        var a = d[i + 3] / 255;
+        var r = d[i] * a + 255 * (1 - a);
+        var g = d[i + 1] * a + 255 * (1 - a);
+        var b = d[i + 2] * a + 255 * (1 - a);
+        sum += 0.2126 * r + 0.7152 * g + 0.0722 * b; n++;
+      }
+      return n ? sum / n / 255 : -1;
+    } catch (err) { return -1; }
+  }
+
+  function adapt(el) {
+    if (!el) return;
+    var L = luminanceBehind(el);
+    if (L < 0) return;
+    var dark = el.classList.contains("on-dark");
+    if (!dark && L < 0.46) el.classList.add("on-dark");
+    else if (dark && L > 0.58) el.classList.remove("on-dark");
+  }
+
   function step() {
-    tFlow += 1;
+    tFlow += 1; frame += 1;
     for (var v = 0; v < vortices.length; v++) {
       var vo = vortices[v];
       vo.x += vo.dx; vo.y += vo.dy;
@@ -254,29 +309,22 @@
     smY += (ptrY - smY) * 0.12;
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
 
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fillStyle = "rgba(0,0,0,0.015)";
-    ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "source-over";
-    ctx.lineCap = "round";
+    ctx.fillStyle = "rgba(255,255,255,0.030)";
+    ctx.fillRect(0, 0, W, H);
 
-    for (var g = 0; g < groups.length; g++) {
-      var arr = groups[g];
-      ctx.strokeStyle = PAINTS[g].c;
-      ctx.lineWidth = PAINTS[g].w;
-      ctx.beginPath();
-      for (var i = 0; i < arr.length; i++) {
-        var p = arr[i];
-        field(p.x, p.y);
-        p.x += fvx; p.y += fvy;
-        p.life--;
-        if (p.life < 0 || p.x < -50 || p.x > W + 50 || p.y < -50 || p.y > H + 50) { spawn(p); continue; }
-        ctx.moveTo(p.px, p.py);
-        ctx.lineTo(p.x, p.y);
-        p.px = p.x; p.py = p.y;
-      }
-      ctx.stroke();
+    ctx.globalCompositeOperation = "multiply";
+    for (var i = 0; i < drops.length; i++) {
+      var p = drops[i];
+      field(p.x, p.y);
+      p.x += fvx; p.y += fvy;
+      p.life--;
+      if (p.life < 0 || p.x < -p.r || p.x > W + p.r || p.y < -p.r || p.y > H + p.r) { spawn(p); continue; }
+      ctx.drawImage(sprites[p.s], p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
     }
+    ctx.globalCompositeOperation = "source-over";
+
+    if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
   }
 
   var raf = null, running = false;
@@ -307,9 +355,11 @@
   }
 
   function start() {
-    resize(); build();
-    var warm = reduce ? 320 : 200;
-    for (var k = 0; k < warm; k++) step();
+    resize(); makeSprites(); build();
+    warming = true;
+    for (var k = 0; k < 240; k++) step();
+    warming = false;
+    adapt(wordmark); adapt(tagline);
     if (reduce) return;
     if (!running) { running = true; raf = requestAnimationFrame(loop); }
   }

@@ -134,6 +134,12 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 .hero-tagline { position: relative; z-index: 3; margin-top: clamp(16px, 2.6vh, 30px); font-family: var(--font-jp); font-weight: 700; font-size: clamp(15px, 2.1vw, 23px); letter-spacing: .04em; }
 .hero-tagline .accent { color: var(--accent); }
 
+/* 背面の色水が濃いときは文字を白へ自動反転（JSが on-dark を付与） */
+.hero-wordmark, .hero-tagline { transition: color .5s var(--ease); }
+.hero-wordmark.on-dark { color: #FFFFFF; }
+.hero-tagline.on-dark { color: #FFFFFF; }
+.hero-tagline.on-dark .accent { color: #8CEBFB; }
+
 .hero-foot { position: relative; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: clamp(28px, 5vh, 56px); }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 13px; }
 .hero-scroll { writing-mode: vertical-rl; font-family: var(--font-en); font-weight: 700; font-size: 11px; letter-spacing: .28em; color: var(--text-45); text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
