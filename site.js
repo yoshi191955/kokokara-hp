@@ -152,19 +152,16 @@
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var W = 0, H = 0, cx = 0, cy = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var homeCx = 0, homeCy = 0, tgtCx = 0, tgtCy = 0, curCx = 0, curCy = 0;
-  var placed = false, idleTimer = null;
+  var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
 
   function resize() {
     var r = canvas.getBoundingClientRect();
     W = r.width; H = r.height;
     canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    homeCx = W * (W < 760 ? 0.5 : 0.63);
-    homeCy = H * (W < 760 ? 0.36 : 0.40);
-    if (!placed) { curCx = homeCx; curCy = homeCy; placed = true; }
-    tgtCx = homeCx; tgtCy = homeCy;
-    cx = curCx; cy = curCy;
+    cx = W * (W < 760 ? 0.5 : 0.63);
+    cy = H * (W < 760 ? 0.36 : 0.40);
+    if (!pullOn) { ptrX = cx; ptrY = cy; smX = cx; smY = cy; }
     ctx.clearRect(0, 0, W, H);
   }
 
@@ -184,7 +181,6 @@
         wob: 0.10 + Math.random() * 0.22,
         wf: 0.6 + Math.random() * 1.7,
         hue: hue,
-        follow: 0.5 + t * 0.85,
         light: 40 + Math.random() * 9,
         alpha: 0.30 + (1 - t) * 0.26,
         px: 0, py: 0, seeded: false
@@ -195,10 +191,11 @@
   var tGlobal = 0;
   function step() {
     tGlobal += 1;
-    curCx += (tgtCx - curCx) * 0.055;
-    curCy += (tgtCy - curCy) * 0.055;
-    cx = curCx; cy = curCy;
-    var offX = curCx - homeCx, offY = curCy - homeCy;
+    smX += (ptrX - smX) * 0.12;
+    smY += (ptrY - smY) * 0.12;
+    pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
+    var PULL = 0.85 * pullAmt;
+    var R2 = Math.pow(Math.min(W, H) * 0.40, 2);
     ctx.globalCompositeOperation = "destination-out";
     ctx.fillStyle = "rgba(0,0,0,0.045)";
     ctx.fillRect(0, 0, W, H);
@@ -210,10 +207,19 @@
       s.a += s.spin;
       var wob = 1 + Math.sin(s.a * s.wf + tGlobal * 0.006) * s.wob;
       var rr = s.r * wob;
-      var ccx = homeCx + offX * s.follow;
-      var ccy = homeCy + offY * s.follow;
-      var x = ccx + Math.cos(s.a) * rr;
-      var y = ccy + Math.sin(s.a) * rr * 0.92;
+      var x = cx + Math.cos(s.a) * rr;
+      var y = cy + Math.sin(s.a) * rr * 0.92;
+      if (PULL > 0.002) {
+        var dx = smX - x, dy = smY - y;
+        var q = (dx * dx + dy * dy) / R2;
+        if (q < 1) {
+          var k = 1 - q;
+          var f = PULL * k * k;
+          var sw = f * 0.38;
+          x += dx * f - dy * sw;
+          y += dy * f + dx * sw;
+        }
+      }
       if (!s.seeded) { s.px = x; s.py = y; s.seeded = true; }
       ctx.beginPath();
       ctx.moveTo(s.px, s.py);
@@ -228,31 +234,31 @@
   var raf = null, running = false;
   function loop() { step(); raf = requestAnimationFrame(loop); }
 
-  /* ---- カーソル / 指の追従（渦の中心をなめらかに引き寄せる） ---- */
-  function aimAt(clientX, clientY) {
+  /* ---- カーソル / 指に吸い寄せられる引力（重力井戸） ----
+     渦全体は動かさず、ポインタ付近の筋ほど強く引き込まれる。
+     引力は距離の二乗で減衰し、わずかに旋回成分を加えて渦を巻かせる。 */
+  function grabAt(clientX, clientY) {
     if (reduce) return;
     var r = canvas.getBoundingClientRect();
-    var dx = (clientX - r.left) - homeCx;
-    var dy = (clientY - r.top) - homeCy;
-    var max = Math.min(W, H) * 0.42;
-    var d = Math.sqrt(dx * dx + dy * dy);
-    if (d > max && d > 0) { dx = dx / d * max; dy = dy / d * max; }
-    tgtCx = homeCx + dx; tgtCy = homeCy + dy;
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(release, 2600);
+    ptrX = clientX - r.left;
+    ptrY = clientY - r.top;
+    if (!pullOn) { smX = ptrX; smY = ptrY; }
+    pullOn = true;
   }
-  function release() { clearTimeout(idleTimer); tgtCx = homeCx; tgtCy = homeCy; }
+  function release() { pullOn = false; }
 
   var heroEl = (canvas.closest && canvas.closest(".hero")) || canvas.parentElement;
   if (heroEl) {
-    heroEl.addEventListener("pointermove", function (e) { aimAt(e.clientX, e.clientY); }, { passive: true });
-    heroEl.addEventListener("pointerdown", function (e) { aimAt(e.clientX, e.clientY); }, { passive: true });
+    heroEl.addEventListener("pointermove", function (e) { grabAt(e.clientX, e.clientY); }, { passive: true });
+    heroEl.addEventListener("pointerdown", function (e) { grabAt(e.clientX, e.clientY); }, { passive: true });
     heroEl.addEventListener("pointerleave", release, { passive: true });
     heroEl.addEventListener("touchmove", function (e) {
       var t = e.touches && e.touches[0];
-      if (t) aimAt(t.clientX, t.clientY);
+      if (t) grabAt(t.clientX, t.clientY);
     }, { passive: true });
     heroEl.addEventListener("touchend", release, { passive: true });
+    heroEl.addEventListener("touchcancel", release, { passive: true });
+    window.addEventListener("blur", release);
   }
 
   function start() {
