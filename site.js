@@ -146,99 +146,147 @@
   })();
 
   /* =====================================================
-     ヒーロー: ジェネラティブな渦（フローフィールド）
+     ヒーロー: 流体シミュレーション風の渦（マーブリング）
+     ストリーム関数の解析微分から非圧縮の速度場をつくり、
+     5色の絵具粒子を流し続けて混ざり合う軌跡を描く。
      ===================================================== */
   var canvas = document.getElementById("hero-canvas");
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
-  var W = 0, H = 0, cx = 0, cy = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
   var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
+  var tFlow = 0, fvx = 0, fvy = 0;
+  var vortices = [], waves = [], groups = [];
+
+  var PAINTS = [
+    { c: "hsla(188,92%,40%,0.10)", w: 1.1 },
+    { c: "hsla(197,90%,52%,0.09)", w: 0.9 },
+    { c: "hsla(177,78%,36%,0.10)", w: 1.3 },
+    { c: "hsla(204,88%,62%,0.07)", w: 0.8 },
+    { c: "hsla(186,68%,26%,0.08)", w: 1.5 }
+  ];
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
 
   function resize() {
     var r = canvas.getBoundingClientRect();
     W = r.width; H = r.height;
     canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cx = W * (W < 760 ? 0.5 : 0.63);
-    cy = H * (W < 760 ? 0.36 : 0.40);
-    if (!pullOn) { ptrX = cx; ptrY = cy; smX = cx; smY = cy; }
     ctx.clearRect(0, 0, W, H);
+    if (!pullOn) { ptrX = W * 0.5; ptrY = H * 0.5; smX = ptrX; smY = ptrY; }
   }
 
-  var strands = [];
+  function spawn(p) {
+    p.x = Math.random() * W; p.y = Math.random() * H;
+    p.px = p.x; p.py = p.y;
+    p.life = rnd(140, 520);
+    return p;
+  }
+
   function build() {
-    strands.length = 0;
     var base = Math.min(W, H);
-    var count = W < 760 ? 170 : 260;
-    for (var i = 0; i < count; i++) {
-      var t = i / count;
-      var hue = 186 + t * 22 + (Math.random() * 8 - 4);
-      if (Math.random() < 0.12) hue = 172 + Math.random() * 8;
-      strands.push({
-        r: base * (0.045 + Math.pow(t, 0.82) * 0.55),
-        a: Math.random() * Math.PI * 2,
-        spin: 0.0016 + (1 - t) * 0.0046,
-        wob: 0.10 + Math.random() * 0.22,
-        wf: 0.6 + Math.random() * 1.7,
-        hue: hue,
-        light: 40 + Math.random() * 9,
-        alpha: 0.30 + (1 - t) * 0.26,
-        px: 0, py: 0, seeded: false
+    /* 渦の核を左右いっぱいに配置して画面全体を巻き込む */
+    vortices = [
+      { x: W * 0.10, y: H * 0.32, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
+      { x: W * 0.30, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
+      { x: W * 0.50, y: H * 0.28, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
+      { x: W * 0.70, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
+      { x: W * 0.90, y: H * 0.34, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) }
+    ];
+    /* 大きなうねり */
+    waves = [];
+    for (var w = 0; w < 3; w++) {
+      waves.push({
+        ax: rnd(0.5, 1.5) * Math.PI / base,
+        ay: rnd(0.5, 1.5) * Math.PI / base,
+        amp: base * rnd(0.05, 0.10),
+        sp: rnd(0.0015, 0.0040),
+        ph: rnd(0, Math.PI * 2)
       });
+    }
+    /* 絵具ごとに粒子を分けて保持（描画をまとめて高速化） */
+    var total = W < 760 ? 480 : 900;
+    groups = [];
+    for (var g = 0; g < PAINTS.length; g++) {
+      var arr = [];
+      for (var i = 0; i < Math.round(total / PAINTS.length); i++) arr.push(spawn({}));
+      groups.push(arr);
     }
   }
 
-  var tGlobal = 0;
+  function field(x, y) {
+    var vx = 0, vy = 0, i;
+    for (i = 0; i < waves.length; i++) {
+      var wv = waves[i];
+      var c = Math.cos(wv.ax * x + wv.ay * y + wv.ph + tFlow * wv.sp);
+      vx += wv.amp * wv.ay * c;
+      vy -= wv.amp * wv.ax * c;
+    }
+    for (i = 0; i < vortices.length; i++) {
+      var vo = vortices[i];
+      var rx = x - vo.x, ry = y - vo.y;
+      var e = Math.exp(-(rx * rx + ry * ry) / (2 * vo.s * vo.s));
+      var k = vo.a * 1.9 * e / vo.s;
+      vx += -ry * k; vy += rx * k;
+    }
+    if (pullAmt > 0.002) {
+      var dx = smX - x, dy = smY - y;
+      var d = Math.sqrt(dx * dx + dy * dy) + 1;
+      var u = d / (Math.min(W, H) * 0.38);
+      var g = 3.2 * pullAmt / (1 + u * u * u);
+      var nx = dx / d, ny = dy / d;
+      vx += nx * g - ny * g * 0.95;
+      vy += ny * g + nx * g * 0.95;
+    }
+    fvx = vx; fvy = vy;
+  }
+
   function step() {
-    tGlobal += 1;
+    tFlow += 1;
+    for (var v = 0; v < vortices.length; v++) {
+      var vo = vortices[v];
+      vo.x += vo.dx; vo.y += vo.dy;
+      if (vo.x < -W * 0.15 || vo.x > W * 1.15) vo.dx *= -1;
+      if (vo.y < -H * 0.15 || vo.y > H * 1.15) vo.dy *= -1;
+    }
     smX += (ptrX - smX) * 0.12;
     smY += (ptrY - smY) * 0.12;
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
-    var PULL = 0.78 * pullAmt;
-    var RAD = Math.min(W, H) * 0.38;
+
     ctx.globalCompositeOperation = "destination-out";
-    ctx.fillStyle = "rgba(0,0,0,0.045)";
+    ctx.fillStyle = "rgba(0,0,0,0.015)";
     ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "source-over";
     ctx.lineCap = "round";
 
-    for (var i = 0; i < strands.length; i++) {
-      var s = strands[i];
-      s.a += s.spin;
-      var wob = 1 + Math.sin(s.a * s.wf + tGlobal * 0.006) * s.wob;
-      var rr = s.r * wob;
-      var x = cx + Math.cos(s.a) * rr;
-      var y = cy + Math.sin(s.a) * rr * 0.92;
-      if (PULL > 0.002) {
-        var dx = smX - x, dy = smY - y;
-        var u = Math.sqrt(dx * dx + dy * dy) / RAD;
-        var f = PULL / (1 + u * u * u);
-        var sw = f * 0.38;
-        x += dx * f - dy * sw;
-        y += dy * f + dx * sw;
-      }
-      if (!s.seeded) { s.px = x; s.py = y; s.seeded = true; }
+    for (var g = 0; g < groups.length; g++) {
+      var arr = groups[g];
+      ctx.strokeStyle = PAINTS[g].c;
+      ctx.lineWidth = PAINTS[g].w;
       ctx.beginPath();
-      ctx.moveTo(s.px, s.py);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = "hsla(" + s.hue + ",96%," + s.light + "%," + s.alpha + ")";
-      ctx.lineWidth = 1.3;
+      for (var i = 0; i < arr.length; i++) {
+        var p = arr[i];
+        field(p.x, p.y);
+        p.x += fvx; p.y += fvy;
+        p.life--;
+        if (p.life < 0 || p.x < -50 || p.x > W + 50 || p.y < -50 || p.y > H + 50) { spawn(p); continue; }
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        p.px = p.x; p.py = p.y;
+      }
       ctx.stroke();
-      s.px = x; s.py = y;
     }
   }
 
   var raf = null, running = false;
   function loop() { step(); raf = requestAnimationFrame(loop); }
 
-  /* ---- カーソル / 指に吸い寄せられる引力（重力井戸） ----
-     渦全体は動かさず、ポインタ付近の筋ほど強く引き込まれる。
-     引力は距離の二乗で減衰し、わずかに旋回成分を加えて渦を巻かせる。 */
+  /* ---- カーソル / 指に吸い寄せられる流れ ---- */
   function grabAt(clientX, clientY) {
     if (reduce) return;
     var r = canvas.getBoundingClientRect();
-    ptrX = clientX - r.left;
-    ptrY = clientY - r.top;
+    ptrX = clientX - r.left; ptrY = clientY - r.top;
     if (!pullOn) { smX = ptrX; smY = ptrY; }
     pullOn = true;
   }
@@ -260,26 +308,10 @@
 
   function start() {
     resize(); build();
-    if (reduce) { staticDraw(); return; }
-    for (var k = 0; k < 120; k++) step();
+    var warm = reduce ? 320 : 200;
+    for (var k = 0; k < warm; k++) step();
+    if (reduce) return;
     if (!running) { running = true; raf = requestAnimationFrame(loop); }
-  }
-
-  function staticDraw() {
-    ctx.globalCompositeOperation = "source-over"; ctx.lineCap = "round";
-    for (var i = 0; i < strands.length; i++) {
-      var s = strands[i]; var steps = 220;
-      ctx.beginPath();
-      for (var j = 0; j < steps; j++) {
-        var a = s.a + j * 0.045;
-        var rr = s.r * (1 + Math.sin(a * s.wf) * s.wob);
-        var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr * 0.92;
-        if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = "hsla(" + s.hue + ",95%," + s.light + "%," + (s.alpha * 0.5) + ")";
-      ctx.lineWidth = 1.1; ctx.stroke();
-    }
-    ctx.globalCompositeOperation = "source-over";
   }
 
   var rt;
