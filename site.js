@@ -194,8 +194,8 @@
     smX += (ptrX - smX) * 0.12;
     smY += (ptrY - smY) * 0.12;
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
-    var PULL = 0.85 * pullAmt;
-    var R2 = Math.pow(Math.min(W, H) * 0.40, 2);
+    var PULL = 0.78 * pullAmt;
+    var RAD = Math.min(W, H) * 0.38;
     ctx.globalCompositeOperation = "destination-out";
     ctx.fillStyle = "rgba(0,0,0,0.045)";
     ctx.fillRect(0, 0, W, H);
@@ -211,14 +211,11 @@
       var y = cy + Math.sin(s.a) * rr * 0.92;
       if (PULL > 0.002) {
         var dx = smX - x, dy = smY - y;
-        var q = (dx * dx + dy * dy) / R2;
-        if (q < 1) {
-          var k = 1 - q;
-          var f = PULL * k * k;
-          var sw = f * 0.38;
-          x += dx * f - dy * sw;
-          y += dy * f + dx * sw;
-        }
+        var u = Math.sqrt(dx * dx + dy * dy) / RAD;
+        var f = PULL / (1 + u * u * u);
+        var sw = f * 0.38;
+        x += dx * f - dy * sw;
+        y += dy * f + dx * sw;
       }
       if (!s.seeded) { s.px = x; s.py = y; s.seeded = true; }
       ctx.beginPath();
