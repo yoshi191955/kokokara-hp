@@ -158,12 +158,14 @@
   var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
   var vortices = [], waves = [], drops = [], sprites = [];
 
+  /* 明るい同系色（赤だけが低く緑青は高い）に揃える。
+     暗いチャンネルがインクごとに違うと乗算で全チャンネルが削られ黒く沈むため。 */
   var INKS = [
-    "rgba(0,168,196,A)",
-    "rgba(11,124,147,A)",
-    "rgba(20,200,170,A)",
-    "rgba(44,132,216,A)",
-    "rgba(104,72,224,A)"
+    "rgba(56,214,226,A)",
+    "rgba(74,232,198,A)",
+    "rgba(96,198,246,A)",
+    "rgba(40,200,212,A)",
+    "rgba(140,236,248,A)"
   ];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -174,9 +176,9 @@
       c.width = S; c.height = S;
       var g = c.getContext("2d");
       var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-      gr.addColorStop(0, tpl.replace("A", "0.26"));
-      gr.addColorStop(0.40, tpl.replace("A", "0.13"));
-      gr.addColorStop(0.75, tpl.replace("A", "0.04"));
+      gr.addColorStop(0, tpl.replace("A", "0.045"));
+      gr.addColorStop(0.40, tpl.replace("A", "0.022"));
+      gr.addColorStop(0.75, tpl.replace("A", "0.007"));
       gr.addColorStop(1, tpl.replace("A", "0"));
       g.fillStyle = gr; g.fillRect(0, 0, S, S);
       return c;
@@ -310,7 +312,7 @@
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
 
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(255,255,255,0.030)";
+    ctx.fillStyle = "rgba(255,255,255,0.035)";
     ctx.fillRect(0, 0, W, H);
 
     ctx.globalCompositeOperation = "multiply";
