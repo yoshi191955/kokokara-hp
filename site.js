@@ -170,8 +170,8 @@
     var count = W < 760 ? 170 : 260;
     for (var i = 0; i < count; i++) {
       var t = i / count;
-      var hue = 12 + t * 26 + (Math.random() * 10 - 5);
-      if (Math.random() < 0.12) hue = 6 + Math.random() * 6;
+      var hue = 186 + t * 22 + (Math.random() * 8 - 4);
+      if (Math.random() < 0.12) hue = 172 + Math.random() * 8;
       strands.push({
         r: base * (0.045 + Math.pow(t, 0.82) * 0.55),
         a: Math.random() * Math.PI * 2,
@@ -179,8 +179,8 @@
         wob: 0.10 + Math.random() * 0.22,
         wf: 0.6 + Math.random() * 1.7,
         hue: hue,
-        light: 50 + Math.random() * 8,
-        alpha: 0.40 + (1 - t) * 0.30,
+        light: 40 + Math.random() * 9,
+        alpha: 0.30 + (1 - t) * 0.26,
         px: 0, py: 0, seeded: false
       });
     }
