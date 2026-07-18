@@ -197,6 +197,7 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 32px); margin-top: auto; padding-top: clamp(28px, 4vh, 44px); border-top: 1px solid var(--line); }
 .stat-num { font-family: var(--font-en); font-weight: 900; font-size: clamp(38px, 5vw, 66px); line-height: 1; letter-spacing: -.03em; }
 .stat-num small { font-size: .38em; font-weight: 800; margin-left: 4px; }
+.stat-num.is-text { font-family: var(--font-jp); font-weight: 900; letter-spacing: 0; font-size: clamp(30px, 3.6vw, 50px); }
 .stat-label { margin-top: 10px; color: var(--text-70); font-size: 13.5px; font-weight: 700; }
 
 /* ---------- ACTIVITY（02） ---------- */
