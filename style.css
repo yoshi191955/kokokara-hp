@@ -212,8 +212,8 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 .activity-card:hover { transform: translateY(-6px); box-shadow: 0 22px 44px rgba(12,30,36,.10); border-color: var(--line-2); }
 .activity-num { font-family: var(--font-en); font-weight: 900; font-size: clamp(56px, 8vw, 104px); line-height: .9; letter-spacing: -.04em; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; display: block; margin-bottom: 12px; }
 .activity-badge { display: inline-block; font-family: var(--font-en); font-weight: 800; font-size: 11.5px; letter-spacing: .1em; color: var(--text); border: 1px solid var(--line-2); border-radius: 100px; padding: 5px 13px; margin-bottom: 16px; text-transform: uppercase; }
-.activity-card h3 { font-family: var(--font-jp); font-weight: 900; font-size: clamp(20px, 2.2vw, 26px); margin-bottom: 12px; }
-.activity-card p { color: var(--text-70); font-size: 14.5px; }
+.activity-card h3 { font-family: var(--font-jp); font-weight: 900; font-size: clamp(22px, 2.7vw, 31px); margin-bottom: 14px; }
+.activity-card p { color: var(--text-70); font-size: clamp(14.5px, 1.5vw, 16.5px); line-height: 1.85; }
 .activities-note { margin-top: 32px; font-family: var(--font-jp); font-weight: 700; font-size: clamp(18px, 2.6vw, 28px); text-align: center; letter-spacing: .02em; }
 .activities-note .hl { color: var(--accent); }
 
@@ -412,34 +412,39 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 
 /* ---- 活動カード：枠全体を背景ビジュアルに ----
    写真を用意した場合は該当カードに style="--card-img:url('assets/xxx.jpg')" を付けるだけで差し替わる */
-.activity-card { background-image: var(--card-img, none); background-size: cover; background-position: center; }
-.card-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; display: grid; justify-items: center; align-items: start; padding-top: 26px; overflow: hidden; opacity: .38; }
-.card-bg svg { width: 92%; height: auto; }
+.activity-card { background-image: var(--card-img, none); background-size: cover; background-position: center;
+  aspect-ratio: 1 / 1; display: flex; flex-direction: column; justify-content: flex-end; }
+.card-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: .38; }
+.card-bg > svg { position: absolute; left: 5%; width: 90%; top: 12%; height: auto; }
 .card-bg::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.34) 38%, rgba(255,255,255,.82) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 34%, rgba(255,255,255,.78) 62%, rgba(255,255,255,.96) 100%);
 }
 .activity-card > :not(.card-bg) { position: relative; z-index: 1; }
 
 /* ---- MBTI 16タイプが順番に現れる ---- */
 .card-bg.mbti-stage { opacity: .46; align-items: start; padding-top: 30px; }
 .mbti-chip {
-  position: absolute; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  opacity: 0; transform: translateY(10px) scale(.92);
-  animation: mbtiCycle 20s linear infinite;
-  animation-delay: calc(var(--i) * 1.25s);
+  position: absolute; inset: 0;
+  opacity: 0; transform: translateY(10px) scale(.96);
+  animation: mbtiCycle 35.2s linear infinite;
+  animation-delay: calc(var(--i) * 2.2s);
 }
 .mbti-chip b {
-  font-family: var(--font-en); font-weight: 900; font-size: clamp(34px, 4.4vw, 54px); letter-spacing: .02em;
-  color: #fff; background: var(--c); padding: 10px 16px; border-radius: 14px; line-height: 1;
+  position: absolute; top: 6%; right: 7%;
+  font-family: var(--font-en); font-weight: 900; font-size: clamp(15px, 1.7vw, 20px); letter-spacing: .04em;
+  color: #fff; background: var(--c); padding: 8px 14px; border-radius: 10px; line-height: 1;
 }
-.mbti-chip small { font-family: var(--font-jp); font-weight: 700; font-size: 15px; color: var(--text-70); margin-top: 10px; }
+.mbti-chip small {
+  position: absolute; top: calc(6% + 40px); right: 7%;
+  font-family: var(--font-jp); font-weight: 700; font-size: 13px; color: var(--text-70);
+}
 @keyframes mbtiCycle {
-  0%    { opacity: 0; transform: translateY(10px) scale(.92); }
-  0.6%  { opacity: 1; transform: translateY(0) scale(1); }
+  0%    { opacity: 0; transform: translateY(10px) scale(.96); }
+  1.6%  { opacity: 1; transform: translateY(0) scale(1); }
   5.6%  { opacity: 1; transform: translateY(0) scale(1); }
-  7.0%  { opacity: 0; transform: translateY(-10px) scale(.96); }
-  100%  { opacity: 0; transform: translateY(-10px) scale(.96); }
+  7.2%  { opacity: 0; transform: translateY(-8px) scale(.99); }
+  100%  { opacity: 0; transform: translateY(-8px) scale(.99); }
 }
 
 
@@ -450,35 +455,32 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
   position: absolute; inset: -34%;
   background: radial-gradient(circle at 50% 44%, var(--w) 0%, var(--w) 54%, transparent 78%);
   opacity: 0; transform: scale(.5);
-  animation: washCycle 20s linear infinite;
-  animation-delay: calc(var(--i) * 1.25s);
+  animation: washCycle 35.2s linear infinite;
+  animation-delay: calc(var(--i) * 2.2s);
 }
 @keyframes washCycle {
-  0%    { opacity: 0; transform: scale(.5); }
-  3.0%  { opacity: 1; transform: scale(1); }
-  5.8%  { opacity: 1; transform: scale(1.06); }
-  7.4%  { opacity: 0; transform: scale(1.12); }
-  100%  { opacity: 0; transform: scale(1.12); }
+  0%    { opacity: 0; transform: scale(.62); }
+  2.8%  { opacity: 1; transform: scale(1); }
+  5.9%  { opacity: 1; transform: scale(1.05); }
+  7.8%  { opacity: 0; transform: scale(1.10); }
+  100%  { opacity: 0; transform: scale(1.10); }
 }
 @media (prefers-reduced-motion: reduce) { .card-wash i { animation: none; } .card-wash i:first-child { opacity: 1; transform: none; } }
 
 /* ---- MBTIキャラ画像スロット（assets/mbti/ に置くと自動で画像モード） ---- */
 .mbti-art { display: none; }
-.card-bg.mbti-stage.has-art { opacity: .92; padding-top: 14px; }
+.card-bg.mbti-stage.has-art { opacity: 1; }
 .has-art .mbti-art {
-  display: block; width: clamp(150px, 20vw, 250px); height: clamp(190px, 26vw, 300px);
+  display: block; position: absolute; left: 0; right: 0; top: 4%; height: 66%;
   background-image: var(--img); background-size: contain;
-  background-repeat: no-repeat; background-position: center bottom;
+  background-repeat: no-repeat; background-position: center center;
 }
-.has-art .mbti-chip b { font-size: 15px; padding: 6px 12px; border-radius: 9px; margin-top: 8px; }
-.has-art .mbti-chip small { font-size: 12px; margin-top: 4px; }
 
 
 /* 画像モードではキャラを主役にするため白かぶりを弱める */
 .card-bg.mbti-stage.has-art::after {
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 46%, rgba(255,255,255,.52) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,.72) 63%, rgba(255,255,255,.95) 100%);
 }
-.has-art .mbti-chip { gap: 0; }
 
 /* ---- 育成プログラム：課題→提案→解決 ---- */
 .pg-step circle { fill: #FFFFFF; stroke: var(--accent); stroke-width: 1.6; }
@@ -492,7 +494,10 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 @keyframes pgFlow { to { stroke-dashoffset: -16; } }
 .pg-bars rect { fill: #12A0B8; opacity: .85; }
 
-@media (max-width: 520px) { .mbti-chip b { font-size: 30px; } }
+@media (max-width: 620px) {
+  .activity-card { aspect-ratio: auto; min-height: 500px; }
+  .has-art .mbti-art { height: 58%; top: 3%; }
+}
 @media (prefers-reduced-motion: reduce) {
   .cv-link { animation: none; stroke-dashoffset: 0; opacity: .45; }
   .pg-arrow { animation: none; }
