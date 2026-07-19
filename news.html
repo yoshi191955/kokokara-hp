@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>イベント（開催済）｜学生団体ココカラ</title>
-  <meta name="description" content="学生団体ココカラの開催済イベント一覧です。" />
+  <title>お知らせ｜学生団体ココカラ</title>
+  <meta name="description" content="学生団体ココカラからのお知らせ・最新情報。" />
   <link rel="icon" href="assets/logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,9 +21,9 @@
       </a>
       <div class="header-right">
         <nav class="nav-inline" aria-label="ナビゲーション">
-          <a href="index.html">HOME</a>
+          <a href="index.html" class="active">HOME</a>
           <a href="about.html">ABOUT</a>
-          <a href="events.html" class="active">EVENT</a>
+          <a href="events.html">EVENT</a>
           <a href="sponsors.html">SPONSOR</a>
           <a href="join.html">JOIN</a>
         </nav>
@@ -57,33 +57,42 @@
   </div>
 
   <main>
-
     <section class="page-hero">
       <div class="container">
-        <span class="eyebrow">03 — Events</span>
-        <h1>イベント申込</h1>
-        <span class="en-big" aria-hidden="true">EVENTS</span>
-        <p>ココカラの交流イベント一覧です。気になるイベントに申し込んでみよう！</p>
+        <span class="eyebrow">09 — News</span>
+        <h1>お知らせ</h1>
+        <span class="en-big">NEWS</span>
+        <p>イベントや募集に関する最新情報をお届けします。</p>
       </div>
     </section>
 
-    <div class="container">
-      <nav class="event-tabs" aria-label="イベント表示切り替え">
-        <a href="events.html">募集中</a>
-        <a href="events-past.html" class="active">開催済</a>
-      </nav>
-    </div>
-
-    <section class="section events-section">
+    <section class="section">
       <div class="container">
-        <div class="notice-box reveal">
-          <span class="notice-badge">Past Events</span>
-          <h2>開催済のイベントはまだありません</h2>
-          <p>イベント終了後、こちらに掲載していきます。</p>
+        <div class="news-list reveal">
+          <article class="news-item">
+            <time datetime="2026-07-19">2026.07.19</time>
+            <span class="news-cat">Site</span>
+            <h2>公式サイトをリニューアルしました</h2>
+            <p>団体の活動内容や協賛のご案内を分かりやすくお伝えできるよう、サイト全体を作り直しました。イベント情報も随時こちらから確認いただけます。</p>
+          </article>
+          <article class="news-item">
+            <time datetime="2026-07-01">2026.07.01</time>
+            <span class="news-cat">Recruit</span>
+            <h2>運営メンバーを募集しています</h2>
+            <p>企画・渉外・広報・制作の4チームで、一緒に活動する仲間を探しています。学年や経験は問いません。詳細はメンバー募集ページをご覧ください。</p>
+          </article>
+          <article class="news-item">
+            <time datetime="2026-06-20">2026.06.20</time>
+            <span class="news-cat">Sponsor</span>
+            <h2>協賛企業さまの募集を開始しました</h2>
+            <p>学生と本音で出会いたい企業さまを募集しています。ご関心をお持ちの企業さまは、協賛ページまたは公式LINEよりお問い合わせください。</p>
+          </article>
+        </div>
+        <div class="event-preview-cta reveal">
+          <a class="btn btn-ghost" href="https://line.me/R/ti/p/@113crihp">最新情報は公式LINEでも配信中</a>
         </div>
       </div>
     </section>
-
   </main>
 
   <footer class="site-footer">

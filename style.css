@@ -394,3 +394,120 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
    追加: フッター大型ワードマーク（JSで幅にフィット）
    ========================================================= */
 .footer-word { text-align: center; max-width: 100%; }
+
+/* =========================================================
+   追加: カード内ビジュアル（SVG / アニメーション）
+   画像を用意した場合は .card-viz を <img> に差し替えれば置換可能
+   ========================================================= */
+
+/* ---- 01枠：企業と学生をまっすぐつなぐ ---- */
+.connect-viz { margin-top: clamp(18px, 3vh, 28px); }
+.connect-viz svg { width: 100%; max-width: 340px; height: auto; overflow: visible; }
+.cv-link { stroke: #5BD2E8; stroke-width: 1.4; opacity: .34; stroke-dasharray: 220; stroke-dashoffset: 220; animation: cvDraw 3.4s var(--ease) infinite; }
+.cv-link.d1 { animation-delay: .35s; } .cv-link.d2 { animation-delay: .7s; } .cv-link.d3 { animation-delay: 1.05s; }
+@keyframes cvDraw { 0% { stroke-dashoffset: 220; opacity: 0; } 22% { opacity: .5; } 60% { stroke-dashoffset: 0; opacity: .5; } 92% { stroke-dashoffset: 0; opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.cv-side circle, .cv-side rect { fill: rgba(255,255,255,.9); }
+.cv-corp rect { fill: #7FE0F0; }
+.cv-cap { fill: rgba(242,250,252,.6); font-family: var(--font-en); font-size: 8.5px; font-weight: 800; letter-spacing: .14em; text-anchor: middle; }
+
+/* ---- 活動カード共通のビジュアル枠 ---- */
+.card-viz { position: relative; height: 132px; margin-bottom: 20px; border-radius: 16px; background: var(--bg-2); border: 1px solid var(--line); overflow: hidden; display: grid; place-items: center; }
+.card-viz svg { width: 100%; height: 100%; padding: 10px 14px; }
+
+/* ---- MBTI 16タイプが順番に現れる ---- */
+.mbti-stage { background: var(--bg-2); }
+.mbti-chip {
+  position: absolute; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  opacity: 0; transform: translateY(10px) scale(.92);
+  animation: mbtiCycle 20s linear infinite;
+  animation-delay: calc(var(--i) * 1.25s);
+}
+.mbti-chip b {
+  font-family: var(--font-en); font-weight: 900; font-size: 26px; letter-spacing: .02em;
+  color: #fff; background: var(--c); padding: 10px 16px; border-radius: 14px; line-height: 1;
+}
+.mbti-chip small { font-family: var(--font-jp); font-weight: 700; font-size: 12px; color: var(--text-70); margin-top: 6px; }
+@keyframes mbtiCycle {
+  0%    { opacity: 0; transform: translateY(10px) scale(.92); }
+  0.6%  { opacity: 1; transform: translateY(0) scale(1); }
+  5.6%  { opacity: 1; transform: translateY(0) scale(1); }
+  7.0%  { opacity: 0; transform: translateY(-10px) scale(.96); }
+  100%  { opacity: 0; transform: translateY(-10px) scale(.96); }
+}
+
+/* ---- 育成プログラム：課題→提案→解決 ---- */
+.pg-step circle { fill: #FFFFFF; stroke: var(--accent); stroke-width: 1.6; }
+.pg-step.s2 circle { stroke: #12A0B8; } .pg-step.s3 circle { fill: var(--accent); stroke: var(--accent); }
+.pg-ic { fill: var(--accent); font-family: var(--font-en); font-weight: 900; font-size: 17px; text-anchor: middle; }
+.pg-step.s3 .pg-ic { fill: #FFFFFF; }
+.pg-lb { fill: var(--text-70); font-family: var(--font-jp); font-weight: 700; font-size: 11px; text-anchor: middle; }
+.pg-cap { fill: var(--text-45); font-family: var(--font-jp); font-weight: 700; font-size: 10.5px; text-anchor: middle; }
+.pg-arrow { stroke: var(--line-2); stroke-width: 1.6; fill: none; stroke-dasharray: 4 4; animation: pgFlow 2.4s linear infinite; }
+.pg-arrow.d1 { animation-delay: .5s; }
+@keyframes pgFlow { to { stroke-dashoffset: -16; } }
+.pg-bars rect { fill: #12A0B8; opacity: .85; }
+
+@media (max-width: 520px) { .card-viz { height: 116px; } .mbti-chip b { font-size: 22px; } }
+@media (prefers-reduced-motion: reduce) {
+  .cv-link { animation: none; stroke-dashoffset: 0; opacity: .45; }
+  .pg-arrow { animation: none; }
+  .mbti-chip { animation-duration: 20s; }
+}
+
+/* =========================================================
+   追加: 下層ページの共通パーツ（概要表 / FAQ / お知らせ / 規約）
+   ========================================================= */
+
+/* ---- 概要・募集要項テーブル ---- */
+.info-table dl { border-top: 1px solid var(--line); }
+.info-table dl > div { display: grid; grid-template-columns: 200px 1fr; gap: 20px; padding: 20px 4px; border-bottom: 1px solid var(--line); }
+.info-table dt { font-family: var(--font-jp); font-weight: 900; font-size: 14px; color: var(--text); }
+.info-table dd { color: var(--text-70); font-size: 15px; }
+.info-table dd a { color: var(--accent); font-weight: 700; border-bottom: 1px solid var(--line-2); }
+@media (max-width: 700px) { .info-table dl > div { grid-template-columns: 1fr; gap: 6px; } }
+
+/* ---- メンバーカードの補足文 ---- */
+.member-note { margin-top: 14px; color: var(--text-70); font-size: 13.5px; text-align: left; line-height: 1.8; }
+
+/* ---- FAQ（開閉式） ---- */
+.faq-list { border-top: 1px solid var(--line); }
+.faq-item { border-bottom: 1px solid var(--line); }
+.faq-item summary {
+  list-style: none; cursor: pointer; position: relative;
+  padding: 22px 52px 22px 4px;
+  font-family: var(--font-jp); font-weight: 700; font-size: clamp(15px, 1.6vw, 17px); color: var(--text);
+  transition: color .25s var(--ease);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--accent); }
+.faq-item summary::after {
+  content: ""; position: absolute; right: 14px; top: 50%; width: 13px; height: 2px;
+  background: var(--accent); transform: translateY(-50%); transition: transform .3s var(--ease);
+}
+.faq-item summary::before {
+  content: ""; position: absolute; right: 14px; top: 50%; width: 13px; height: 2px;
+  background: var(--accent); transform: translateY(-50%) rotate(90deg); transition: transform .3s var(--ease);
+}
+.faq-item[open] summary::before { transform: translateY(-50%) rotate(0deg); }
+.faq-a { padding: 0 52px 24px 4px; }
+.faq-a p { color: var(--text-70); font-size: 15px; line-height: 1.9; }
+
+/* ---- お知らせ一覧 ---- */
+.news-list { border-top: 1px solid var(--line); }
+.news-item { padding: 30px 4px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 120px 96px 1fr; gap: 6px 20px; align-items: start; }
+.news-item time { font-family: var(--font-en); font-weight: 800; font-size: 13px; color: var(--text-45); letter-spacing: .06em; padding-top: 4px; }
+.news-cat { justify-self: start; font-family: var(--font-en); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--line-2); border-radius: 100px; padding: 4px 12px; }
+.news-item h2 { font-family: var(--font-jp); font-weight: 900; font-size: clamp(17px, 1.9vw, 21px); line-height: 1.5; }
+.news-item p { grid-column: 3; color: var(--text-70); font-size: 14.5px; margin-top: 10px; }
+@media (max-width: 760px) {
+  .news-item { grid-template-columns: 1fr; gap: 10px; }
+  .news-item p, .news-item h2 { grid-column: 1; }
+}
+
+/* ---- 規約・ポリシー本文 ---- */
+.legal { max-width: 820px; }
+.legal p { color: var(--text-70); font-size: 15px; line-height: 2; margin-bottom: 22px; }
+.legal h2 { font-family: var(--font-jp); font-weight: 900; font-size: clamp(17px, 2vw, 21px); color: var(--text); margin: 40px 0 14px; padding-top: 26px; border-top: 1px solid var(--line); }
+.legal h2:first-of-type { margin-top: 30px; }
+.legal a { color: var(--accent); font-weight: 700; border-bottom: 1px solid var(--line-2); }
+.legal-date { font-size: 13.5px; color: var(--text-45); margin-top: 40px; }
