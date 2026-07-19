@@ -173,7 +173,7 @@
   var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
   var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
   var vortices = [], waves = [], drops = [], sprites = [];
-  var lastPX = 0, lastPY = 0, emitIdx = 0, curInk = 0;
+  var lastPX = 0, lastPY = 0, emitIdx = 0, curInk = 0, pvx = 0, pvy = 0;
 
   /* 明るい同系色（赤だけが低く緑青は高い）に揃える。
      暗いチャンネルがインクごとに違うと乗算で全チャンネルが削られ黒く沈むため。 */
@@ -189,14 +189,15 @@
 
   function makeSprites() {
     sprites = INKS.map(function (tpl) {
-      var c = document.createElement("canvas"), S = 128;
+      var c = document.createElement("canvas"), S = 160;
       c.width = S; c.height = S;
       var g = c.getContext("2d");
       var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-      gr.addColorStop(0, tpl.replace("A", "0.045"));
-      gr.addColorStop(0.40, tpl.replace("A", "0.022"));
-      gr.addColorStop(0.75, tpl.replace("A", "0.007"));
-      gr.addColorStop(1, tpl.replace("A", "0"));
+      /* 段差のないガウス状の減衰。停止点が粗いと重ね塗りで同心円の縞が出る */
+      for (var k = 0; k <= 14; k++) {
+        var tt = k / 14, aa = 0.070 * Math.exp(-(tt * 2.1) * (tt * 2.1));
+        gr.addColorStop(tt, tpl.replace("A", aa.toFixed(4)));
+      }
       g.fillStyle = gr; g.fillRect(0, 0, S, S);
       return c;
     });
@@ -219,7 +220,7 @@
 
   function spawn(d) {
     d.x = Math.random() * W; d.y = Math.random() * H;
-    d.r = rnd(46, 132);
+    d.r = rnd(44, 118);
     d.life = rnd(220, 700);
     d.s = (Math.random() * INKS.length) | 0;
     return d;
@@ -245,7 +246,7 @@
       });
     }
     drops.length = 0;
-    var n = W < 760 ? 90 : 210;
+    var n = W < 760 ? 170 : 380;
     for (var i = 0; i < n; i++) drops.push(spawn({}));
   }
 
@@ -267,14 +268,13 @@
     if (pullAmt > 0.002) {
       var dx = smX - x, dy = smY - y;
       var d = Math.sqrt(dx * dx + dy * dy) + 1;
-      var u = d / (Math.min(W, H) * 0.38);
-      var g = 4.6 * pullAmt / (1 + u * u * u);
+      var u = d / (Math.min(W, H) * 0.34);
+      var infl = pullAmt / (1 + u * u * u);
       var nx = dx / d, ny = dy / d;
-      /* 接線方向のみで回す。半径方向は内向きにしない（内向きにすると
-         そこが吸い込み口になり、色水が一点に溜まって出られなくなる）。
-         わずかに外向きを足して滞留を防ぐ。 */
-      vx += -ny * g * 1.60 - nx * g * 0.18;
-      vy +=  nx * g * 1.60 - ny * g * 0.18;
+      /* マドラーで水をかき混ぜる動き。
+         (1) 棒の進行方向へ水を引きずる  (2) 棒の周りを回す */
+      vx += pvx * 1.25 * infl - ny * 2.6 * infl;
+      vy += pvy * 1.25 * infl + nx * 2.6 * infl;
     }
     fvx = vx; fvy = vy;
   }
@@ -327,8 +327,13 @@
       if (vo.x < -W * 0.15 || vo.x > W * 1.15) vo.dx *= -1;
       if (vo.y < -H * 0.15 || vo.y > H * 1.15) vo.dy *= -1;
     }
-    smX += (ptrX - smX) * 0.12;
-    smY += (ptrY - smY) * 0.12;
+    var nvx = ptrX - smX, nvy = ptrY - smY;
+    smX += nvx * 0.12;
+    smY += nvy * 0.12;
+    var sp = Math.sqrt(nvx * nvx + nvy * nvy), cap = 26;
+    if (sp > cap) { nvx = nvx / sp * cap; nvy = nvy / sp * cap; }
+    pvx += (nvx - pvx) * 0.22;
+    pvy += (nvy - pvy) * 0.22;
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
     ctx.globalCompositeOperation = "source-over";
@@ -357,12 +362,6 @@
         d0.y = smY + Math.sin(ang) * rad;
         d0.r = rnd(40, 80); d0.life = rnd(120, 260); d0.s = curInk;
       }
-    }
-    if (pullAmt > 0.01) {
-      var cr2 = 66 + 44 * pullAmt;
-      ctx.globalAlpha = Math.min(1, pullAmt * 0.85);
-      ctx.drawImage(sprites[curInk], smX - cr2, smY - cr2, cr2 * 2, cr2 * 2);
-      ctx.globalAlpha = 1;
     }
     ctx.globalCompositeOperation = "source-over";
 
