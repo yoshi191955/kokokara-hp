@@ -189,6 +189,18 @@
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
 
+  /* 場所ごとに色を決める。近い場所は同じ色になるので、
+     水色・青・緑がそれぞれの帯として同じ面に共存する。
+     帯はゆっくり流れて位置が変わる。 */
+  function inkAt(x, y, t) {
+    var v = Math.sin(x * 0.0075 + t * 0.0007)
+          + Math.cos(y * 0.0068 - t * 0.0006)
+          + 0.8 * Math.sin((x - y) * 0.0045 + t * 0.0005);
+    var n = (v + 2.8) / 5.6;
+    if (n < 0) n = 0; else if (n > 0.999) n = 0.999;
+    return Math.floor(n * INKS.length);
+  }
+
   function makeSprites() {
     sprites = INKS.map(function (tpl) {
       var c = document.createElement("canvas"), S = 160;
@@ -197,7 +209,7 @@
       var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
       /* 段差のないガウス状の減衰。停止点が粗いと重ね塗りで同心円の縞が出る */
       for (var k = 0; k <= 14; k++) {
-        var tt = k / 14, aa = 0.080 * Math.exp(-(tt * 2.1) * (tt * 2.1));
+        var tt = k / 14, aa = 0.140 * Math.exp(-(tt * 2.1) * (tt * 2.1));
         gr.addColorStop(tt, tpl.replace("A", aa.toFixed(4)));
       }
       g.fillStyle = gr; g.fillRect(0, 0, S, S);
@@ -222,9 +234,9 @@
 
   function spawn(d) {
     d.x = Math.random() * W; d.y = Math.random() * H;
-    d.r = rnd(44, 118);
+    d.r = rnd(38, 96);
     d.life = rnd(220, 700);
-    d.s = (Math.random() * INKS.length) | 0;
+    d.s = inkAt(d.x, d.y, tFlow);
     return d;
   }
 
@@ -248,7 +260,7 @@
       });
     }
     drops.length = 0;
-    var n = W < 760 ? 190 : 430;
+    var n = W < 760 ? 150 : 300;
     for (var i = 0; i < n; i++) drops.push(spawn({}));
   }
 
@@ -342,7 +354,7 @@
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(220,240,245,0.008)";
+    ctx.fillStyle = "rgba(220,240,245,0.006)";
     ctx.fillRect(0, 0, W, H);
 
     for (var i = 0; i < drops.length; i++) {
@@ -359,12 +371,12 @@
       var moved = Math.abs(ptrX - lastPX) + Math.abs(ptrY - lastPY);
       lastPX = ptrX; lastPY = ptrY;
       if (moved > 1.5 && frame % 5 === 0) {
-        if (frame % 40 === 0) curInk = (curInk + 1) % INKS.length;
         var d0 = drops[emitIdx % drops.length]; emitIdx++;
         var ang = Math.random() * Math.PI * 2, rad = 30 + Math.random() * 42;
         d0.x = smX + Math.cos(ang) * rad;
         d0.y = smY + Math.sin(ang) * rad;
-        d0.r = rnd(40, 80); d0.life = rnd(120, 260); d0.s = curInk;
+        d0.r = rnd(36, 74); d0.life = rnd(120, 260);
+        d0.s = inkAt(d0.x, d0.y, tFlow);
       }
     }
     if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
