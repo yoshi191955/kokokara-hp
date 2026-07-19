@@ -182,7 +182,9 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 /* ---- ダークなグラフィックカード ---- */
 .stmt-card {
   position: relative; height: 100%; min-height: 340px; border-radius: 24px; overflow: hidden; isolation: isolate;
-  background: radial-gradient(120% 78% at 82% 10%, #0E7186 0%, #06323C 58%);
+  background:
+    linear-gradient(158deg, rgba(9,70,84,.80) 0%, rgba(5,38,47,.93) 100%),
+    url('assets/match/sight.jpg') center 42% / cover no-repeat;
   border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 60px rgba(6,50,60,.22);
   display: flex; flex-direction: column; justify-content: space-between;
   padding: clamp(24px, 3vw, 40px); color: #F2FAFC;
@@ -400,15 +402,28 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
    写真に差し替える場合はカードに --card-img を指定するだけでよい
    ========================================================= */
 
-/* ---- 01枠：背景いっぱいの「つなぐ」図 ---- */
-.stmt-bg { position: absolute; z-index: -1; inset: 0; display: grid; place-items: center; opacity: .5; }
-.stmt-bg svg { width: 118%; height: auto; overflow: visible; }
-.cv-link { stroke: #5BD2E8; stroke-width: 1.4; opacity: .34; stroke-dasharray: 220; stroke-dashoffset: 220; animation: cvDraw 3.4s var(--ease) infinite; }
-.cv-link.d1 { animation-delay: .35s; } .cv-link.d2 { animation-delay: .7s; } .cv-link.d3 { animation-delay: 1.05s; }
-@keyframes cvDraw { 0% { stroke-dashoffset: 220; opacity: 0; } 22% { opacity: .5; } 60% { stroke-dashoffset: 0; opacity: .5; } 92% { stroke-dashoffset: 0; opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
-.cv-side circle, .cv-side rect { fill: rgba(255,255,255,.9); }
-.cv-corp rect { fill: #7FE0F0; }
-.cv-cap { fill: rgba(242,250,252,.6); font-family: var(--font-en); font-size: 8.5px; font-weight: 800; letter-spacing: .14em; text-anchor: middle; }
+/* ---- 01枠：線と点のネットワーク（背景いっぱい） ---- */
+.stmt-bg { position: absolute; z-index: -1; inset: 0; overflow: hidden; }
+.stmt-bg svg { width: 100%; height: 100%; }
+.nw-link {
+  stroke: #7FE0F0; stroke-width: 1; opacity: .5;
+  stroke-dasharray: var(--d); stroke-dashoffset: var(--d);
+  animation: nwDraw 9s var(--ease) infinite; animation-delay: var(--t);
+}
+@keyframes nwDraw {
+  0%   { stroke-dashoffset: var(--d); opacity: 0; }
+  12%  { opacity: .55; }
+  38%  { stroke-dashoffset: 0; opacity: .55; }
+  78%  { stroke-dashoffset: 0; opacity: .5; }
+  92%  { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.nw-dot { fill: #8CEBFB; animation: nwPulse 4.2s var(--ease) infinite; animation-delay: var(--t); }
+@keyframes nwPulse { 0%,100% { opacity: .45; r: 3.0; } 50% { opacity: 1; r: 4.2; } }
+@media (prefers-reduced-motion: reduce) {
+  .nw-link { animation: none; stroke-dashoffset: 0; opacity: .5; }
+  .nw-dot { animation: none; opacity: .8; }
+}
 
 /* ---- 活動カード：枠全体を背景ビジュアルに ----
    写真を用意した場合は該当カードに style="--card-img:url('assets/xxx.jpg')" を付けるだけで差し替わる */
