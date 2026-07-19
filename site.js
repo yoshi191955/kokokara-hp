@@ -254,8 +254,11 @@
       var u = d / (Math.min(W, H) * 0.38);
       var g = 4.6 * pullAmt / (1 + u * u * u);
       var nx = dx / d, ny = dy / d;
-      vx += nx * g - ny * g * 1.15;
-      vy += ny * g + nx * g * 1.15;
+      /* 接線方向のみで回す。半径方向は内向きにしない（内向きにすると
+         そこが吸い込み口になり、色水が一点に溜まって出られなくなる）。
+         わずかに外向きを足して滞留を防ぐ。 */
+      vx += -ny * g * 1.60 - nx * g * 0.18;
+      vy +=  nx * g * 1.60 - ny * g * 0.18;
     }
     fvx = vx; fvy = vy;
   }
@@ -330,18 +333,18 @@
     if (pullOn) {
       var moved = Math.abs(ptrX - lastPX) + Math.abs(ptrY - lastPY);
       lastPX = ptrX; lastPY = ptrY;
-      if (moved > 1.5) {
+      if (moved > 1.5 && frame % 5 === 0) {
         if (frame % 40 === 0) curInk = (curInk + 1) % INKS.length;
-        for (var q = 0; q < 2; q++) {
-          var d0 = drops[emitIdx % drops.length]; emitIdx++;
-          d0.x = smX + rnd(-26, 26); d0.y = smY + rnd(-26, 26);
-          d0.r = rnd(38, 84); d0.life = rnd(180, 420); d0.s = curInk;
-        }
+        var d0 = drops[emitIdx % drops.length]; emitIdx++;
+        var ang = Math.random() * Math.PI * 2, rad = 30 + Math.random() * 42;
+        d0.x = smX + Math.cos(ang) * rad;
+        d0.y = smY + Math.sin(ang) * rad;
+        d0.r = rnd(40, 80); d0.life = rnd(120, 260); d0.s = curInk;
       }
     }
     if (pullAmt > 0.01) {
       var cr2 = 66 + 44 * pullAmt;
-      ctx.globalAlpha = Math.min(1, pullAmt * 1.6);
+      ctx.globalAlpha = Math.min(1, pullAmt * 0.85);
       ctx.drawImage(sprites[curInk], smX - cr2, smY - cr2, cr2 * 2, cr2 * 2);
       ctx.globalAlpha = 1;
     }

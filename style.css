@@ -171,7 +171,7 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 
 /* ---------- ステートメント（01） ---------- */
 .statement .sec-head { margin-bottom: clamp(28px, 4vh, 48px); }
-.statement .statement-title { font-family: var(--font-jp); font-weight: 900; font-size: clamp(30px, 6vw, 78px); line-height: 1.16; letter-spacing: .005em; }
+.statement .statement-title { font-family: var(--font-jp); font-weight: 900; font-size: clamp(24px, 3.5vw, 50px); line-height: 1.22; letter-spacing: .005em; }
 .statement .statement-title em { font-style: normal; color: var(--accent); }
 .statement-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(28px, 4vw, 64px); align-items: stretch; }
 .statement-copy { display: flex; flex-direction: column; }
@@ -397,12 +397,12 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 
 /* =========================================================
    追加: カード内ビジュアル（SVG / アニメーション）
-   画像を用意した場合は .card-viz を <img> に差し替えれば置換可能
+   写真に差し替える場合はカードに --card-img を指定するだけでよい
    ========================================================= */
 
-/* ---- 01枠：企業と学生をまっすぐつなぐ ---- */
-.connect-viz { margin-top: clamp(18px, 3vh, 28px); }
-.connect-viz svg { width: 100%; max-width: 340px; height: auto; overflow: visible; }
+/* ---- 01枠：背景いっぱいの「つなぐ」図 ---- */
+.stmt-bg { position: absolute; z-index: -1; inset: 0; display: grid; place-items: center; opacity: .5; }
+.stmt-bg svg { width: 118%; height: auto; overflow: visible; }
 .cv-link { stroke: #5BD2E8; stroke-width: 1.4; opacity: .34; stroke-dasharray: 220; stroke-dashoffset: 220; animation: cvDraw 3.4s var(--ease) infinite; }
 .cv-link.d1 { animation-delay: .35s; } .cv-link.d2 { animation-delay: .7s; } .cv-link.d3 { animation-delay: 1.05s; }
 @keyframes cvDraw { 0% { stroke-dashoffset: 220; opacity: 0; } 22% { opacity: .5; } 60% { stroke-dashoffset: 0; opacity: .5; } 92% { stroke-dashoffset: 0; opacity: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
@@ -410,12 +410,19 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 .cv-corp rect { fill: #7FE0F0; }
 .cv-cap { fill: rgba(242,250,252,.6); font-family: var(--font-en); font-size: 8.5px; font-weight: 800; letter-spacing: .14em; text-anchor: middle; }
 
-/* ---- 活動カード共通のビジュアル枠 ---- */
-.card-viz { position: relative; height: 132px; margin-bottom: 20px; border-radius: 16px; background: var(--bg-2); border: 1px solid var(--line); overflow: hidden; display: grid; place-items: center; }
-.card-viz svg { width: 100%; height: 100%; padding: 10px 14px; }
+/* ---- 活動カード：枠全体を背景ビジュアルに ----
+   写真を用意した場合は該当カードに style="--card-img:url('assets/xxx.jpg')" を付けるだけで差し替わる */
+.activity-card { background-image: var(--card-img, none); background-size: cover; background-position: center; }
+.card-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; display: grid; justify-items: center; align-items: start; padding-top: 26px; overflow: hidden; opacity: .38; }
+.card-bg svg { width: 92%; height: auto; }
+.card-bg::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.34) 38%, rgba(255,255,255,.82) 100%);
+}
+.activity-card > :not(.card-bg) { position: relative; z-index: 1; }
 
 /* ---- MBTI 16タイプが順番に現れる ---- */
-.mbti-stage { background: var(--bg-2); }
+.card-bg.mbti-stage { opacity: .46; align-items: start; padding-top: 30px; }
 .mbti-chip {
   position: absolute; display: flex; flex-direction: column; align-items: center; gap: 2px;
   opacity: 0; transform: translateY(10px) scale(.92);
@@ -423,10 +430,10 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
   animation-delay: calc(var(--i) * 1.25s);
 }
 .mbti-chip b {
-  font-family: var(--font-en); font-weight: 900; font-size: 26px; letter-spacing: .02em;
+  font-family: var(--font-en); font-weight: 900; font-size: clamp(34px, 4.4vw, 54px); letter-spacing: .02em;
   color: #fff; background: var(--c); padding: 10px 16px; border-radius: 14px; line-height: 1;
 }
-.mbti-chip small { font-family: var(--font-jp); font-weight: 700; font-size: 12px; color: var(--text-70); margin-top: 6px; }
+.mbti-chip small { font-family: var(--font-jp); font-weight: 700; font-size: 15px; color: var(--text-70); margin-top: 10px; }
 @keyframes mbtiCycle {
   0%    { opacity: 0; transform: translateY(10px) scale(.92); }
   0.6%  { opacity: 1; transform: translateY(0) scale(1); }
@@ -447,7 +454,7 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
 @keyframes pgFlow { to { stroke-dashoffset: -16; } }
 .pg-bars rect { fill: #12A0B8; opacity: .85; }
 
-@media (max-width: 520px) { .card-viz { height: 116px; } .mbti-chip b { font-size: 22px; } }
+@media (max-width: 520px) { .mbti-chip b { font-size: 30px; } }
 @media (prefers-reduced-motion: reduce) {
   .cv-link { animation: none; stroke-dashoffset: 0; opacity: .45; }
   .pg-arrow { animation: none; }
