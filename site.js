@@ -177,14 +177,14 @@
 
   /* 通常合成で重ねる水の色。すべて高明度・寒色でまとめ、
      色相だけ広げて「いろんな色の水が混ざる」感じを出す。 */
-  var BASE = "#E9F6FA";
+  var BASE = "#DCF0F5";
   var INKS = [
-    "rgba(95,211,224,A)",
-    "rgba(127,227,201,A)",
-    "rgba(143,210,245,A)",
-    "rgba(183,230,242,A)",
-    "rgba(169,199,240,A)",
-    "rgba(150,232,222,A)"
+    "rgba(43,184,206,A)",
+    "rgba(63,203,168,A)",
+    "rgba(79,168,232,A)",
+    "rgba(126,217,232,A)",
+    "rgba(126,157,232,A)",
+    "rgba(53,199,188,A)"
   ];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -269,14 +269,17 @@
     }
     if (pullAmt > 0.002) {
       var dx = smX - x, dy = smY - y;
-      var d = Math.sqrt(dx * dx + dy * dy) + 1;
-      var u = d / (Math.min(W, H) * 0.34);
-      var infl = pullAmt / (1 + u * u * u);
-      var nx = dx / d, ny = dy / d;
-      /* マドラーで水をかき混ぜる動き。
-         (1) 棒の進行方向へ水を引きずる  (2) 棒の周りを回す */
-      vx += pvx * 1.25 * infl - ny * 2.6 * infl;
-      vy += pvy * 1.25 * infl + nx * 2.6 * infl;
+      var rr = Math.min(W, H) * 0.20;
+      var q = (dx * dx + dy * dy) / (rr * rr);
+      if (q < 1) {
+        /* マドラーで水をかき混ぜる動き。半径 rr の外では完全に効かない。
+           (1) 棒の進行方向へ水を引きずる  (2) 棒の周りを回す */
+        var k = 1 - q, infl = pullAmt * k * k;
+        var d = Math.sqrt(dx * dx + dy * dy) + 1;
+        var nx = dx / d, ny = dy / d;
+        vx += pvx * 1.70 * infl - ny * 3.2 * infl;
+        vy += pvy * 1.70 * infl + nx * 3.2 * infl;
+      }
     }
     fvx = vx; fvy = vy;
   }
@@ -317,8 +320,8 @@
     var L = luminanceBehind(el);
     if (L < 0) return;
     var dark = el.classList.contains("on-dark");
-    if (!dark && L < 0.46) el.classList.add("on-dark");
-    else if (dark && L > 0.58) el.classList.remove("on-dark");
+    if (!dark && L < 0.26) el.classList.add("on-dark");
+    else if (dark && L > 0.38) el.classList.remove("on-dark");
   }
 
   function step() {
@@ -339,7 +342,7 @@
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(233,246,250,0.008)";
+    ctx.fillStyle = "rgba(220,240,245,0.008)";
     ctx.fillRect(0, 0, W, H);
 
     for (var i = 0; i < drops.length; i++) {
