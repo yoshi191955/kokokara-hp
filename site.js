@@ -217,6 +217,40 @@
     });
   }
 
+  var off = document.createElement("canvas"), octx = null, maskImg = null;
+
+  function initSmudge() {
+    var S = Math.round(Math.min(W, H) * 0.42);
+    off.width = Math.max(2, Math.round(S * dpr));
+    off.height = off.width;
+    octx = off.getContext("2d");
+    maskImg = document.createElement("canvas");
+    maskImg.width = maskImg.height = 128;
+    var mg = maskImg.getContext("2d");
+    var gr = mg.createRadialGradient(64, 64, 0, 64, 64, 64);
+    for (var i = 0; i <= 10; i++) {
+      var t = i / 10;
+      gr.addColorStop(t, "rgba(255,255,255," + Math.max(0, 1 - t * t).toFixed(3) + ")");
+    }
+    mg.fillStyle = gr; mg.fillRect(0, 0, 128, 128);
+  }
+
+  /* カーソル周辺を切り出し、移動量ぶんずらして描き戻す */
+  function smudge(px, py, mvx, mvy) {
+    if (!octx) return;
+    var Scss = off.width / dpr, h = Scss / 2;
+    octx.setTransform(1, 0, 0, 1, 0, 0);
+    octx.clearRect(0, 0, off.width, off.height);
+    octx.globalCompositeOperation = "source-over";
+    octx.drawImage(canvas, (px - h) * dpr, (py - h) * dpr, off.width, off.height,
+                   0, 0, off.width, off.height);
+    octx.globalCompositeOperation = "destination-in";
+    octx.drawImage(maskImg, 0, 0, off.width, off.height);
+    ctx.globalAlpha = 0.85;
+    ctx.drawImage(off, px - h + mvx, py - h + mvy, Scss, Scss);
+    ctx.globalAlpha = 1;
+  }
+
   function paintWhite() {
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = BASE;
@@ -289,8 +323,8 @@
         var k = 1 - q, infl = pullAmt * k * k;
         var d = Math.sqrt(dx * dx + dy * dy) + 1;
         var nx = dx / d, ny = dy / d;
-        vx += pvx * 1.70 * infl - ny * 3.2 * infl;
-        vy += pvy * 1.70 * infl + nx * 3.2 * infl;
+        vx += pvx * 0.85 * infl - ny * 3.4 * infl;
+        vy += pvy * 0.85 * infl + nx * 3.4 * infl;
       }
     }
     fvx = vx; fvy = vy;
@@ -375,19 +409,9 @@
       ctx.restore();
     }
 
-    /* カーソル / 指の追従：動かした跡から色が湧き、位置に色だまりができる */
-    if (pullOn) {
-      var moved = Math.abs(ptrX - lastPX) + Math.abs(ptrY - lastPY);
-      lastPX = ptrX; lastPY = ptrY;
-      if (moved > 1.5 && frame % 5 === 0) {
-        var d0 = drops[emitIdx % drops.length]; emitIdx++;
-        var ang = Math.random() * Math.PI * 2, rad = 30 + Math.random() * 42;
-        d0.x = smX + Math.cos(ang) * rad;
-        d0.y = smY + Math.sin(ang) * rad;
-        d0.r = rnd(24, 58); d0.life = rnd(120, 260);
-        d0.s = inkAt(d0.x, d0.y, tFlow);
-      }
-    }
+    /* 描かれている絵そのものをカーソルの動きに合わせて引きずる。
+       新しい色を足すのではなく、既にある筋を運ぶことで追従に見せる。 */
+    if (pullOn && (pvx * pvx + pvy * pvy) > 0.25) smudge(smX, smY, pvx, pvy);
     if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
   }
 
@@ -419,7 +443,7 @@
   }
 
   function start() {
-    resize(); makeSprites(); build();
+    resize(); makeSprites(); initSmudge(); build();
     warming = true;
     for (var k = 0; k < 240; k++) step();
     warming = false;
