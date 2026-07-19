@@ -175,14 +175,16 @@
   var vortices = [], waves = [], drops = [], sprites = [];
   var lastPX = 0, lastPY = 0, emitIdx = 0, curInk = 0, pvx = 0, pvy = 0;
 
-  /* 明るい同系色（赤だけが低く緑青は高い）に揃える。
-     暗いチャンネルがインクごとに違うと乗算で全チャンネルが削られ黒く沈むため。 */
+  /* 通常合成で重ねる水の色。すべて高明度・寒色でまとめ、
+     色相だけ広げて「いろんな色の水が混ざる」感じを出す。 */
+  var BASE = "#E9F6FA";
   var INKS = [
-    "rgba(56,214,226,A)",
-    "rgba(74,232,198,A)",
-    "rgba(96,198,246,A)",
-    "rgba(40,200,212,A)",
-    "rgba(140,236,248,A)"
+    "rgba(95,211,224,A)",
+    "rgba(127,227,201,A)",
+    "rgba(143,210,245,A)",
+    "rgba(183,230,242,A)",
+    "rgba(169,199,240,A)",
+    "rgba(150,232,222,A)"
   ];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -195,7 +197,7 @@
       var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
       /* 段差のないガウス状の減衰。停止点が粗いと重ね塗りで同心円の縞が出る */
       for (var k = 0; k <= 14; k++) {
-        var tt = k / 14, aa = 0.070 * Math.exp(-(tt * 2.1) * (tt * 2.1));
+        var tt = k / 14, aa = 0.080 * Math.exp(-(tt * 2.1) * (tt * 2.1));
         gr.addColorStop(tt, tpl.replace("A", aa.toFixed(4)));
       }
       g.fillStyle = gr; g.fillRect(0, 0, S, S);
@@ -205,7 +207,7 @@
 
   function paintWhite() {
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = BASE;
     ctx.fillRect(0, 0, W, H);
   }
 
@@ -246,7 +248,7 @@
       });
     }
     drops.length = 0;
-    var n = W < 760 ? 170 : 380;
+    var n = W < 760 ? 190 : 430;
     for (var i = 0; i < n; i++) drops.push(spawn({}));
   }
 
@@ -337,10 +339,9 @@
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(255,255,255,0.035)";
+    ctx.fillStyle = "rgba(233,246,250,0.008)";
     ctx.fillRect(0, 0, W, H);
 
-    ctx.globalCompositeOperation = "multiply";
     for (var i = 0; i < drops.length; i++) {
       var p = drops[i];
       field(p.x, p.y);
@@ -363,8 +364,6 @@
         d0.r = rnd(40, 80); d0.life = rnd(120, 260); d0.s = curInk;
       }
     }
-    ctx.globalCompositeOperation = "source-over";
-
     if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
   }
 
