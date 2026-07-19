@@ -246,8 +246,9 @@
                    0, 0, off.width, off.height);
     octx.globalCompositeOperation = "destination-in";
     octx.drawImage(maskImg, 0, 0, off.width, off.height);
-    ctx.globalAlpha = 0.85;
-    ctx.drawImage(off, px - h + mvx, py - h + mvy, Scss, Scss);
+    var sc = 0.945, dd = Scss * sc;          /* 中心へ縮めて描き戻す＝吸い込み */
+    ctx.globalAlpha = 0.9;
+    ctx.drawImage(off, px - dd / 2 + mvx * 0.45, py - dd / 2 + mvy * 0.45, dd, dd);
     ctx.globalAlpha = 1;
   }
 
@@ -323,8 +324,10 @@
         var k = 1 - q, infl = pullAmt * k * k;
         var d = Math.sqrt(dx * dx + dy * dy) + 1;
         var nx = dx / d, ny = dy / d;
-        vx += pvx * 0.85 * infl - ny * 3.4 * infl;
-        vy += pvy * 0.85 * infl + nx * 3.4 * infl;
+        /* 内向きに吸い込みつつ旋回させる（排水口の渦）。
+           中心に達した粒子は消して別の場所へ再生成するので溜まらない。 */
+        vx += nx * 3.6 * infl - ny * 2.8 * infl + pvx * 0.45 * infl;
+        vy += ny * 3.6 * infl + nx * 2.8 * infl + pvy * 0.45 * infl;
       }
     }
     fvx = vx; fvy = vy;
@@ -397,6 +400,10 @@
       p.x += fvx; p.y += fvy;
       p.life--;
       if (p.life < 0 || p.x < -p.r || p.x > W + p.r || p.y < -p.r || p.y > H + p.r) { spawn(p); continue; }
+        if (pullAmt > 0.35) {
+          var sdx = smX - p.x, sdy = smY - p.y;
+          if (sdx * sdx + sdy * sdy < 576) { spawn(p); continue; }  /* 24px以内＝飲み込まれた */
+        }
       /* 速度ベクトルの向きに引き伸ばして描く。
          球を並べるのではなく、流れに沿った筋になる。 */
       var sp2 = Math.sqrt(fvx * fvx + fvy * fvy);
@@ -411,7 +418,7 @@
 
     /* 描かれている絵そのものをカーソルの動きに合わせて引きずる。
        新しい色を足すのではなく、既にある筋を運ぶことで追従に見せる。 */
-    if (pullOn && (pvx * pvx + pvy * pvy) > 0.25) smudge(smX, smY, pvx, pvy);
+    if (pullAmt > 0.05) smudge(smX, smY, pvx, pvy);
     if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
   }
 
