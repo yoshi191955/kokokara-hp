@@ -45,6 +45,22 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
+  /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
+     assets/mbti/ に1枚でも画像があれば .has-art を付けて画像表示に切り替える。
+     画像が無い間はタイプ名のテキスト表示のまま（表示は壊れない）。 */
+  (function () {
+    var stage = document.querySelector(".mbti-stage");
+    if (!stage) return;
+    var first = stage.querySelector(".mbti-chip");
+    if (!first) return;
+    var m = /url\(['"]?([^'")]+)['"]?\)/.exec(first.getAttribute("style") || "");
+    if (!m) return;
+    var probe = new Image();
+    probe.onload = function () { stage.classList.add("has-art"); };
+    probe.onerror = function () { /* 未設置ならテキスト表示のまま */ };
+    probe.src = m[1];
+  })();
+
   /* ---- 現在の年 ---- */
   var y = document.querySelector("[data-year]");
   if (y) y.textContent = new Date().getFullYear();

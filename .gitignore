@@ -12,8 +12,10 @@ _t2
 
 # 手動デプロイ補助
 デプロイ実行.bat
-ポジトリには含めない）
-auto_deploy_watch.ps1
-auto_deploy.log
-自動デプロイ_開始.bat
-自動デプロイ_停止.bat
+
+# 作業用スクリプト
+tools/
+assets/mbti/_raw/
+assets/mbti/_sheet.png
+assets/mbti/_check.png
+動デプロイ_停止.bat

@@ -442,6 +442,44 @@ body.menu-open .menu-list li:nth-child(4) a { transition-delay: .28s; }
   100%  { opacity: 0; transform: translateY(-10px) scale(.96); }
 }
 
+
+
+/* ---- MBTIグループごとの枠色が「じわーっと染み出る」 ---- */
+.card-wash { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.card-wash i {
+  position: absolute; inset: -34%;
+  background: radial-gradient(circle at 50% 44%, var(--w) 0%, var(--w) 54%, transparent 78%);
+  opacity: 0; transform: scale(.5);
+  animation: washCycle 20s linear infinite;
+  animation-delay: calc(var(--i) * 1.25s);
+}
+@keyframes washCycle {
+  0%    { opacity: 0; transform: scale(.5); }
+  3.0%  { opacity: 1; transform: scale(1); }
+  5.8%  { opacity: 1; transform: scale(1.06); }
+  7.4%  { opacity: 0; transform: scale(1.12); }
+  100%  { opacity: 0; transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) { .card-wash i { animation: none; } .card-wash i:first-child { opacity: 1; transform: none; } }
+
+/* ---- MBTIキャラ画像スロット（assets/mbti/ に置くと自動で画像モード） ---- */
+.mbti-art { display: none; }
+.card-bg.mbti-stage.has-art { opacity: .92; padding-top: 14px; }
+.has-art .mbti-art {
+  display: block; width: clamp(150px, 20vw, 250px); height: clamp(190px, 26vw, 300px);
+  background-image: var(--img); background-size: contain;
+  background-repeat: no-repeat; background-position: center bottom;
+}
+.has-art .mbti-chip b { font-size: 15px; padding: 6px 12px; border-radius: 9px; margin-top: 8px; }
+.has-art .mbti-chip small { font-size: 12px; margin-top: 4px; }
+
+
+/* 画像モードではキャラを主役にするため白かぶりを弱める */
+.card-bg.mbti-stage.has-art::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 46%, rgba(255,255,255,.52) 100%);
+}
+.has-art .mbti-chip { gap: 0; }
+
 /* ---- 育成プログラム：課題→提案→解決 ---- */
 .pg-step circle { fill: #FFFFFF; stroke: var(--accent); stroke-width: 1.6; }
 .pg-step.s2 circle { stroke: #12A0B8; } .pg-step.s3 circle { fill: var(--accent); stroke: var(--accent); }
