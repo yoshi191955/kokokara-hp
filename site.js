@@ -209,7 +209,7 @@
       var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
       /* 段差のないガウス状の減衰。停止点が粗いと重ね塗りで同心円の縞が出る */
       for (var k = 0; k <= 14; k++) {
-        var tt = k / 14, aa = 0.140 * Math.exp(-(tt * 2.1) * (tt * 2.1));
+        var tt = k / 14, aa = 0.160 * Math.exp(-(tt * 2.1) * (tt * 2.1));
         gr.addColorStop(tt, tpl.replace("A", aa.toFixed(4)));
       }
       g.fillStyle = gr; g.fillRect(0, 0, S, S);
@@ -234,7 +234,7 @@
 
   function spawn(d) {
     d.x = Math.random() * W; d.y = Math.random() * H;
-    d.r = rnd(38, 96);
+    d.r = rnd(26, 70);
     d.life = rnd(220, 700);
     d.s = inkAt(d.x, d.y, tFlow);
     return d;
@@ -260,7 +260,7 @@
       });
     }
     drops.length = 0;
-    var n = W < 760 ? 150 : 300;
+    var n = W < 760 ? 200 : 400;
     for (var i = 0; i < n; i++) drops.push(spawn({}));
   }
 
@@ -363,7 +363,16 @@
       p.x += fvx; p.y += fvy;
       p.life--;
       if (p.life < 0 || p.x < -p.r || p.x > W + p.r || p.y < -p.r || p.y > H + p.r) { spawn(p); continue; }
-      ctx.drawImage(sprites[p.s], p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+      /* 速度ベクトルの向きに引き伸ばして描く。
+         球を並べるのではなく、流れに沿った筋になる。 */
+      var sp2 = Math.sqrt(fvx * fvx + fvy * fvy);
+      var half = p.r * (1.9 + (sp2 > 6 ? 6 : sp2) * 0.62);
+      var hw = p.r * 0.52;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(Math.atan2(fvy, fvx));
+      ctx.drawImage(sprites[p.s], -half, -hw, half * 2, hw * 2);
+      ctx.restore();
     }
 
     /* カーソル / 指の追従：動かした跡から色が湧き、位置に色だまりができる */
@@ -375,7 +384,7 @@
         var ang = Math.random() * Math.PI * 2, rad = 30 + Math.random() * 42;
         d0.x = smX + Math.cos(ang) * rad;
         d0.y = smY + Math.sin(ang) * rad;
-        d0.r = rnd(36, 74); d0.life = rnd(120, 260);
+        d0.r = rnd(24, 58); d0.life = rnd(120, 260);
         d0.s = inkAt(d0.x, d0.y, tFlow);
       }
     }
