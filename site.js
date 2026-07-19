@@ -157,6 +157,7 @@
   var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
   var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
   var vortices = [], waves = [], drops = [], sprites = [];
+  var lastPX = 0, lastPY = 0, emitIdx = 0, curInk = 0;
 
   /* 明るい同系色（赤だけが低く緑青は高い）に揃える。
      暗いチャンネルがインクごとに違うと乗算で全チャンネルが削られ黒く沈むため。 */
@@ -251,10 +252,10 @@
       var dx = smX - x, dy = smY - y;
       var d = Math.sqrt(dx * dx + dy * dy) + 1;
       var u = d / (Math.min(W, H) * 0.38);
-      var g = 3.2 * pullAmt / (1 + u * u * u);
+      var g = 4.6 * pullAmt / (1 + u * u * u);
       var nx = dx / d, ny = dy / d;
-      vx += nx * g - ny * g * 0.95;
-      vy += ny * g + nx * g * 0.95;
+      vx += nx * g - ny * g * 1.15;
+      vy += ny * g + nx * g * 1.15;
     }
     fvx = vx; fvy = vy;
   }
@@ -309,7 +310,7 @@
     }
     smX += (ptrX - smX) * 0.12;
     smY += (ptrY - smY) * 0.12;
-    pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.045;
+    pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "rgba(255,255,255,0.035)";
@@ -323,6 +324,26 @@
       p.life--;
       if (p.life < 0 || p.x < -p.r || p.x > W + p.r || p.y < -p.r || p.y > H + p.r) { spawn(p); continue; }
       ctx.drawImage(sprites[p.s], p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+    }
+
+    /* カーソル / 指の追従：動かした跡から色が湧き、位置に色だまりができる */
+    if (pullOn) {
+      var moved = Math.abs(ptrX - lastPX) + Math.abs(ptrY - lastPY);
+      lastPX = ptrX; lastPY = ptrY;
+      if (moved > 1.5) {
+        if (frame % 40 === 0) curInk = (curInk + 1) % INKS.length;
+        for (var q = 0; q < 2; q++) {
+          var d0 = drops[emitIdx % drops.length]; emitIdx++;
+          d0.x = smX + rnd(-26, 26); d0.y = smY + rnd(-26, 26);
+          d0.r = rnd(38, 84); d0.life = rnd(180, 420); d0.s = curInk;
+        }
+      }
+    }
+    if (pullAmt > 0.01) {
+      var cr2 = 66 + 44 * pullAmt;
+      ctx.globalAlpha = Math.min(1, pullAmt * 1.6);
+      ctx.drawImage(sprites[curInk], smX - cr2, smY - cr2, cr2 * 2, cr2 * 2);
+      ctx.globalAlpha = 1;
     }
     ctx.globalCompositeOperation = "source-over";
 
