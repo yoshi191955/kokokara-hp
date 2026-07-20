@@ -184,6 +184,28 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 @keyframes aura5 { 0%,100% { transform: translate3d(0,0,0) scale(.96); } 50% { transform: translate3d(8vw,16vh,0) scale(1.2); } }
 @media (prefers-reduced-motion: reduce) { .hero-aura span { animation: none; } }
 
+/* ---- さざ波：角度と周期の違う2層をずらして干渉させる ---- */
+.hero-aura i {
+  position: absolute; inset: -30%; display: block; pointer-events: none;
+  will-change: transform;
+}
+.hero-aura .r1 {
+  background: repeating-linear-gradient(102deg,
+    rgba(255,255,255,0) 0px, rgba(255,255,255,.30) 24px,
+    rgba(255,255,255,0) 52px, rgba(255,255,255,0) 96px);
+  animation: rip1 19s linear infinite;
+}
+.hero-aura .r2 {
+  background: repeating-linear-gradient(78deg,
+    rgba(255,255,255,0) 0px, rgba(180,240,236,.24) 32px,
+    rgba(255,255,255,0) 74px, rgba(255,255,255,0) 130px);
+  animation: rip2 27s linear infinite;
+}
+@keyframes rip1 { from { transform: translate3d(0,0,0); } to { transform: translate3d(93.9px,20.0px,0); } }
+@keyframes rip2 { from { transform: translate3d(0,0,0); } to { transform: translate3d(-127.2px,27.0px,0); } }
+@media (prefers-reduced-motion: reduce) { .hero-aura i { animation: none; opacity: .5; } }
+
+
 .hero-marks { position: relative; z-index: 4; display: flex; justify-content: space-between; padding-top: calc(var(--header-h) + 22px); font-family: var(--font-en); font-weight: 700; font-size: 11px; letter-spacing: .2em; color: var(--text-45); text-transform: uppercase; line-height: 1.8; }
 .hero-marks .r { text-align: right; }
 
