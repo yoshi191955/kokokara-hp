@@ -320,8 +320,25 @@
     for (var v = 0; v < vortices.length; v++) {
       var vo = vortices[v];
       vo.x += vo.dx; vo.y += vo.dy;
-      if (vo.x < -W * 0.15 || vo.x > W * 1.15) vo.dx *= -1;
-      if (vo.y < -H * 0.15 || vo.y > H * 1.15) vo.dy *= -1;
+      /* かき混ぜると渦そのものが動き、回転の強さも変わる。
+         この変化は残るので、触った後は流れの形が変わったままになる。 */
+      if (pullAmt > 0.05) {
+        var vdx = vo.x - smX, vdy = vo.y - smY;
+        var vrr = Math.min(W, H) * 0.48;
+        var vq = (vdx * vdx + vdy * vdy) / (vrr * vrr);
+        if (vq < 1) {
+          var vk = (1 - vq) * pullAmt;
+          vo.x += pvx * 0.18 * vk;
+          vo.y += pvy * 0.18 * vk;
+          vo.a += (vdx * pvy - vdy * pvx) * 0.0000016 * vk;
+          if (vo.a > 1.7) vo.a = 1.7; else if (vo.a < -1.7) vo.a = -1.7;
+          if (vo.a > -0.18 && vo.a < 0.18) vo.a = vo.a < 0 ? -0.18 : 0.18;
+        }
+      }
+      if (vo.x < -W * 0.15) { vo.x = -W * 0.15; vo.dx = Math.abs(vo.dx); }
+      else if (vo.x > W * 1.15) { vo.x = W * 1.15; vo.dx = -Math.abs(vo.dx); }
+      if (vo.y < -H * 0.15) { vo.y = -H * 0.15; vo.dy = Math.abs(vo.dy); }
+      else if (vo.y > H * 1.15) { vo.y = H * 1.15; vo.dy = -Math.abs(vo.dy); }
     }
     var nvx = ptrX - smX, nvy = ptrY - smY;
     smX += nvx * 0.12; smY += nvy * 0.12;
