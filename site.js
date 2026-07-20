@@ -32,6 +32,17 @@
     });
   }
 
+  /* ---- メニュー内の「前のページに戻る」 ---- */
+  var backBtn = document.querySelector(".menu-back");
+  if (backBtn) {
+    backBtn.addEventListener("click", function () {
+      setMenu(false);
+      /* 履歴があれば戻る。無い場合（直接開かれた等）はトップへ */
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = "index.html";
+    });
+  }
+
   /* ---- リビール演出 ---- */
   var targets = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && !reduce) {
@@ -108,6 +119,43 @@
   var fwT;
   window.addEventListener("resize", function () { clearTimeout(fwT); fwT = setTimeout(fitFooterWord, 150); });
 
+  /* ---- 数字が0からカウントアップして増える ---- */
+  var statsShown = false;
+  function countUp(el, target, dur) {
+    if (reduce) { el.textContent = String(target); return; }
+    var from = parseInt(el.textContent, 10);
+    if (isNaN(from)) from = 0;
+    var t0 = null;
+    function tick(now) {
+      if (t0 === null) t0 = now;
+      var t = Math.min(1, (now - t0) / dur);
+      var e = 1 - Math.pow(1 - t, 3);            /* 最後にゆっくり止まる */
+      el.textContent = String(Math.round(from + (target - from) * e));
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  function runStats() {
+    document.querySelectorAll("[data-stat]").forEach(function (el) {
+      var tv = parseInt(el.getAttribute("data-target") || el.textContent, 10);
+      if (isNaN(tv)) return;
+      el.setAttribute("data-target", tv);
+      el.textContent = "0";
+      countUp(el, tv, 1500);
+    });
+  }
+  (function () {
+    var box = document.querySelector(".stats");
+    if (!box) return;
+    if (!("IntersectionObserver" in window)) { statsShown = true; runStats(); return; }
+    var io2 = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) {
+        if (e.isIntersecting && !statsShown) { statsShown = true; runStats(); io2.disconnect(); }
+      });
+    }, { threshold: 0.35 });
+    io2.observe(box);
+  })();
+
   /* ---- サイトデータ（イベント／メンバー数／協賛企業数）の読み込み ----
      ENDPOINT が空なら events.json（イベントのみ）を読む。
      GAS の公開URL(/exec)を ENDPOINT に入れると
@@ -127,7 +175,11 @@
     function setStat(key, val) {
       if (val === null || val === undefined || val === "") return;
       var el = document.querySelector('[data-stat="' + key + '"]');
-      if (el) el.textContent = String(val);
+      if (!el) return;
+      var tv = parseInt(val, 10);
+      if (isNaN(tv)) { el.textContent = String(val); return; }
+      el.setAttribute("data-target", tv);
+      if (statsShown) countUp(el, tv, 900); else el.textContent = "0";
     }
     function renderEvents(list) {
       if (!box || !Array.isArray(list)) return;
@@ -162,278 +214,30 @@
   })();
 
   /* =====================================================
-     ヒーロー: 粒子の軌跡（尾を引く「オタマジャクシ」）
-     流体の速度場に沿って細い線を描き、キャンバスをゆっくり
-     消していくことで尾になる。色は数色を混在させる。
+     ヒーロー: 光の帯（CSSアニメーション）
+     描画はGPUに任せ、JSはカーソルのわずかな視差だけを担当する。
      ===================================================== */
-  var canvas = document.getElementById("hero-canvas");
-  if (!canvas) return;
-  var ctx = canvas.getContext("2d");
-  var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
-  var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
-  var vortices = [], waves = [], groups = [], pvx = 0, pvy = 0;
-
-  /* 数色を混在させる。白地に映える中明度の寒色でまとめる */
-  var INKS = [
-    { c: "rgba(23,184,206,",  w: 1.5 },
-    { c: "rgba(18,165,160,",  w: 1.3 },
-    { c: "rgba(61,143,214,",  w: 1.4 },
-    { c: "rgba(35,181,127,",  w: 1.3 },
-    { c: "rgba(108,127,224,", w: 1.2 },
-    { c: "rgba(22,194,179,",  w: 1.6 }
-  ];
-
-  function rnd(a, b) { return a + Math.random() * (b - a); }
-
-  function resize() {
-    var r = canvas.getBoundingClientRect();
-    W = r.width; H = r.height;
-    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    if (!pullOn) { ptrX = W * 0.5; ptrY = H * 0.5; smX = ptrX; smY = ptrY; }
-  }
-
-  function spawn(p) {
-    p.x = Math.random() * W; p.y = Math.random() * H;
-    p.px = p.x; p.py = p.y;
-    p.life = rnd(160, 620);
-    p.a = rnd(0.30, 0.72);
-    return p;
-  }
-
-  function build() {
-    var base = Math.min(W, H);
-    /* 渦は毎回ランダムに作る。位置・大きさ・強さ・回転方向を振りつつ、
-       横方向は列ごとに1つ置いて画面のどこかが止まらないようにする。 */
-    var cnt = 3 + ((Math.random() * 3) | 0);          /* 3〜5個（大きめの渦） */
-    var signs = [];
-    for (var q = 0; q < cnt; q++) signs.push(q % 2 ? -1 : 1);
-    for (var q2 = signs.length - 1; q2 > 0; q2--) {   /* 並びをシャッフル */
-      var r2 = (Math.random() * (q2 + 1)) | 0, tmp = signs[q2];
-      signs[q2] = signs[r2]; signs[r2] = tmp;
+  (function () {
+    var aura = document.querySelector(".hero-aura");
+    var heroEl = document.querySelector(".hero");
+    if (!aura || !heroEl || reduce) return;
+    var tx = 0, ty = 0, cx = 0, cy = 0, ticking = false;
+    function apply() {
+      cx += (tx - cx) * 0.08;
+      cy += (ty - cy) * 0.08;
+      aura.style.transform = "translate3d(" + cx.toFixed(2) + "px," + cy.toFixed(2) + "px,0)";
+      if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) requestAnimationFrame(apply);
+      else ticking = false;
     }
-    vortices = [];
-    for (var vi = 0; vi < cnt; vi++) {
-      vortices.push({
-        x: W * (vi + rnd(0.12, 0.88)) / cnt,
-        y: H * rnd(0.12, 0.88),
-        s: base * rnd(0.40, 0.70),
-        a: signs[vi] * rnd(0.62, 1.38),
-        dx: rnd(-.10, .10), dy: rnd(-.08, .08)
-      });
-    }
-    waves = [];
-    var wc = 2 + ((Math.random() * 3) | 0);           /* うねりも2〜4本 */
-    for (var w = 0; w < wc; w++) {
-      waves.push({
-        ax: rnd(0.5, 1.5) * Math.PI / base,
-        ay: rnd(0.5, 1.5) * Math.PI / base,
-        amp: base * rnd(0.06, 0.12),
-        sp: rnd(0.0015, 0.0040),
-        ph: rnd(0, Math.PI * 2)
-      });
-    }
-    var total = W < 760 ? 620 : 1500;
-    groups = [];
-    for (var g = 0; g < INKS.length; g++) {
-      var arr = [];
-      for (var i = 0; i < Math.round(total / INKS.length); i++) arr.push(spawn({}));
-      groups.push(arr);
-    }
-  }
-
-  function field(x, y) {
-    var vx = 0, vy = 0, i;
-    for (i = 0; i < waves.length; i++) {
-      var wv = waves[i];
-      var c = Math.cos(wv.ax * x + wv.ay * y + wv.ph + tFlow * wv.sp);
-      vx += wv.amp * wv.ay * c;
-      vy -= wv.amp * wv.ax * c;
-    }
-    for (i = 0; i < vortices.length; i++) {
-      var vo = vortices[i];
-      var rx = x - vo.x, ry = y - vo.y;
-      var e = Math.exp(-(rx * rx + ry * ry) / (2 * vo.s * vo.s));
-      var k = vo.a * 1.9 * e / vo.s;
-      vx += -ry * k; vy += rx * k;
-    }
-    if (pullAmt > 0.002) {
-      var dx = smX - x, dy = smY - y;
-      var rr = Math.min(W, H) * 0.22;
-      var q = (dx * dx + dy * dy) / (rr * rr);
-      if (q < 1) {
-        /* カーソルへ吸い込みつつ旋回。中心に達した粒子は再生成するので溜まらない */
-        var kk = 1 - q, infl = pullAmt * kk * kk;
-        var d = Math.sqrt(dx * dx + dy * dy) + 1;
-        var nx = dx / d, ny = dy / d;
-        vx += nx * 3.4 * infl - ny * 2.6 * infl + pvx * 0.40 * infl;
-        vy += ny * 3.4 * infl + nx * 2.6 * infl + pvy * 0.40 * infl;
-      }
-    }
-    fvx = vx; fvy = vy;
-  }
-
-  /* ---- 背面の明るさを見て文字色を反転 ---- */
-  var wordmark = document.querySelector(".hero-wordmark");
-  var tagline = document.querySelector(".hero-tagline");
-  var probe = document.createElement("canvas");
-  probe.width = 24; probe.height = 8;
-  var pctx = probe.getContext("2d", { willReadFrequently: true });
-
-  function luminanceBehind(el) {
-    var cr = canvas.getBoundingClientRect(), er = el.getBoundingClientRect();
-    var sx = (er.left - cr.left) * dpr, sy = (er.top - cr.top) * dpr;
-    var sw = er.width * dpr, sh = er.height * dpr;
-    if (sw < 2 || sh < 2) return -1;
-    sx = Math.max(0, Math.min(sx, canvas.width - 2));
-    sy = Math.max(0, Math.min(sy, canvas.height - 2));
-    sw = Math.min(sw, canvas.width - sx);
-    sh = Math.min(sh, canvas.height - sy);
-    try {
-      pctx.clearRect(0, 0, 24, 8);
-      pctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, 24, 8);
-      var d = pctx.getImageData(0, 0, 24, 8).data, sum = 0, n = 0;
-      for (var i = 0; i < d.length; i += 4) {
-        var a = d[i + 3] / 255;
-        var r = d[i] * a + 255 * (1 - a);
-        var g = d[i + 1] * a + 255 * (1 - a);
-        var b = d[i + 2] * a + 255 * (1 - a);
-        sum += 0.2126 * r + 0.7152 * g + 0.0722 * b; n++;
-      }
-      return n ? sum / n / 255 : -1;
-    } catch (err) { return -1; }
-  }
-
-  function adapt(el) {
-    if (!el) return;
-    var L = luminanceBehind(el);
-    if (L < 0) return;
-    var dark = el.classList.contains("on-dark");
-    if (!dark && L < 0.30) el.classList.add("on-dark");
-    else if (dark && L > 0.44) el.classList.remove("on-dark");
-  }
-
-  function step() {
-    tFlow += 1; frame += 1;
-    for (var v = 0; v < vortices.length; v++) {
-      var vo = vortices[v];
-      vo.x += vo.dx; vo.y += vo.dy;
-      /* かき混ぜると渦そのものが動き、回転の強さも変わる。
-         この変化は残るので、触った後は流れの形が変わったままになる。 */
-      if (pullAmt > 0.05) {
-        var vdx = vo.x - smX, vdy = vo.y - smY;
-        var vrr = Math.min(W, H) * 0.48;
-        var vq = (vdx * vdx + vdy * vdy) / (vrr * vrr);
-        if (vq < 1) {
-          var vk = (1 - vq) * pullAmt;
-          vo.x += pvx * 0.18 * vk;
-          vo.y += pvy * 0.18 * vk;
-          vo.a += (vdx * pvy - vdy * pvx) * 0.0000016 * vk;
-          if (vo.a > 1.7) vo.a = 1.7; else if (vo.a < -1.7) vo.a = -1.7;
-          if (vo.a > -0.18 && vo.a < 0.18) vo.a = vo.a < 0 ? -0.18 : 0.18;
-        }
-      }
-      if (vo.x < -W * 0.15) { vo.x = -W * 0.15; vo.dx = Math.abs(vo.dx); }
-      else if (vo.x > W * 1.15) { vo.x = W * 1.15; vo.dx = -Math.abs(vo.dx); }
-      if (vo.y < -H * 0.15) { vo.y = -H * 0.15; vo.dy = Math.abs(vo.dy); }
-      else if (vo.y > H * 1.15) { vo.y = H * 1.15; vo.dy = -Math.abs(vo.dy); }
-    }
-    var nvx = ptrX - smX, nvy = ptrY - smY;
-    smX += nvx * 0.12; smY += nvy * 0.12;
-    var sp = Math.sqrt(nvx * nvx + nvy * nvy), cap = 26;
-    if (sp > cap) { nvx = nvx / sp * cap; nvy = nvy / sp * cap; }
-    pvx += (nvx - pvx) * 0.22; pvy += (nvy - pvy) * 0.22;
-    pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
-
-    /* 少しずつ消していくことで軌跡が尾になる */
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fillStyle = "rgba(0,0,0,0.040)";
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = "source-over";
-    ctx.lineCap = "round";
-
-    for (var g = 0; g < groups.length; g++) {
-      var arr = groups[g], ink = INKS[g];
-      ctx.strokeStyle = ink.c + "0.62)";
-      ctx.lineWidth = ink.w;
-      ctx.beginPath();
-      for (var i = 0; i < arr.length; i++) {
-        var p = arr[i];
-        field(p.x, p.y);
-        p.x += fvx; p.y += fvy;
-        p.life--;
-        if (p.life < 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) { spawn(p); continue; }
-        if (pullAmt > 0.35) {
-          var sdx = smX - p.x, sdy = smY - p.y;
-          if (sdx * sdx + sdy * sdy < 400) { spawn(p); continue; }  /* 飲み込まれた */
-        }
-        ctx.moveTo(p.px, p.py);
-        ctx.lineTo(p.x, p.y);
-        p.px = p.x; p.py = p.y;
-      }
-      ctx.stroke();
-    }
-
-    if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
-  }
-
-  var raf = null, running = false;
-  function loop() { step(); raf = requestAnimationFrame(loop); }
-
-  /* ---- カーソル / 指 ---- */
-  function grabAt(clientX, clientY) {
-    if (reduce) return;
-    var r = canvas.getBoundingClientRect();
-    ptrX = clientX - r.left; ptrY = clientY - r.top;
-    if (!pullOn) { smX = ptrX; smY = ptrY; }
-    pullOn = true;
-  }
-  function release() { pullOn = false; }
-
-  var heroEl = (canvas.closest && canvas.closest(".hero")) || canvas.parentElement;
-  if (heroEl) {
-    heroEl.addEventListener("pointermove", function (e) { grabAt(e.clientX, e.clientY); }, { passive: true });
-    heroEl.addEventListener("pointerdown", function (e) { grabAt(e.clientX, e.clientY); }, { passive: true });
-    heroEl.addEventListener("pointerleave", release, { passive: true });
-    heroEl.addEventListener("touchmove", function (e) {
-      var t = e.touches && e.touches[0];
-      if (t) grabAt(t.clientX, t.clientY);
+    heroEl.addEventListener("pointermove", function (e) {
+      var r = heroEl.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 46;
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 30;
+      if (!ticking) { ticking = true; requestAnimationFrame(apply); }
     }, { passive: true });
-    heroEl.addEventListener("touchend", release, { passive: true });
-    heroEl.addEventListener("touchcancel", release, { passive: true });
-    window.addEventListener("blur", release);
-  }
-
-  function start() {
-    resize(); build();
-    warming = true;
-    for (var k = 0; k < 200; k++) step();
-    warming = false;
-    adapt(wordmark); adapt(tagline);
-    if (reduce) return;
-    if (!running) { running = true; raf = requestAnimationFrame(loop); }
-  }
-
-  var rt;
-  window.addEventListener("resize", function () {
-    clearTimeout(rt);
-    rt = setTimeout(function () {
-      if (raf) cancelAnimationFrame(raf);
-      raf = null; running = false; start();
-    }, 200);
-  });
-
-  if ("IntersectionObserver" in window && !reduce) {
-    var vio = new IntersectionObserver(function (ents) {
-      ents.forEach(function (e) {
-        if (e.isIntersecting) { if (!running) { running = true; raf = requestAnimationFrame(loop); } }
-        else { if (raf) { cancelAnimationFrame(raf); raf = null; running = false; } }
-      });
-    }, { threshold: 0 });
-    vio.observe(canvas);
-  }
-
-  start();
+    heroEl.addEventListener("pointerleave", function () {
+      tx = 0; ty = 0;
+      if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+    }, { passive: true });
+  })();
 })();

@@ -42,6 +42,9 @@
   <!-- フルスクリーンメニュー -->
   <div class="menu-overlay" id="menu">
     <div class="container">
+      <button class="menu-back" type="button">
+        <span class="mb-ico" aria-hidden="true">&#8592;</span> 前のページに戻る
+      </button>
       <ul class="menu-list">
         <li><a href="index.html"><span class="idx">01</span><span class="en-lbl">HOME</span><span class="jp-lbl">ホーム</span></a></li>
         <li><a href="about.html"><span class="idx">02</span><span class="en-lbl">ABOUT</span><span class="jp-lbl">私たちについて</span></a></li>
@@ -65,7 +68,10 @@
 
     <!-- ヒーロー -->
     <section class="hero">
-      <canvas id="hero-canvas"></canvas>
+      <div class="hero-aura" aria-hidden="true">
+        <span class="a1"></span><span class="a2"></span><span class="a3"></span>
+        <span class="a4"></span><span class="a5"></span>
+      </div>
       <div class="container hero-marks">
         <span class="l">Student Community<br />Kansai / Japan</span>
         <span class="r">新しい就活、はじまる<br />Est. 2026</span>
@@ -105,7 +111,7 @@
             <div class="stats">
               <div><div class="stat-num"><span data-stat="members">70</span><small>名</small></div><div class="stat-label">活動メンバー</div></div>
               <div><div class="stat-num"><span data-stat="sponsors">0</span><small>社</small></div><div class="stat-label">協賛企業</div></div>
-              <div><div class="stat-num is-text">無料</div><div class="stat-label">学生入会費・年会費・参加費</div></div>
+              <div><div class="stat-num is-text">無料</div><div class="stat-label">入会費・年会費・参加費</div></div>
             </div>
           </div>
           <div class="statement-visual reveal d2">
