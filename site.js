@@ -162,9 +162,9 @@
   })();
 
   /* =====================================================
-     ヒーロー: 色水を混ぜるマーブリング
-     非圧縮の速度場で色玉を流し、乗算合成で重ねて混色させる。
-     背面の明るさを実測して KOKOKARA の文字色を自動反転する。
+     ヒーロー: 粒子の軌跡（尾を引く「オタマジャクシ」）
+     流体の速度場に沿って細い線を描き、キャンバスをゆっくり
+     消していくことで尾になる。色は数色を混在させる。
      ===================================================== */
   var canvas = document.getElementById("hero-canvas");
   if (!canvas) return;
@@ -172,107 +172,35 @@
   var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
   var ptrX = 0, ptrY = 0, smX = 0, smY = 0, pullAmt = 0, pullOn = false;
   var tFlow = 0, fvx = 0, fvy = 0, warming = false, frame = 0;
-  var vortices = [], waves = [], drops = [], sprites = [];
-  var lastPX = 0, lastPY = 0, emitIdx = 0, curInk = 0, pvx = 0, pvy = 0;
+  var vortices = [], waves = [], groups = [], pvx = 0, pvy = 0;
 
-  /* 通常合成で重ねる水の色。すべて高明度・寒色でまとめ、
-     色相だけ広げて「いろんな色の水が混ざる」感じを出す。 */
-  var BASE = "#DCF0F5";
+  /* 数色を混在させる。白地に映える中明度の寒色でまとめる */
   var INKS = [
-    "rgba(43,184,206,A)",
-    "rgba(63,203,168,A)",
-    "rgba(79,168,232,A)",
-    "rgba(126,217,232,A)",
-    "rgba(126,157,232,A)",
-    "rgba(53,199,188,A)"
+    { c: "rgba(23,184,206,",  w: 1.5 },
+    { c: "rgba(18,165,160,",  w: 1.3 },
+    { c: "rgba(61,143,214,",  w: 1.4 },
+    { c: "rgba(35,181,127,",  w: 1.3 },
+    { c: "rgba(108,127,224,", w: 1.2 },
+    { c: "rgba(22,194,179,",  w: 1.6 }
   ];
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
-
-  /* 場所ごとに色を決める。近い場所は同じ色になるので、
-     水色・青・緑がそれぞれの帯として同じ面に共存する。
-     帯はゆっくり流れて位置が変わる。 */
-  function inkAt(x, y, t) {
-    var v = Math.sin(x * 0.0075 + t * 0.0007)
-          + Math.cos(y * 0.0068 - t * 0.0006)
-          + 0.8 * Math.sin((x - y) * 0.0045 + t * 0.0005);
-    var n = (v + 2.8) / 5.6;
-    if (n < 0) n = 0; else if (n > 0.999) n = 0.999;
-    return Math.floor(n * INKS.length);
-  }
-
-  function makeSprites() {
-    sprites = INKS.map(function (tpl) {
-      var c = document.createElement("canvas"), S = 160;
-      c.width = S; c.height = S;
-      var g = c.getContext("2d");
-      var gr = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-      /* 段差のないガウス状の減衰。停止点が粗いと重ね塗りで同心円の縞が出る */
-      for (var k = 0; k <= 14; k++) {
-        var tt = k / 14, aa = 0.160 * Math.exp(-(tt * 2.1) * (tt * 2.1));
-        gr.addColorStop(tt, tpl.replace("A", aa.toFixed(4)));
-      }
-      g.fillStyle = gr; g.fillRect(0, 0, S, S);
-      return c;
-    });
-  }
-
-  var off = document.createElement("canvas"), octx = null, maskImg = null;
-
-  function initSmudge() {
-    var S = Math.round(Math.min(W, H) * 0.42);
-    off.width = Math.max(2, Math.round(S * dpr));
-    off.height = off.width;
-    octx = off.getContext("2d");
-    maskImg = document.createElement("canvas");
-    maskImg.width = maskImg.height = 128;
-    var mg = maskImg.getContext("2d");
-    var gr = mg.createRadialGradient(64, 64, 0, 64, 64, 64);
-    for (var i = 0; i <= 10; i++) {
-      var t = i / 10;
-      gr.addColorStop(t, "rgba(255,255,255," + Math.max(0, 1 - t * t).toFixed(3) + ")");
-    }
-    mg.fillStyle = gr; mg.fillRect(0, 0, 128, 128);
-  }
-
-  /* カーソル周辺を切り出し、移動量ぶんずらして描き戻す */
-  function smudge(px, py, mvx, mvy) {
-    if (!octx) return;
-    var Scss = off.width / dpr, h = Scss / 2;
-    octx.setTransform(1, 0, 0, 1, 0, 0);
-    octx.clearRect(0, 0, off.width, off.height);
-    octx.globalCompositeOperation = "source-over";
-    octx.drawImage(canvas, (px - h) * dpr, (py - h) * dpr, off.width, off.height,
-                   0, 0, off.width, off.height);
-    octx.globalCompositeOperation = "destination-in";
-    octx.drawImage(maskImg, 0, 0, off.width, off.height);
-    var sc = 0.945, dd = Scss * sc;          /* 中心へ縮めて描き戻す＝吸い込み */
-    ctx.globalAlpha = 0.9;
-    ctx.drawImage(off, px - dd / 2 + mvx * 0.45, py - dd / 2 + mvy * 0.45, dd, dd);
-    ctx.globalAlpha = 1;
-  }
-
-  function paintWhite() {
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = BASE;
-    ctx.fillRect(0, 0, W, H);
-  }
 
   function resize() {
     var r = canvas.getBoundingClientRect();
     W = r.width; H = r.height;
     canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    paintWhite();
+    ctx.clearRect(0, 0, W, H);
     if (!pullOn) { ptrX = W * 0.5; ptrY = H * 0.5; smX = ptrX; smY = ptrY; }
   }
 
-  function spawn(d) {
-    d.x = Math.random() * W; d.y = Math.random() * H;
-    d.r = rnd(26, 70);
-    d.life = rnd(220, 700);
-    d.s = inkAt(d.x, d.y, tFlow);
-    return d;
+  function spawn(p) {
+    p.x = Math.random() * W; p.y = Math.random() * H;
+    p.px = p.x; p.py = p.y;
+    p.life = rnd(160, 620);
+    p.a = rnd(0.30, 0.72);
+    return p;
   }
 
   function build() {
@@ -294,9 +222,13 @@
         ph: rnd(0, Math.PI * 2)
       });
     }
-    drops.length = 0;
-    var n = W < 760 ? 200 : 400;
-    for (var i = 0; i < n; i++) drops.push(spawn({}));
+    var total = W < 760 ? 260 : 540;
+    groups = [];
+    for (var g = 0; g < INKS.length; g++) {
+      var arr = [];
+      for (var i = 0; i < Math.round(total / INKS.length); i++) arr.push(spawn({}));
+      groups.push(arr);
+    }
   }
 
   function field(x, y) {
@@ -316,18 +248,15 @@
     }
     if (pullAmt > 0.002) {
       var dx = smX - x, dy = smY - y;
-      var rr = Math.min(W, H) * 0.20;
+      var rr = Math.min(W, H) * 0.22;
       var q = (dx * dx + dy * dy) / (rr * rr);
       if (q < 1) {
-        /* マドラーで水をかき混ぜる動き。半径 rr の外では完全に効かない。
-           (1) 棒の進行方向へ水を引きずる  (2) 棒の周りを回す */
-        var k = 1 - q, infl = pullAmt * k * k;
+        /* カーソルへ吸い込みつつ旋回。中心に達した粒子は再生成するので溜まらない */
+        var kk = 1 - q, infl = pullAmt * kk * kk;
         var d = Math.sqrt(dx * dx + dy * dy) + 1;
         var nx = dx / d, ny = dy / d;
-        /* 内向きに吸い込みつつ旋回させる（排水口の渦）。
-           中心に達した粒子は消して別の場所へ再生成するので溜まらない。 */
-        vx += nx * 3.6 * infl - ny * 2.8 * infl + pvx * 0.45 * infl;
-        vy += ny * 3.6 * infl + nx * 2.8 * infl + pvy * 0.45 * infl;
+        vx += nx * 3.4 * infl - ny * 2.6 * infl + pvx * 0.40 * infl;
+        vy += ny * 3.4 * infl + nx * 2.6 * infl + pvy * 0.40 * infl;
       }
     }
     fvx = vx; fvy = vy;
@@ -369,8 +298,8 @@
     var L = luminanceBehind(el);
     if (L < 0) return;
     var dark = el.classList.contains("on-dark");
-    if (!dark && L < 0.26) el.classList.add("on-dark");
-    else if (dark && L > 0.38) el.classList.remove("on-dark");
+    if (!dark && L < 0.30) el.classList.add("on-dark");
+    else if (dark && L > 0.44) el.classList.remove("on-dark");
   }
 
   function step() {
@@ -382,50 +311,48 @@
       if (vo.y < -H * 0.15 || vo.y > H * 1.15) vo.dy *= -1;
     }
     var nvx = ptrX - smX, nvy = ptrY - smY;
-    smX += nvx * 0.12;
-    smY += nvy * 0.12;
+    smX += nvx * 0.12; smY += nvy * 0.12;
     var sp = Math.sqrt(nvx * nvx + nvy * nvy), cap = 26;
     if (sp > cap) { nvx = nvx / sp * cap; nvy = nvy / sp * cap; }
-    pvx += (nvx - pvx) * 0.22;
-    pvy += (nvy - pvy) * 0.22;
+    pvx += (nvx - pvx) * 0.22; pvy += (nvy - pvy) * 0.22;
     pullAmt += ((pullOn ? 1 : 0) - pullAmt) * 0.090;
 
-    ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "rgba(220,240,245,0.006)";
+    /* 少しずつ消していくことで軌跡が尾になる */
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.fillStyle = "rgba(0,0,0,0.040)";
     ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.lineCap = "round";
 
-    for (var i = 0; i < drops.length; i++) {
-      var p = drops[i];
-      field(p.x, p.y);
-      p.x += fvx; p.y += fvy;
-      p.life--;
-      if (p.life < 0 || p.x < -p.r || p.x > W + p.r || p.y < -p.r || p.y > H + p.r) { spawn(p); continue; }
+    for (var g = 0; g < groups.length; g++) {
+      var arr = groups[g], ink = INKS[g];
+      ctx.strokeStyle = ink.c + "0.62)";
+      ctx.lineWidth = ink.w;
+      ctx.beginPath();
+      for (var i = 0; i < arr.length; i++) {
+        var p = arr[i];
+        field(p.x, p.y);
+        p.x += fvx; p.y += fvy;
+        p.life--;
+        if (p.life < 0 || p.x < -40 || p.x > W + 40 || p.y < -40 || p.y > H + 40) { spawn(p); continue; }
         if (pullAmt > 0.35) {
           var sdx = smX - p.x, sdy = smY - p.y;
-          if (sdx * sdx + sdy * sdy < 576) { spawn(p); continue; }  /* 24px以内＝飲み込まれた */
+          if (sdx * sdx + sdy * sdy < 400) { spawn(p); continue; }  /* 飲み込まれた */
         }
-      /* 速度ベクトルの向きに引き伸ばして描く。
-         球を並べるのではなく、流れに沿った筋になる。 */
-      var sp2 = Math.sqrt(fvx * fvx + fvy * fvy);
-      var half = p.r * (1.9 + (sp2 > 6 ? 6 : sp2) * 0.62);
-      var hw = p.r * 0.52;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(Math.atan2(fvy, fvx));
-      ctx.drawImage(sprites[p.s], -half, -hw, half * 2, hw * 2);
-      ctx.restore();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        p.px = p.x; p.py = p.y;
+      }
+      ctx.stroke();
     }
 
-    /* 描かれている絵そのものをカーソルの動きに合わせて引きずる。
-       新しい色を足すのではなく、既にある筋を運ぶことで追従に見せる。 */
-    if (pullAmt > 0.05) smudge(smX, smY, pvx, pvy);
     if (!warming && frame % 6 === 0) { adapt(wordmark); adapt(tagline); }
   }
 
   var raf = null, running = false;
   function loop() { step(); raf = requestAnimationFrame(loop); }
 
-  /* ---- カーソル / 指に吸い寄せられる流れ ---- */
+  /* ---- カーソル / 指 ---- */
   function grabAt(clientX, clientY) {
     if (reduce) return;
     var r = canvas.getBoundingClientRect();
@@ -450,9 +377,9 @@
   }
 
   function start() {
-    resize(); makeSprites(); initSmudge(); build();
+    resize(); build();
     warming = true;
-    for (var k = 0; k < 240; k++) step();
+    for (var k = 0; k < 200; k++) step();
     warming = false;
     adapt(wordmark); adapt(tagline);
     if (reduce) return;
