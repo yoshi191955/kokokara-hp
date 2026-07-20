@@ -205,15 +205,28 @@
 
   function build() {
     var base = Math.min(W, H);
-    vortices = [
-      { x: W * 0.10, y: H * 0.32, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
-      { x: W * 0.30, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
-      { x: W * 0.50, y: H * 0.28, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
-      { x: W * 0.70, y: H * 0.66, s: base * 0.36, a: -1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) },
-      { x: W * 0.90, y: H * 0.34, s: base * 0.36, a:  1.00, dx: rnd(-.06,.06), dy: rnd(-.05,.05) }
-    ];
+    /* 渦は毎回ランダムに作る。位置・大きさ・強さ・回転方向を振りつつ、
+       横方向は列ごとに1つ置いて画面のどこかが止まらないようにする。 */
+    var cnt = 5 + ((Math.random() * 3) | 0);          /* 5〜7個 */
+    var signs = [];
+    for (var q = 0; q < cnt; q++) signs.push(q % 2 ? -1 : 1);
+    for (var q2 = signs.length - 1; q2 > 0; q2--) {   /* 並びをシャッフル */
+      var r2 = (Math.random() * (q2 + 1)) | 0, tmp = signs[q2];
+      signs[q2] = signs[r2]; signs[r2] = tmp;
+    }
+    vortices = [];
+    for (var vi = 0; vi < cnt; vi++) {
+      vortices.push({
+        x: W * (vi + rnd(0.12, 0.88)) / cnt,
+        y: H * rnd(0.12, 0.88),
+        s: base * rnd(0.22, 0.46),
+        a: signs[vi] * rnd(0.62, 1.38),
+        dx: rnd(-.10, .10), dy: rnd(-.08, .08)
+      });
+    }
     waves = [];
-    for (var w = 0; w < 3; w++) {
+    var wc = 2 + ((Math.random() * 3) | 0);           /* うねりも2〜4本 */
+    for (var w = 0; w < wc; w++) {
       waves.push({
         ax: rnd(0.5, 1.5) * Math.PI / base,
         ay: rnd(0.5, 1.5) * Math.PI / base,
