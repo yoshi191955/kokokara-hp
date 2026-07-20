@@ -155,6 +155,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 }
 .hero-aura span i {
   display: block; width: 100%; height: 100%; border-radius: 50%;
+  filter: blur(0px);
   animation-name: bandWave; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
   will-change: transform;
 }
@@ -172,19 +173,21 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
   50%      { transform: translate3d(0,0,0) scaleY(.95); }
   75%      { transform: translate3d(0,3.2vh,0) scaleY(1.08); }
 }
-.hero-aura .b1 { top: 6%; width: 72vmax; height: 34vmax; animation-duration: 34s; animation-delay: -3s; }
-.hero-aura .b1 i { background: radial-gradient(closest-side, rgba(43,184,206,.55) 0%, rgba(43,184,206,.55) 38%, rgba(255,255,255,0) 72%); animation-duration: 9.0s; animation-delay: 0s; }
-.hero-aura .b2 { top: 22%; width: 64vmax; height: 30vmax; animation-duration: 41s; animation-delay: -14s; }
-.hero-aura .b2 i { background: radial-gradient(closest-side, rgba(63,203,168,.50) 0%, rgba(63,203,168,.50) 38%, rgba(255,255,255,0) 72%); animation-duration: 10.5s; animation-delay: -2.2s; }
-.hero-aura .b3 { top: 40%; width: 78vmax; height: 36vmax; animation-duration: 30s; animation-delay: -8s; }
-.hero-aura .b3 i { background: radial-gradient(closest-side, rgba(79,168,232,.48) 0%, rgba(79,168,232,.48) 38%, rgba(255,255,255,0) 72%); animation-duration: 8.2s; animation-delay: -4.1s; }
-.hero-aura .b4 { top: 56%; width: 60vmax; height: 28vmax; animation-duration: 37s; animation-delay: -21s; }
-.hero-aura .b4 i { background: radial-gradient(closest-side, rgba(150,232,222,.52) 0%, rgba(150,232,222,.52) 38%, rgba(255,255,255,0) 72%); animation-duration: 11.4s; animation-delay: -6.0s; }
-.hero-aura .b5 { top: 70%; width: 70vmax; height: 32vmax; animation-duration: 45s; animation-delay: -30s; }
-.hero-aura .b5 i { background: radial-gradient(closest-side, rgba(126,157,232,.42) 0%, rgba(126,157,232,.42) 38%, rgba(255,255,255,0) 72%); animation-duration: 9.6s; animation-delay: -7.8s; }
-.hero-aura .b6 { top: 84%; width: 66vmax; height: 30vmax; animation-duration: 26s; animation-delay: -18s; }
-.hero-aura .b6 i { background: radial-gradient(closest-side, rgba(43,184,206,.40) 0%, rgba(43,184,206,.40) 38%, rgba(255,255,255,0) 72%); animation-duration: 10.0s; animation-delay: -9.5s; }
+.hero-aura .b1 { top: 6%; width: 108vmax; height: 26vmax; animation-duration: 34s; animation-delay: -3s; }
+.hero-aura .b1 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,.55) 0%, rgba(43,184,206,0.25) 30%, rgba(255,255,255,0) 78%); animation-duration: 9.0s; animation-delay: 0s; }
+.hero-aura .b2 { top: 22%; width: 96vmax; height: 22vmax; animation-duration: 41s; animation-delay: -14s; }
+.hero-aura .b2 i { background: radial-gradient(ellipse closest-side, rgba(63,203,168,.50) 0%, rgba(63,203,168,0.23) 30%, rgba(255,255,255,0) 78%); animation-duration: 10.5s; animation-delay: -2.2s; }
+.hero-aura .b3 { top: 40%; width: 120vmax; height: 28vmax; animation-duration: 30s; animation-delay: -8s; }
+.hero-aura .b3 i { background: radial-gradient(ellipse closest-side, rgba(79,168,232,.48) 0%, rgba(79,168,232,0.22) 30%, rgba(255,255,255,0) 78%); animation-duration: 8.2s; animation-delay: -4.1s; }
+.hero-aura .b4 { top: 56%; width: 92vmax; height: 20vmax; animation-duration: 37s; animation-delay: -21s; }
+.hero-aura .b4 i { background: radial-gradient(ellipse closest-side, rgba(150,232,222,.52) 0%, rgba(150,232,222,0.23) 30%, rgba(255,255,255,0) 78%); animation-duration: 11.4s; animation-delay: -6.0s; }
+.hero-aura .b5 { top: 70%; width: 104vmax; height: 24vmax; animation-duration: 45s; animation-delay: -30s; }
+.hero-aura .b5 i { background: radial-gradient(ellipse closest-side, rgba(126,157,232,.42) 0%, rgba(126,157,232,0.19) 30%, rgba(255,255,255,0) 78%); animation-duration: 9.6s; animation-delay: -7.8s; }
+.hero-aura .b6 { top: 84%; width: 100vmax; height: 22vmax; animation-duration: 26s; animation-delay: -18s; }
+.hero-aura .b6 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,.40) 0%, rgba(43,184,206,0.18) 30%, rgba(255,255,255,0) 78%); animation-duration: 10.0s; animation-delay: -9.5s; }
 @media (prefers-reduced-motion: reduce) { .hero-aura span, .hero-aura span i { animation: none; opacity: .85; } }
+
+.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 3; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
 
 /* =========================================================
    マーキー（明色バンドで抜き差し）
@@ -370,7 +373,8 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
   .stats { grid-template-columns: 1fr; gap: 22px; text-align: left; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { justify-content: center; }
-  .hero-wordmark { font-size: 24vw; }
+  .hero-center { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.hero-wordmark { font-size: 24vw; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto; }
