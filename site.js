@@ -207,7 +207,7 @@
     var base = Math.min(W, H);
     /* 渦は毎回ランダムに作る。位置・大きさ・強さ・回転方向を振りつつ、
        横方向は列ごとに1つ置いて画面のどこかが止まらないようにする。 */
-    var cnt = 5 + ((Math.random() * 3) | 0);          /* 5〜7個 */
+    var cnt = 3 + ((Math.random() * 3) | 0);          /* 3〜5個（大きめの渦） */
     var signs = [];
     for (var q = 0; q < cnt; q++) signs.push(q % 2 ? -1 : 1);
     for (var q2 = signs.length - 1; q2 > 0; q2--) {   /* 並びをシャッフル */
@@ -219,7 +219,7 @@
       vortices.push({
         x: W * (vi + rnd(0.12, 0.88)) / cnt,
         y: H * rnd(0.12, 0.88),
-        s: base * rnd(0.22, 0.46),
+        s: base * rnd(0.40, 0.70),
         a: signs[vi] * rnd(0.62, 1.38),
         dx: rnd(-.10, .10), dy: rnd(-.08, .08)
       });
@@ -230,7 +230,7 @@
       waves.push({
         ax: rnd(0.5, 1.5) * Math.PI / base,
         ay: rnd(0.5, 1.5) * Math.PI / base,
-        amp: base * rnd(0.05, 0.10),
+        amp: base * rnd(0.06, 0.12),
         sp: rnd(0.0015, 0.0040),
         ph: rnd(0, Math.PI * 2)
       });
