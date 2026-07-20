@@ -222,7 +222,7 @@
         ph: rnd(0, Math.PI * 2)
       });
     }
-    var total = W < 760 ? 260 : 540;
+    var total = W < 760 ? 620 : 1500;
     groups = [];
     for (var g = 0; g < INKS.length; g++) {
       var arr = [];
