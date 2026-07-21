@@ -142,6 +142,96 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
    ヒーロー
    ========================================================= */
 .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
+/* =========================================================
+   ヒーロー
+   ========================================================= */
+.hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; overflow: hidden; }
+/* ---- ヒーロー背景：光の帯（GPU合成のCSSアニメーション） ---- */
+.hero-aura {
+  position: absolute; inset: -12%; z-index: 2; pointer-events: none;
+  background: #F6FCFD; overflow: hidden;
+  transition: transform .5s var(--ease);
+}
+.hero-aura span {
+  position: absolute; display: block; border-radius: 50%;
+  will-change: transform;
+}
+.hero-aura .a1 {
+  width: 78vmax; height: 78vmax; left: -14%; top: -18%;
+  background: radial-gradient(circle, rgba(43,184,206,.62) 0%, rgba(43,184,206,.28) 42%, rgba(43,184,206,0) 70%);
+  animation: aura1 34s ease-in-out infinite;
+}
+.hero-aura .a2 {
+  width: 66vmax; height: 66vmax; right: -12%; top: -10%;
+  background: radial-gradient(circle, rgba(63,203,168,.58) 0%, rgba(63,203,168,.26) 44%, rgba(63,203,168,0) 70%);
+  animation: aura2 41s ease-in-out infinite;
+}
+.hero-aura .a3 {
+  width: 72vmax; height: 72vmax; left: 18%; bottom: -30%;
+  background: radial-gradient(circle, rgba(79,168,232,.55) 0%, rgba(79,168,232,.24) 44%, rgba(79,168,232,0) 70%);
+  animation: aura3 47s ease-in-out infinite;
+}
+.hero-aura .a4 {
+  width: 58vmax; height: 58vmax; right: 6%; bottom: -22%;
+  background: radial-gradient(circle, rgba(126,157,232,.48) 0%, rgba(126,157,232,.20) 44%, rgba(126,157,232,0) 70%);
+  animation: aura4 53s ease-in-out infinite;
+}
+.hero-aura .a5 {
+  width: 52vmax; height: 52vmax; left: 34%; top: 6%;
+  background: radial-gradient(circle, rgba(150,232,222,.52) 0%, rgba(150,232,222,.22) 44%, rgba(150,232,222,0) 70%);
+  animation: aura5 28s ease-in-out infinite;
+}
+@keyframes aura1 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(14vw,8vh,0) scale(1.18); } }
+@keyframes aura2 { 0%,100% { transform: translate3d(0,0,0) scale(1.06); } 50% { transform: translate3d(-12vw,12vh,0) scale(.9); } }
+@keyframes aura3 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(10vw,-14vh,0) scale(1.22); } }
+@keyframes aura4 { 0%,100% { transform: translate3d(0,0,0) scale(1.1); } 50% { transform: translate3d(-16vw,-8vh,0) scale(.94); } }
+@keyframes aura5 { 0%,100% { transform: translate3d(0,0,0) scale(.96); } 50% { transform: translate3d(8vw,16vh,0) scale(1.2); } }
+@media (prefers-reduced-motion: reduce) { .hero-aura span { animation: none; } }
+
+/* ---- さざ波：角度と周期の違う2層をずらして干渉させる ---- */
+.hero-aura i {
+  position: absolute; inset: -30%; display: block; pointer-events: none;
+  will-change: transform;
+}
+.hero-aura .r1 {
+  background: repeating-linear-gradient(102deg,
+    rgba(255,255,255,0) 0px, rgba(255,255,255,.30) 24px,
+    rgba(255,255,255,0) 52px, rgba(255,255,255,0) 96px);
+  animation: rip1 19s linear infinite;
+}
+.hero-aura .r2 {
+  background: repeating-linear-gradient(78deg,
+    rgba(255,255,255,0) 0px, rgba(180,240,236,.24) 32px,
+    rgba(255,255,255,0) 74px, rgba(255,255,255,0) 130px);
+  animation: rip2 27s linear infinite;
+}
+@keyframes rip1 { from { transform: translate3d(0,0,0); } to { transform: translate3d(93.9px,20.0px,0); } }
+@keyframes rip2 { from { transform: translate3d(0,0,0); } to { transform: translate3d(-127.2px,27.0px,0); } }
+@media (prefers-reduced-motion: reduce) { .hero-aura i { animation: none; opacity: .5; } }
+
+
+.hero-marks { position: relative; z-index: 4; display: flex; justify-content: space-between; padding-top: calc(var(--header-h) + 22px); font-family: var(--font-en); font-weight: 700; font-size: 11px; letter-spacing: .2em; color: var(--text-45); text-transform: uppercase; line-height: 1.8; }
+.hero-marks .r { text-align: right; }
+
+.hero-center { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.hero-wordmark { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: -.035em; font-size: clamp(60px, 15.5vw, 260px); line-height: .82; color: var(--text); white-space: nowrap; position: relative; z-index: 1; }
+.hero-tagline { position: relative; z-index: 3; margin-top: clamp(16px, 2.6vh, 30px); font-family: var(--font-jp); font-weight: 700; font-size: clamp(15px, 2.1vw, 23px); letter-spacing: .04em; }
+.hero-tagline .accent { color: var(--accent); }
+
+/* 背面の色水が濃いときは文字を白へ自動反転（JSが on-dark を付与） */
+.hero-wordmark, .hero-tagline { transition: color .5s var(--ease); }
+.hero-wordmark.on-dark { color: #FFFFFF; }
+.hero-tagline.on-dark { color: #FFFFFF; }
+.hero-tagline.on-dark .accent { color: #8CEBFB; }
+
+.hero-foot { position: relative; z-index: 4; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: clamp(28px, 5vh, 56px); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 13px; }
+.hero-scroll { writing-mode: vertical-rl; font-family: var(--font-en); font-weight: 700; font-size: 11px; letter-spacing: .28em; color: var(--text-45); text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+.hero-scroll::after { content: ""; width: 1px; height: 46px; background: var(--text-45); animation: scrollpulse 1.9s var(--ease) infinite; }
+@keyframes scrollpulse { 0%,100% { transform: scaleY(.4); opacity:.4; transform-origin: top; } 50% { transform: scaleY(1); opacity:1; transform-origin: top; } }
+
+.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 2; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
+
 /* ---- ヒーロー背景：右から左へ波打つ光の帯 ---- */
 .hero-aura {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -187,7 +277,6 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 .hero-aura .b6 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,.40) 0%, rgba(43,184,206,0.18) 30%, rgba(255,255,255,0) 78%); animation-duration: 10.0s; animation-delay: -9.5s; }
 @media (prefers-reduced-motion: reduce) { .hero-aura span, .hero-aura span i { animation: none; opacity: .85; } }
 
-.hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 3; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
 
 /* =========================================================
    マーキー（明色バンドで抜き差し）
@@ -373,8 +462,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
   .stats { grid-template-columns: 1fr; gap: 22px; text-align: left; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { justify-content: center; }
-  .hero-center { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.hero-wordmark { font-size: 24vw; }
+  .hero-wordmark { font-size: 24vw; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto; }
