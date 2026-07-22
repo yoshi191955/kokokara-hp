@@ -102,6 +102,45 @@
     if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(closeModal);
   });
 
+  /* ---- フッター背景：薄い四角が下から上へ ---- */
+  (function () {
+    var box = document.querySelector(".footer-fall");
+    if (!box) return;
+    var rand = function (a, b) { return a + Math.random() * (b - a); };
+    var pick = function (a) { return a[(Math.random() * a.length) | 0]; };
+    var N = window.innerWidth < 760 ? 12 : 22;
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < N; i++) {
+      var depth = Math.pow(Math.random(), 1.4);
+      var size = Math.round(rand(10, 20) + depth * 34);
+      var hue = rand(160, 210), sat = rand(40, 62), lit = rand(66, 82);  /* 明るい寒色 */
+      var outline = Math.random() < 0.4;
+      var op = +(0.04 + depth * 0.08).toFixed(2);                        /* 濃紺に薄く重ねる */
+      var dur = +(rand(20, 32) - depth * 9).toFixed(1);
+      var radius = pick([2, 4, 8, 12, size / 2 | 0]);
+      var rot = Math.round(rand(-90, 90)), amp = Math.round(rand(4, 12));
+      var swayDur = +(rand(3.5, 7)).toFixed(1);
+      var chip = document.createElement("span");
+      chip.className = "foot-chip";
+      chip.style.cssText =
+        "left:" + rand(-2, 98).toFixed(2) + "%;width:" + size + "px;height:" + size + "px;" +
+        "animation-duration:" + dur + "s;animation-delay:" + (-rand(0, dur)).toFixed(2) + "s;--op:" + op + ";";
+      var inner = document.createElement("i");
+      var col = "hsl(" + hue.toFixed(0) + "," + sat.toFixed(0) + "%," + lit.toFixed(0) + "%)";
+      inner.style.cssText =
+        "border-radius:" + radius + "px;" +
+        (outline ? "background:transparent;border:1.5px solid " + col + ";box-sizing:border-box;" : "background:" + col + ";") +
+        "animation-duration:" + swayDur + "s;animation-delay:" + (-rand(0, swayDur)).toFixed(2) + "s;--amp:" + amp + "px;--rot:" + rot + "deg;";
+      chip.appendChild(inner);
+      if (reduce) {
+        chip.style.top = rand(4, 84).toFixed(1) + "%";
+        chip.style.transform = "translateY(0)"; chip.style.opacity = op;
+      }
+      frag.appendChild(chip);
+    }
+    box.appendChild(frag);
+  })();
+
   /* ---- フッターの大型ワードマークを親幅にフィット（はみ出し防止） ---- */
   function fitFooterWord() {
     var el = document.querySelector(".footer-word");

@@ -268,6 +268,31 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
   .fall-chip, .fall-chip > .fall-move > i { animation: none !important; }
 }
 
+/* ---- フッター背景：薄い四角が下から上へ ---- */
+.footer-fall { position: absolute; left: 0; right: 0; top: 0; height: 68%; z-index: 0; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%); mask-image: linear-gradient(180deg, #000 62%, transparent 100%); }
+.footer-fall .foot-chip {
+  position: absolute; top: 0;
+  will-change: transform, opacity;
+  animation-name: footRise; animation-timing-function: linear; animation-iteration-count: infinite;
+}
+@keyframes footRise {
+  0%   { transform: translateY(420px); opacity: 0; }
+  12%  { opacity: var(--op); }
+  85%  { opacity: var(--op); }
+  100% { transform: translateY(-80px); opacity: 0; }
+}
+.footer-fall .foot-chip > i {
+  display: block; width: 100%; height: 100%;
+  will-change: transform;
+  animation-name: chipSway; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
+}
+.site-footer .container { position: relative; z-index: 1; }
+.footer-word { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .footer-fall .foot-chip, .footer-fall .foot-chip > i { animation: none !important; }
+}
+
+
 /* =========================================================
    マーキー（明色バンドで抜き差し）
    ========================================================= */
@@ -412,7 +437,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
    フッター
    ========================================================= */
 .site-footer { background: #06232B; color: #EAF4F7; padding: clamp(58px, 9vh, 100px) 0 40px; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
-.footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: -.03em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; }
+.footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .015em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; padding-right: .12em; }
 .footer-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; align-items: flex-end; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .footer-brand { display: flex; align-items: center; gap: 12px; }
 .footer-brand img { width: 40px; height: 40px; border-radius: 10px; }
