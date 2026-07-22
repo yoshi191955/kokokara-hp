@@ -216,7 +216,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 .hero-center { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .hero-wordmark { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: -.035em; font-size: clamp(60px, 15.5vw, 260px); line-height: .82; color: var(--text); white-space: nowrap; position: relative; z-index: 1; }
 .hero-tagline { position: relative; z-index: 3; margin-top: clamp(16px, 2.6vh, 30px); font-family: var(--font-jp); font-weight: 700; font-size: clamp(15px, 2.1vw, 23px); letter-spacing: .04em; }
-.hero-tagline .accent { color: #064A58; }
+.hero-tagline .accent { color: #053C48; }
 
 /* 背面の色水が濃いときは文字を白へ自動反転（JSが on-dark を付与） */
 .hero-wordmark, .hero-tagline { transition: color .5s var(--ease); }
@@ -232,51 +232,66 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 
 .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 2; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
 
-/* ---- ヒーロー背景：右から左へ波打つ光の帯 ---- */
+/* ---- ヒーロー背景：常時グラデーションの帯が波打つ ---- */
 .hero-aura {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  background: linear-gradient(180deg, #F4FBFD 0%, #EDF8FB 55%, #F7FCFD 100%);
-  overflow: hidden; transition: transform .5s var(--ease);
+  overflow: hidden; background: #EEF7FA; transition: transform .5s var(--ease);
 }
-.hero-aura span {
-  position: absolute; left: 0; display: block;
-  animation-name: bandDrift; animation-timing-function: linear; animation-iteration-count: infinite;
-  will-change: transform, opacity;
-}
-.hero-aura span i {
-  display: block; width: 100%; height: 100%; border-radius: 50%;
-  filter: blur(0px);
-  animation-name: bandWave; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
+/* 3枚の帯を縦に重ね、それぞれ横グラデ＋横スクロール＋縦の波でうねらせる。
+   各帯は画面より大きくとってあるので、常に画面全体が帯で埋まる。 */
+.hero-aura .wave {
+  position: absolute; left: -25%; width: 150%; height: 150%;
   will-change: transform;
+  background-repeat: repeat-x; background-size: 55% 100%;
+  mask-repeat: repeat-x; -webkit-mask-repeat: repeat-x;
+  mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
 }
-/* 横：右端から左端へ流れる（両端でフェードしループの継ぎ目を隠す） */
-@keyframes bandDrift {
-  0%   { transform: translate3d(62vw,0,0); opacity: 0; }
-  10%  { opacity: 1; }
-  90%  { opacity: 1; }
-  100% { transform: translate3d(-62vw,0,0); opacity: 0; }
+/* 上下方向の波形マスク（sinカーブ）で帯の縁がうねる */
+.hero-aura .w1 {
+  top: -34%;
+  background-image: linear-gradient(90deg,
+    rgba(43,184,206,.85) 0%, rgba(63,203,168,.80) 26%, rgba(79,168,232,.82) 52%,
+    rgba(150,232,222,.80) 74%, rgba(43,184,206,.85) 100%);
+  -webkit-mask-image: radial-gradient(120% 60% at 50% 40%, #000 55%, transparent 78%);
+  mask-image: radial-gradient(120% 60% at 50% 40%, #000 55%, transparent 78%);
+  animation: drift1 26s linear infinite, sway1 7s ease-in-out infinite;
 }
-/* 縦：うねり。開始と終了を揃えて継ぎ目なくループ */
-@keyframes bandWave {
-  0%, 100% { transform: translate3d(0,0,0) scaleY(1); }
-  25%      { transform: translate3d(0,-7vh,0) scaleY(1.20); }
-  50%      { transform: translate3d(0,1.5vh,0) scaleY(.86); }
-  75%      { transform: translate3d(0,7vh,0) scaleY(1.20); }
+.hero-aura .w2 {
+  top: 8%;
+  background-image: linear-gradient(90deg,
+    rgba(63,203,168,.78) 0%, rgba(79,168,232,.80) 30%, rgba(126,157,232,.72) 60%,
+    rgba(43,184,206,.82) 100%);
+  -webkit-mask-image: radial-gradient(130% 55% at 50% 50%, #000 52%, transparent 80%);
+  mask-image: radial-gradient(130% 55% at 50% 50%, #000 52%, transparent 80%);
+  animation: drift2 34s linear infinite, sway2 9s ease-in-out infinite;
 }
-.hero-aura .b1 { top: 6%; width: 108vmax; height: 26vmax; animation-duration: 34s; animation-delay: -3s; }
-.hero-aura .b1 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,0.83) 0%, rgba(43,184,206,0.42) 34%, rgba(255,255,255,0) 80%); animation-duration: 9.0s; animation-delay: 0s; }
-.hero-aura .b2 { top: 22%; width: 96vmax; height: 22vmax; animation-duration: 41s; animation-delay: -14s; }
-.hero-aura .b2 i { background: radial-gradient(ellipse closest-side, rgba(63,203,168,0.75) 0%, rgba(63,203,168,0.39) 34%, rgba(255,255,255,0) 80%); animation-duration: 10.5s; animation-delay: -2.2s; }
-.hero-aura .b3 { top: 40%; width: 120vmax; height: 28vmax; animation-duration: 30s; animation-delay: -8s; }
-.hero-aura .b3 i { background: radial-gradient(ellipse closest-side, rgba(79,168,232,0.72) 0%, rgba(79,168,232,0.37) 34%, rgba(255,255,255,0) 80%); animation-duration: 8.2s; animation-delay: -4.1s; }
-.hero-aura .b4 { top: 56%; width: 92vmax; height: 20vmax; animation-duration: 37s; animation-delay: -21s; }
-.hero-aura .b4 i { background: radial-gradient(ellipse closest-side, rgba(150,232,222,0.78) 0%, rgba(150,232,222,0.39) 34%, rgba(255,255,255,0) 80%); animation-duration: 11.4s; animation-delay: -6.0s; }
-.hero-aura .b5 { top: 70%; width: 104vmax; height: 24vmax; animation-duration: 45s; animation-delay: -30s; }
-.hero-aura .b5 i { background: radial-gradient(ellipse closest-side, rgba(126,157,232,0.63) 0%, rgba(126,157,232,0.32) 34%, rgba(255,255,255,0) 80%); animation-duration: 9.6s; animation-delay: -7.8s; }
-.hero-aura .b6 { top: 84%; width: 100vmax; height: 22vmax; animation-duration: 26s; animation-delay: -18s; }
-.hero-aura .b6 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,0.6) 0%, rgba(43,184,206,0.31) 34%, rgba(255,255,255,0) 80%); animation-duration: 10.0s; animation-delay: -9.5s; }
-@media (prefers-reduced-motion: reduce) { .hero-aura span, .hero-aura span i { animation: none; opacity: .85; } }
-
+.hero-aura .w3 {
+  top: 42%;
+  background-image: linear-gradient(90deg,
+    rgba(79,168,232,.72) 0%, rgba(150,232,222,.80) 34%, rgba(43,184,206,.82) 66%,
+    rgba(63,203,168,.78) 100%);
+  -webkit-mask-image: radial-gradient(140% 58% at 50% 60%, #000 55%, transparent 82%);
+  mask-image: radial-gradient(140% 58% at 50% 60%, #000 55%, transparent 82%);
+  animation: drift3 30s linear infinite, sway3 8s ease-in-out infinite;
+}
+/* 横スクロール：背景を右→左へ流す（背景1枚分でループ＝継ぎ目なし） */
+@keyframes drift1 { from { background-position: 0 0; } to { background-position: -55% 0; } }
+@keyframes drift2 { from { background-position: 0 0; } to { background-position: 55% 0; } }
+@keyframes drift3 { from { background-position: 0 0; } to { background-position: -55% 0; } }
+/* 縦の波打ち：帯全体を上下に揺らしつつ、うねりで傾ける */
+@keyframes sway1 {
+  0%,100% { transform: translateY(0) skewY(0deg); }
+  50%     { transform: translateY(5vh) skewY(-2.4deg); }
+}
+@keyframes sway2 {
+  0%,100% { transform: translateY(0) skewY(0deg); }
+  50%     { transform: translateY(-5vh) skewY(2.2deg); }
+}
+@keyframes sway3 {
+  0%,100% { transform: translateY(0) skewY(0deg); }
+  50%     { transform: translateY(4vh) skewY(-2.0deg); }
+}
+@media (prefers-reduced-motion: reduce) { .hero-aura .wave { animation: none; } }
 
 /* =========================================================
    マーキー（明色バンドで抜き差し）
