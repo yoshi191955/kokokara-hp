@@ -38,7 +38,11 @@
     backBtn.addEventListener("click", function () {
       setMenu(false);
       /* 履歴があれば戻る。無い場合（直接開かれた等）はトップへ */
-      if (window.history.length > 1) window.history.back();
+      var ref = document.referrer || "";
+      var here = location.protocol + "//" + location.host;
+      var sameSite = ref.indexOf(here) === 0 ||
+                     (location.protocol === "file:" && ref.indexOf("file:") === 0);
+      if (sameSite && window.history.length > 1) window.history.back();
       else window.location.href = "index.html";
     });
   }
@@ -115,7 +119,7 @@
       var size = Math.round(rand(10, 20) + depth * 34);
       var hue = rand(150, 260), sat = rand(66, 92), lit = rand(58, 74);  /* カラフルで鮮やか（緑〜青〜紫） */
       var outline = Math.random() < 0.4;
-      var op = +(0.30 + depth * 0.42).toFixed(2);                        /* 濃紺の上でしっかり発色 */
+      var op = +(0.22 + depth * 0.30).toFixed(2);                        /* 濃紺の上で発色しつつKOKOKARAを邪魔しない */
       var dur = +(rand(20, 32) - depth * 9).toFixed(1);
       var radius = pick([2, 4, 8, 12, size / 2 | 0]);
       var rot = Math.round(rand(-90, 90)), amp = Math.round(rand(4, 12));
