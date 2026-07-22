@@ -249,10 +249,10 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
   animation-name: chipSway; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
 }
 @keyframes chipFall {
-  0%   { transform: translateY(-22vh); opacity: 0; }
+  0%   { transform: translateY(122vh); opacity: 0; }
   7%   { opacity: var(--op); }
   90%  { opacity: var(--op); }
-  100% { transform: translateY(122vh); opacity: 0; }
+  100% { transform: translateY(-22vh); opacity: 0; }
 }
 @keyframes chipSway {
   0%, 100% { transform: translateX(calc(var(--amp) * -1)) rotate(calc(var(--rot) * -1)); }
