@@ -216,7 +216,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 .hero-center { position: relative; z-index: 3; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .hero-wordmark { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: -.035em; font-size: clamp(60px, 15.5vw, 260px); line-height: .82; color: var(--text); white-space: nowrap; position: relative; z-index: 1; }
 .hero-tagline { position: relative; z-index: 3; margin-top: clamp(16px, 2.6vh, 30px); font-family: var(--font-jp); font-weight: 700; font-size: clamp(15px, 2.1vw, 23px); letter-spacing: .04em; }
-.hero-tagline .accent { color: var(--accent); }
+.hero-tagline .accent { color: #064A58; }
 
 /* 背面の色水が濃いときは文字を白へ自動反転（JSが on-dark を付与） */
 .hero-wordmark, .hero-tagline { transition: color .5s var(--ease); }
@@ -259,22 +259,22 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 /* 縦：うねり。開始と終了を揃えて継ぎ目なくループ */
 @keyframes bandWave {
   0%, 100% { transform: translate3d(0,0,0) scaleY(1); }
-  25%      { transform: translate3d(0,-3.2vh,0) scaleY(1.08); }
-  50%      { transform: translate3d(0,0,0) scaleY(.95); }
-  75%      { transform: translate3d(0,3.2vh,0) scaleY(1.08); }
+  25%      { transform: translate3d(0,-7vh,0) scaleY(1.20); }
+  50%      { transform: translate3d(0,1.5vh,0) scaleY(.86); }
+  75%      { transform: translate3d(0,7vh,0) scaleY(1.20); }
 }
 .hero-aura .b1 { top: 6%; width: 108vmax; height: 26vmax; animation-duration: 34s; animation-delay: -3s; }
-.hero-aura .b1 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,.55) 0%, rgba(43,184,206,0.25) 30%, rgba(255,255,255,0) 78%); animation-duration: 9.0s; animation-delay: 0s; }
+.hero-aura .b1 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,0.83) 0%, rgba(43,184,206,0.42) 34%, rgba(255,255,255,0) 80%); animation-duration: 9.0s; animation-delay: 0s; }
 .hero-aura .b2 { top: 22%; width: 96vmax; height: 22vmax; animation-duration: 41s; animation-delay: -14s; }
-.hero-aura .b2 i { background: radial-gradient(ellipse closest-side, rgba(63,203,168,.50) 0%, rgba(63,203,168,0.23) 30%, rgba(255,255,255,0) 78%); animation-duration: 10.5s; animation-delay: -2.2s; }
+.hero-aura .b2 i { background: radial-gradient(ellipse closest-side, rgba(63,203,168,0.75) 0%, rgba(63,203,168,0.39) 34%, rgba(255,255,255,0) 80%); animation-duration: 10.5s; animation-delay: -2.2s; }
 .hero-aura .b3 { top: 40%; width: 120vmax; height: 28vmax; animation-duration: 30s; animation-delay: -8s; }
-.hero-aura .b3 i { background: radial-gradient(ellipse closest-side, rgba(79,168,232,.48) 0%, rgba(79,168,232,0.22) 30%, rgba(255,255,255,0) 78%); animation-duration: 8.2s; animation-delay: -4.1s; }
+.hero-aura .b3 i { background: radial-gradient(ellipse closest-side, rgba(79,168,232,0.72) 0%, rgba(79,168,232,0.37) 34%, rgba(255,255,255,0) 80%); animation-duration: 8.2s; animation-delay: -4.1s; }
 .hero-aura .b4 { top: 56%; width: 92vmax; height: 20vmax; animation-duration: 37s; animation-delay: -21s; }
-.hero-aura .b4 i { background: radial-gradient(ellipse closest-side, rgba(150,232,222,.52) 0%, rgba(150,232,222,0.23) 30%, rgba(255,255,255,0) 78%); animation-duration: 11.4s; animation-delay: -6.0s; }
+.hero-aura .b4 i { background: radial-gradient(ellipse closest-side, rgba(150,232,222,0.78) 0%, rgba(150,232,222,0.39) 34%, rgba(255,255,255,0) 80%); animation-duration: 11.4s; animation-delay: -6.0s; }
 .hero-aura .b5 { top: 70%; width: 104vmax; height: 24vmax; animation-duration: 45s; animation-delay: -30s; }
-.hero-aura .b5 i { background: radial-gradient(ellipse closest-side, rgba(126,157,232,.42) 0%, rgba(126,157,232,0.19) 30%, rgba(255,255,255,0) 78%); animation-duration: 9.6s; animation-delay: -7.8s; }
+.hero-aura .b5 i { background: radial-gradient(ellipse closest-side, rgba(126,157,232,0.63) 0%, rgba(126,157,232,0.32) 34%, rgba(255,255,255,0) 80%); animation-duration: 9.6s; animation-delay: -7.8s; }
 .hero-aura .b6 { top: 84%; width: 100vmax; height: 22vmax; animation-duration: 26s; animation-delay: -18s; }
-.hero-aura .b6 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,.40) 0%, rgba(43,184,206,0.18) 30%, rgba(255,255,255,0) 78%); animation-duration: 10.0s; animation-delay: -9.5s; }
+.hero-aura .b6 i { background: radial-gradient(ellipse closest-side, rgba(43,184,206,0.6) 0%, rgba(43,184,206,0.31) 34%, rgba(255,255,255,0) 80%); animation-duration: 10.0s; animation-delay: -9.5s; }
 @media (prefers-reduced-motion: reduce) { .hero-aura span, .hero-aura span i { animation: none; opacity: .85; } }
 
 
