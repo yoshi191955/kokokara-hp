@@ -235,35 +235,29 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 /* ---- ヒーロー背景：色とりどりの矩形が交わり、また離れる ---- */
 .hero-aura {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  overflow: hidden; background: linear-gradient(135deg, #EAF5F8 0%, #EEF3FB 60%, #F3FAFB 100%);
-  transition: transform .5s var(--ease);
+  overflow: hidden; background: #F4FAFC; transition: transform .5s var(--ease);
 }
 .hero-aura .shard {
   position: absolute; display: block;
-  mix-blend-mode: screen;            /* 重なると光が混ざって別の色になる */
-  filter: blur(14px);                /* 縁をやわらげ、硬い四角にしすぎない */
-  will-change: transform, opacity;
+  mix-blend-mode: multiply;          /* 重なると色が深まる（交わると生まれる） */
+  will-change: transform;
 }
-.hero-aura .s0 { top:-4%; left:44%; width:40vmax; height:28vmax; border-radius:46px; background:linear-gradient(135deg, rgba(43,184,206,0.36), rgba(73,204,221,0.25)); animation:sh0 38s ease-in-out -1s infinite; }
-.hero-aura .s1 { top:1%; left:24%; width:43vmax; height:26vmax; border-radius:30px; background:linear-gradient(135deg, rgba(63,203,168,0.35), rgba(93,223,183,0.24)); animation:sh1 38s ease-in-out -3s infinite; }
-.hero-aura .s2 { top:61%; left:-1%; width:31vmax; height:31vmax; border-radius:14px; background:linear-gradient(135deg, rgba(79,168,232,0.39), rgba(109,188,247,0.27)); animation:sh2 24s ease-in-out -17s infinite; }
-.hero-aura .s3 { top:63%; left:68%; width:35vmax; height:27vmax; border-radius:14px; background:linear-gradient(135deg, rgba(150,232,222,0.41), rgba(180,252,237,0.29)); animation:sh3 37s ease-in-out -22s infinite; }
-.hero-aura .s4 { top:30%; left:48%; width:51vmax; height:41vmax; border-radius:46px; background:linear-gradient(135deg, rgba(126,157,232,0.51), rgba(156,177,247,0.36)); animation:sh4 31s ease-in-out -9s infinite; }
-.hero-aura .s5 { top:33%; left:57%; width:39vmax; height:40vmax; border-radius:30px; background:linear-gradient(135deg, rgba(52,199,188,0.39), rgba(82,219,203,0.27)); animation:sh5 22s ease-in-out -3s infinite; }
-.hero-aura .s6 { top:-5%; left:47%; width:34vmax; height:39vmax; border-radius:8px; background:linear-gradient(135deg, rgba(96,214,224,0.48), rgba(126,234,239,0.34)); animation:sh6 38s ease-in-out -25s infinite; }
-.hero-aura .s7 { top:1%; left:2%; width:48vmax; height:38vmax; border-radius:30px; background:linear-gradient(135deg, rgba(120,180,238,0.47), rgba(150,200,253,0.33)); animation:sh7 22s ease-in-out -1s infinite; }
-.hero-aura .s8 { top:34%; left:43%; width:44vmax; height:33vmax; border-radius:30px; background:linear-gradient(135deg, rgba(43,184,206,0.4), rgba(73,204,221,0.28)); animation:sh8 39s ease-in-out -3s infinite; }
-.hero-aura .s9 { top:40%; left:44%; width:34vmax; height:31vmax; border-radius:30px; background:linear-gradient(135deg, rgba(63,203,168,0.35), rgba(93,223,183,0.24)); animation:sh9 34s ease-in-out -12s infinite; }
-@keyframes sh0 { 0%,100% { transform:translate(0,0) rotate(-24deg) scale(1); } 33% { transform:translate(10vw,-3vh) rotate(-60deg) scale(0.84); } 66% { transform:translate(-6vw,-2vh) rotate(-6deg) scale(1.16); } }
-@keyframes sh1 { 0%,100% { transform:translate(0,0) rotate(7deg) scale(1); } 33% { transform:translate(-8vw,-13vh) rotate(40deg) scale(1.06); } 66% { transform:translate(4vw,-9vh) rotate(-9deg) scale(0.94); } }
-@keyframes sh2 { 0%,100% { transform:translate(0,0) rotate(26deg) scale(1); } 33% { transform:translate(-15vw,3vh) rotate(57deg) scale(1.17); } 66% { transform:translate(9vw,2vh) rotate(11deg) scale(0.83); } }
-@keyframes sh3 { 0%,100% { transform:translate(0,0) rotate(12deg) scale(1); } 33% { transform:translate(-18vw,-13vh) rotate(51deg) scale(0.89); } 66% { transform:translate(10vw,-9vh) rotate(-7deg) scale(1.11); } }
-@keyframes sh4 { 0%,100% { transform:translate(0,0) rotate(1deg) scale(1); } 33% { transform:translate(-7vw,-5vh) rotate(-8deg) scale(0.84); } 66% { transform:translate(4vw,-3vh) rotate(6deg) scale(1.16); } }
-@keyframes sh5 { 0%,100% { transform:translate(0,0) rotate(18deg) scale(1); } 33% { transform:translate(10vw,10vh) rotate(-1deg) scale(1.14); } 66% { transform:translate(-6vw,7vh) rotate(28deg) scale(0.86); } }
-@keyframes sh6 { 0%,100% { transform:translate(0,0) rotate(14deg) scale(1); } 33% { transform:translate(-2vw,5vh) rotate(18deg) scale(1.07); } 66% { transform:translate(1vw,3vh) rotate(12deg) scale(0.93); } }
-@keyframes sh7 { 0%,100% { transform:translate(0,0) rotate(-11deg) scale(1); } 33% { transform:translate(22vw,3vh) rotate(22deg) scale(1.25); } 66% { transform:translate(-13vw,2vh) rotate(-27deg) scale(0.75); } }
-@keyframes sh8 { 0%,100% { transform:translate(0,0) rotate(-27deg) scale(1); } 33% { transform:translate(9vw,-13vh) rotate(-40deg) scale(1.15); } 66% { transform:translate(-5vw,-9vh) rotate(-20deg) scale(0.85); } }
-@keyframes sh9 { 0%,100% { transform:translate(0,0) rotate(27deg) scale(1); } 33% { transform:translate(13vw,1vh) rotate(4deg) scale(1.17); } 66% { transform:translate(-7vw,0vh) rotate(39deg) scale(0.83); } }
+.hero-aura .s0 { top:49%; left:55%; width:48vmax; height:43vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(90,206,222,0.33) 0%, rgba(90,206,222,0.2) 46%, rgba(90,206,222,0) 82%); animation:sh0 40s ease-in-out -15s infinite; }
+.hero-aura .s1 { top:60%; left:7%; width:43vmax; height:30vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(96,214,190,0.38) 0%, rgba(96,214,190,0.23) 46%, rgba(96,214,190,0) 82%); animation:sh1 36s ease-in-out -30s infinite; }
+.hero-aura .s2 { top:-4%; left:3%; width:50vmax; height:28vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(120,190,240,0.38) 0%, rgba(120,190,240,0.23) 46%, rgba(120,190,240,0) 82%); animation:sh2 38s ease-in-out -10s infinite; }
+.hero-aura .s3 { top:-8%; left:59%; width:54vmax; height:35vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(150,232,222,0.36) 0%, rgba(150,232,222,0.22) 46%, rgba(150,232,222,0) 82%); animation:sh3 32s ease-in-out -13s infinite; }
+.hero-aura .s4 { top:28%; left:61%; width:44vmax; height:33vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(150,178,240,0.38) 0%, rgba(150,178,240,0.23) 46%, rgba(150,178,240,0) 82%); animation:sh4 27s ease-in-out -12s infinite; }
+.hero-aura .s5 { top:19%; left:-4%; width:34vmax; height:47vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(88,204,196,0.37) 0%, rgba(88,204,196,0.22) 46%, rgba(88,204,196,0) 82%); animation:sh5 36s ease-in-out -13s infinite; }
+.hero-aura .s6 { top:31%; left:7%; width:42vmax; height:36vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(118,200,232,0.43) 0%, rgba(118,200,232,0.26) 46%, rgba(118,200,232,0) 82%); animation:sh6 27s ease-in-out -4s infinite; }
+.hero-aura .s7 { top:16%; left:18%; width:48vmax; height:41vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(80,196,214,0.44) 0%, rgba(80,196,214,0.26) 46%, rgba(80,196,214,0) 82%); animation:sh7 28s ease-in-out -13s infinite; }
+@keyframes sh0 { 0%,100% { transform:translate(0,0) rotate(8deg) scale(1); } 50% { transform:translate(20vw,5vh) rotate(-1deg) scale(0.88); } }
+@keyframes sh1 { 0%,100% { transform:translate(0,0) rotate(20deg) scale(1); } 50% { transform:translate(8vw,6vh) rotate(8deg) scale(1.07); } }
+@keyframes sh2 { 0%,100% { transform:translate(0,0) rotate(-12deg) scale(1); } 50% { transform:translate(8vw,4vh) rotate(-19deg) scale(1.03); } }
+@keyframes sh3 { 0%,100% { transform:translate(0,0) rotate(18deg) scale(1); } 50% { transform:translate(15vw,12vh) rotate(-4deg) scale(1.1); } }
+@keyframes sh4 { 0%,100% { transform:translate(0,0) rotate(-23deg) scale(1); } 50% { transform:translate(-14vw,13vh) rotate(-18deg) scale(0.99); } }
+@keyframes sh5 { 0%,100% { transform:translate(0,0) rotate(-11deg) scale(1); } 50% { transform:translate(-16vw,4vh) rotate(-18deg) scale(1.12); } }
+@keyframes sh6 { 0%,100% { transform:translate(0,0) rotate(-3deg) scale(1); } 50% { transform:translate(-5vw,8vh) rotate(-23deg) scale(0.85); } }
+@keyframes sh7 { 0%,100% { transform:translate(0,0) rotate(4deg) scale(1); } 50% { transform:translate(4vw,-11vh) rotate(22deg) scale(1.0); } }
 @media (prefers-reduced-motion: reduce) { .hero-aura .shard { animation-duration: 0s; } }
 
 /* =========================================================
