@@ -217,6 +217,64 @@
      ヒーロー: 光の帯（CSSアニメーション）
      描画はGPUに任せ、JSはカーソルのわずかな視差だけを担当する。
      ===================================================== */
+  /* =====================================================
+     ヒーロー: 色とりどりの四角が上から降ってくる
+     生成は初回のみ。落下・横揺れ・回転はCSSアニメーション（GPU合成）で回すため、
+     JSの毎フレーム処理は発生しない。奥行きで速度と濃さを変え視差を出す。
+     ===================================================== */
+  (function () {
+    var aura = document.querySelector(".hero-aura");
+    if (!aura) return;
+    var rand = function (a, b) { return a + Math.random() * (b - a); };
+    var pick = function (arr) { return arr[(Math.random() * arr.length) | 0]; };
+    var N = window.innerWidth < 760 ? 26 : 46;
+    var frag = document.createDocumentFragment();
+
+    for (var i = 0; i < N; i++) {
+      /* 奥行き 0=遠(小さく遅く薄い) 〜 1=近(大きく速く濃い) */
+      var depth = Math.pow(Math.random(), 1.4);
+      var size = Math.round(rand(12, 26) + depth * 46);          /* 12〜72px */
+      var hue = rand(158, 220);                                   /* 緑〜青 */
+      var sat = rand(52, 74), lit = rand(52, 64);
+      var outline = Math.random() < 0.28;                          /* 3割は枠だけ */
+      var op = +(0.16 + depth * 0.26).toFixed(2);                 /* 近いほど濃い */
+      var dur = +(rand(22, 34) - depth * 12).toFixed(1);          /* 近いほど速い */
+      var delay = -rand(0, dur).toFixed(2);
+      var radius = pick([2, 4, 8, 14, 22, size / 2 | 0]);
+      var rot = Math.round(rand(-120, 120));
+      var amp = Math.round(rand(4, 16));
+      var swayDur = +(rand(3.5, 7.5)).toFixed(1);
+
+      var chip = document.createElement("span");
+      chip.className = "fall-chip";
+      chip.style.cssText =
+        "left:" + rand(-2, 98).toFixed(2) + "%;" +
+        "width:" + size + "px;height:" + size + "px;" +
+        "animation-duration:" + dur + "s;animation-delay:" + delay + "s;" +
+        "--op:" + op + ";";
+      var inner = document.createElement("i");
+      var col = "hsl(" + hue.toFixed(0) + "," + sat.toFixed(0) + "%," + lit.toFixed(0) + "%)";
+      inner.style.cssText =
+        "border-radius:" + radius + "px;" +
+        (outline
+          ? "background:transparent;border:" + (depth > 0.6 ? 3 : 2) + "px solid " + col + ";box-sizing:border-box;"
+          : "background:" + col + ";") +
+        "animation-duration:" + swayDur + "s;animation-delay:" + (-rand(0, swayDur)).toFixed(2) + "s;" +
+        "--amp:" + amp + "px;--rot:" + rot + "deg;";
+      chip.appendChild(inner);
+
+      if (reduce) {
+        /* 動きを止める設定では、画面内に静止配置して見せる */
+        chip.style.top = rand(2, 88).toFixed(1) + "%";
+        chip.style.transform = "translateY(0)";
+        chip.style.opacity = op;
+        inner.style.transform = "rotate(" + (rot / 2 | 0) + "deg)";
+      }
+      frag.appendChild(chip);
+    }
+    aura.appendChild(frag);
+  })();
+
   (function () {
     var aura = document.querySelector(".hero-aura");
     var heroEl = document.querySelector(".hero");

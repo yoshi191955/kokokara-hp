@@ -232,33 +232,35 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 
 .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 2; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
 
-/* ---- ヒーロー背景：色とりどりの矩形が交わり、また離れる ---- */
+/* ---- ヒーロー背景：色とりどりの四角が上から降ってくる ---- */
 .hero-aura {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  overflow: hidden; background: #F4FAFC; transition: transform .5s var(--ease);
+  overflow: hidden; background: linear-gradient(180deg, #F2F9FC 0%, #EFF6FB 60%, #F6FBFD 100%);
+  transition: transform .5s var(--ease);
 }
-.hero-aura .shard {
-  position: absolute; display: block;
-  mix-blend-mode: multiply;          /* 重なると色が深まる（交わると生まれる） */
+.fall-chip {
+  position: absolute; top: 0;
+  will-change: transform, opacity;
+  animation-name: chipFall; animation-timing-function: linear; animation-iteration-count: infinite;
+}
+.fall-chip > i {
+  display: block; width: 100%; height: 100%;
   will-change: transform;
+  animation-name: chipSway; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
 }
-.hero-aura .s0 { top:49%; left:55%; width:48vmax; height:43vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(90,206,222,0.33) 0%, rgba(90,206,222,0.2) 46%, rgba(90,206,222,0) 82%); animation:sh0 40s ease-in-out -15s infinite; }
-.hero-aura .s1 { top:60%; left:7%; width:43vmax; height:30vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(96,214,190,0.38) 0%, rgba(96,214,190,0.23) 46%, rgba(96,214,190,0) 82%); animation:sh1 36s ease-in-out -30s infinite; }
-.hero-aura .s2 { top:-4%; left:3%; width:50vmax; height:28vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(120,190,240,0.38) 0%, rgba(120,190,240,0.23) 46%, rgba(120,190,240,0) 82%); animation:sh2 38s ease-in-out -10s infinite; }
-.hero-aura .s3 { top:-8%; left:59%; width:54vmax; height:35vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(150,232,222,0.36) 0%, rgba(150,232,222,0.22) 46%, rgba(150,232,222,0) 82%); animation:sh3 32s ease-in-out -13s infinite; }
-.hero-aura .s4 { top:28%; left:61%; width:44vmax; height:33vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(150,178,240,0.38) 0%, rgba(150,178,240,0.23) 46%, rgba(150,178,240,0) 82%); animation:sh4 27s ease-in-out -12s infinite; }
-.hero-aura .s5 { top:19%; left:-4%; width:34vmax; height:47vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(88,204,196,0.37) 0%, rgba(88,204,196,0.22) 46%, rgba(88,204,196,0) 82%); animation:sh5 36s ease-in-out -13s infinite; }
-.hero-aura .s6 { top:31%; left:7%; width:42vmax; height:36vmax; border-radius:10px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(118,200,232,0.43) 0%, rgba(118,200,232,0.26) 46%, rgba(118,200,232,0) 82%); animation:sh6 27s ease-in-out -4s infinite; }
-.hero-aura .s7 { top:16%; left:18%; width:48vmax; height:41vmax; border-radius:16px; background:radial-gradient(ellipse 72% 72% at 50% 50%, rgba(80,196,214,0.44) 0%, rgba(80,196,214,0.26) 46%, rgba(80,196,214,0) 82%); animation:sh7 28s ease-in-out -13s infinite; }
-@keyframes sh0 { 0%,100% { transform:translate(0,0) rotate(8deg) scale(1); } 50% { transform:translate(20vw,5vh) rotate(-1deg) scale(0.88); } }
-@keyframes sh1 { 0%,100% { transform:translate(0,0) rotate(20deg) scale(1); } 50% { transform:translate(8vw,6vh) rotate(8deg) scale(1.07); } }
-@keyframes sh2 { 0%,100% { transform:translate(0,0) rotate(-12deg) scale(1); } 50% { transform:translate(8vw,4vh) rotate(-19deg) scale(1.03); } }
-@keyframes sh3 { 0%,100% { transform:translate(0,0) rotate(18deg) scale(1); } 50% { transform:translate(15vw,12vh) rotate(-4deg) scale(1.1); } }
-@keyframes sh4 { 0%,100% { transform:translate(0,0) rotate(-23deg) scale(1); } 50% { transform:translate(-14vw,13vh) rotate(-18deg) scale(0.99); } }
-@keyframes sh5 { 0%,100% { transform:translate(0,0) rotate(-11deg) scale(1); } 50% { transform:translate(-16vw,4vh) rotate(-18deg) scale(1.12); } }
-@keyframes sh6 { 0%,100% { transform:translate(0,0) rotate(-3deg) scale(1); } 50% { transform:translate(-5vw,8vh) rotate(-23deg) scale(0.85); } }
-@keyframes sh7 { 0%,100% { transform:translate(0,0) rotate(4deg) scale(1); } 50% { transform:translate(4vw,-11vh) rotate(22deg) scale(1.0); } }
-@media (prefers-reduced-motion: reduce) { .hero-aura .shard { animation-duration: 0s; } }
+@keyframes chipFall {
+  0%   { transform: translateY(-22vh); opacity: 0; }
+  7%   { opacity: var(--op); }
+  90%  { opacity: var(--op); }
+  100% { transform: translateY(122vh); opacity: 0; }
+}
+@keyframes chipSway {
+  0%, 100% { transform: translateX(calc(var(--amp) * -1)) rotate(calc(var(--rot) * -1)); }
+  50%      { transform: translateX(var(--amp)) rotate(var(--rot)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fall-chip, .fall-chip > i { animation: none !important; }
+}
 
 /* =========================================================
    マーキー（明色バンドで抜き差し）
