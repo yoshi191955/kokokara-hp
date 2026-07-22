@@ -86,22 +86,22 @@ body.menu-open .menu-btn .txt-close { display: inline; }
    ========================================================= */
 .menu-overlay { position: fixed; inset: 0; z-index: 55; background: var(--bg); transform: translateY(-101%); transition: transform .6s var(--ease); display: flex; flex-direction: column; padding-top: var(--header-h); visibility: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 body.menu-open .menu-overlay { transform: none; visibility: visible; }
-.menu-overlay .container { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: flex-start; padding-block: 26px 40px; max-width: 760px; margin-inline: 0 auto; width: 100%; }
+.menu-overlay .container { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: stretch; padding-block: clamp(14px, 3vh, 30px) clamp(14px, 3vh, 30px); max-width: 1280px; width: 100%; }
 
 .menu-back {
   align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
   background: none; border: 1px solid var(--line-2); border-radius: 100px;
-  padding: 9px 18px; margin-bottom: 22px;
+  padding: 9px 18px; margin-bottom: clamp(10px, 2vh, 20px);
   font-family: var(--font-jp); font-weight: 700; font-size: 13px; color: var(--text-70);
   transition: .25s var(--ease);
 }
 .menu-back:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
 .menu-back .mb-ico { font-family: var(--font-en); font-size: 15px; line-height: 1; }
 
-.menu-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; column-gap: clamp(24px, 5vw, 72px); border-top: 1px solid var(--line); }
+.menu-list { list-style: none; flex: 1 1 auto; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; column-gap: clamp(30px, 6vw, 100px); border-top: 1px solid var(--line); }
 .menu-list li { overflow: hidden; border-bottom: 1px solid var(--line); }
 
-.menu-list a { display: flex; align-items: center; gap: 14px; padding: 13px 4px; transform: translateY(110%); transition: transform .55s var(--ease), color .3s var(--ease), background .25s var(--ease); color: var(--text); }
+.menu-list a { display: flex; align-items: center; height: 100%; gap: clamp(14px, 1.6vw, 24px); padding: 0 6px; transform: translateY(110%); transition: transform .55s var(--ease), color .3s var(--ease), background .25s var(--ease); color: var(--text); }
 .menu-list a:hover { background: var(--bg-2); }
 body.menu-open .menu-list a { transform: none; }
 body.menu-open .menu-list li:nth-child(1) a { transition-delay: .06s; }
@@ -114,11 +114,11 @@ body.menu-open .menu-list li:nth-child(7) a { transition-delay: .30s; }
 body.menu-open .menu-list li:nth-child(8) a { transition-delay: .34s; }
 body.menu-open .menu-list li:nth-child(9) a { transition-delay: .38s; }
 body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
-.menu-list .idx { font-family: var(--font-en); font-weight: 800; font-size: 11px; letter-spacing: .1em; color: var(--accent); width: 30px; flex: none; }
-.menu-list .en-lbl { font-family: var(--font-en); font-weight: 900; font-style: italic; font-size: clamp(19px, 2.1vw, 26px); line-height: 1.1; letter-spacing: -.01em; }
-.menu-list .jp-lbl { font-family: var(--font-jp); font-weight: 700; font-size: 13px; color: var(--text-70); margin-left: auto; }
+.menu-list .idx { font-family: var(--font-en); font-weight: 800; font-size: clamp(11px, 1.1vw, 14px); letter-spacing: .1em; color: var(--accent); width: clamp(30px, 3vw, 44px); flex: none; }
+.menu-list .en-lbl { font-family: var(--font-en); font-weight: 900; font-style: italic; font-size: clamp(26px, 3.4vw, 48px); line-height: 1; letter-spacing: -.02em; }
+.menu-list .jp-lbl { font-family: var(--font-jp); font-weight: 700; font-size: clamp(13px, 1.3vw, 16px); color: var(--text-70); margin-left: auto; }
 .menu-list a:hover .en-lbl { color: var(--accent); }
-.menu-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 26px; color: var(--text-70); font-size: 12.5px; }
+.menu-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: clamp(12px, 2vh, 22px); color: var(--text-70); font-size: 12.5px; }
 .menu-foot .en { letter-spacing: .06em; }
 .menu-foot a { color: var(--text); border-bottom: 1px solid var(--line-2); }
 
@@ -443,7 +443,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
    ========================================================= */
 .site-footer { background: #06232B; color: #EAF4F7; padding: clamp(40px, 6vh, 64px) 0 36px; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
 .footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .015em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; padding-right: .12em; }
-.footer-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; align-items: flex-end; padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.footer-top { display: flex; align-items: center; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .footer-brand { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); }
 .footer-brand img { width: clamp(60px, 8.5vw, 104px); height: clamp(60px, 8.5vw, 104px); border-radius: clamp(14px, 2vw, 24px); }
 .footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(38px, 8vw, 96px); line-height: .9; color: #EAF4F7; }
