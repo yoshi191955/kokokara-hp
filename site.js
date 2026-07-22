@@ -247,11 +247,14 @@
 
       var chip = document.createElement("span");
       chip.className = "fall-chip";
+      var mover = document.createElement("b");
+      mover.className = "fall-move";
       chip.style.cssText =
         "left:" + rand(-2, 98).toFixed(2) + "%;" +
         "width:" + size + "px;height:" + size + "px;" +
         "animation-duration:" + dur + "s;animation-delay:" + delay + "s;" +
         "--op:" + op + ";";
+      chip.dataset.depth = depth.toFixed(3);
       var inner = document.createElement("i");
       var col = "hsl(" + hue.toFixed(0) + "," + sat.toFixed(0) + "%," + lit.toFixed(0) + "%)";
       inner.style.cssText =
@@ -261,7 +264,8 @@
           : "background:" + col + ";") +
         "animation-duration:" + swayDur + "s;animation-delay:" + (-rand(0, swayDur)).toFixed(2) + "s;" +
         "--amp:" + amp + "px;--rot:" + rot + "deg;";
-      chip.appendChild(inner);
+      mover.appendChild(inner);
+      chip.appendChild(mover);
 
       if (reduce) {
         /* 動きを止める設定では、画面内に静止配置して見せる */
@@ -279,18 +283,32 @@
     var aura = document.querySelector(".hero-aura");
     var heroEl = document.querySelector(".hero");
     if (!aura || !heroEl || reduce) return;
+    var chips = [].slice.call(aura.querySelectorAll(".fall-chip"));
+    /* 各chipに奥行き係数を持たせる。手前(depth大)ほど大きく動き、
+       奥は控えめ。カーソルから離れた向きへ押しやり、傾きも加える。 */
+    chips.forEach(function (ch) {
+      var d = parseFloat(ch.dataset.depth || "0.5");
+      ch.__k = 26 + d * 74;                 /* 移動量 26〜100px */
+      ch.__tilt = 6 + d * 12;               /* 傾き 6〜18deg */
+      ch.__mv = ch.querySelector(".fall-move");
+    });
     var tx = 0, ty = 0, cx = 0, cy = 0, ticking = false;
     function apply() {
-      cx += (tx - cx) * 0.08;
-      cy += (ty - cy) * 0.08;
-      aura.style.transform = "translate3d(" + cx.toFixed(2) + "px," + cy.toFixed(2) + "px,0)";
-      if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) requestAnimationFrame(apply);
+      cx += (tx - cx) * 0.09;
+      cy += (ty - cy) * 0.09;
+      for (var i = 0; i < chips.length; i++) {
+        var ch = chips[i];
+        ch.__mv.style.setProperty("--px", (cx * ch.__k).toFixed(2) + "px");
+        ch.__mv.style.setProperty("--py", (cy * ch.__k).toFixed(2) + "px");
+        ch.__mv.style.setProperty("--pr", (cx * ch.__tilt).toFixed(2) + "deg");
+      }
+      if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) requestAnimationFrame(apply);
       else ticking = false;
     }
     heroEl.addEventListener("pointermove", function (e) {
       var r = heroEl.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 46;
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 30;
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;   /* -1〜1 */
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
       if (!ticking) { ticking = true; requestAnimationFrame(apply); }
     }, { passive: true });
     heroEl.addEventListener("pointerleave", function () {
