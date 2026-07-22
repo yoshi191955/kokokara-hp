@@ -113,9 +113,9 @@
     for (var i = 0; i < N; i++) {
       var depth = Math.pow(Math.random(), 1.4);
       var size = Math.round(rand(10, 20) + depth * 34);
-      var hue = rand(160, 210), sat = rand(40, 62), lit = rand(66, 82);  /* 明るい寒色 */
+      var hue = rand(150, 260), sat = rand(66, 92), lit = rand(58, 74);  /* カラフルで鮮やか（緑〜青〜紫） */
       var outline = Math.random() < 0.4;
-      var op = +(0.04 + depth * 0.08).toFixed(2);                        /* 濃紺に薄く重ねる */
+      var op = +(0.30 + depth * 0.42).toFixed(2);                        /* 濃紺の上でしっかり発色 */
       var dur = +(rand(20, 32) - depth * 9).toFixed(1);
       var radius = pick([2, 4, 8, 12, size / 2 | 0]);
       var rot = Math.round(rand(-90, 90)), amp = Math.round(rand(4, 12));
@@ -129,16 +129,52 @@
       var col = "hsl(" + hue.toFixed(0) + "," + sat.toFixed(0) + "%," + lit.toFixed(0) + "%)";
       inner.style.cssText =
         "border-radius:" + radius + "px;" +
-        (outline ? "background:transparent;border:1.5px solid " + col + ";box-sizing:border-box;" : "background:" + col + ";") +
+        (outline ? "background:transparent;border:2px solid " + col + ";box-sizing:border-box;" : "background:" + col + ";") +
         "animation-duration:" + swayDur + "s;animation-delay:" + (-rand(0, swayDur)).toFixed(2) + "s;--amp:" + amp + "px;--rot:" + rot + "deg;";
       chip.appendChild(inner);
       if (reduce) {
         chip.style.top = rand(4, 84).toFixed(1) + "%";
         chip.style.transform = "translateY(0)"; chip.style.opacity = op;
       }
+      chip.dataset.depth = depth.toFixed(3);
       frag.appendChild(chip);
     }
     box.appendChild(frag);
+
+    /* フッターの四角にもカーソル連動の視差を効かせる */
+    if (!reduce) {
+      var footer = box.closest(".site-footer") || box.parentElement;
+      var fchips = [].slice.call(box.querySelectorAll(".foot-chip"));
+      fchips.forEach(function (ch) {
+        var d = parseFloat(ch.dataset.depth || "0.5");
+        ch.__k = 20 + d * 60; ch.__tilt = 5 + d * 12;
+        var mv = document.createElement("b"); mv.className = "foot-move";
+        while (ch.firstChild) mv.appendChild(ch.firstChild);
+        ch.appendChild(mv); ch.__mv = mv;
+      });
+      var ftx = 0, fty = 0, fcx = 0, fcy = 0, fticking = false;
+      function fapply() {
+        fcx += (ftx - fcx) * 0.09; fcy += (fty - fcy) * 0.09;
+        for (var i = 0; i < fchips.length; i++) {
+          var ch = fchips[i];
+          ch.__mv.style.setProperty("--px", (fcx * ch.__k).toFixed(2) + "px");
+          ch.__mv.style.setProperty("--py", (fcy * ch.__k).toFixed(2) + "px");
+          ch.__mv.style.setProperty("--pr", (fcx * ch.__tilt).toFixed(2) + "deg");
+        }
+        if (Math.abs(ftx - fcx) > 0.001 || Math.abs(fty - fcy) > 0.001) requestAnimationFrame(fapply);
+        else fticking = false;
+      }
+      footer.addEventListener("pointermove", function (e) {
+        var r = footer.getBoundingClientRect();
+        ftx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        fty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        if (!fticking) { fticking = true; requestAnimationFrame(fapply); }
+      }, { passive: true });
+      footer.addEventListener("pointerleave", function () {
+        ftx = 0; fty = 0;
+        if (!fticking) { fticking = true; requestAnimationFrame(fapply); }
+      }, { passive: true });
+    }
   })();
 
   /* ---- フッターの大型ワードマークを親幅にフィット（はみ出し防止） ---- */
