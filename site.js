@@ -38,11 +38,7 @@
     backBtn.addEventListener("click", function () {
       setMenu(false);
       /* 履歴があれば戻る。無い場合（直接開かれた等）はトップへ */
-      var ref = document.referrer || "";
-      var here = location.protocol + "//" + location.host;
-      var sameSite = ref.indexOf(here) === 0 ||
-                     (location.protocol === "file:" && ref.indexOf("file:") === 0);
-      if (sameSite && window.history.length > 1) window.history.back();
+      if (window.history.length > 1) window.history.back();
       else window.location.href = "index.html";
     });
   }
