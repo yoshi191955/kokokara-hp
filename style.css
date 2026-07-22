@@ -232,66 +232,39 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 
 .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; z-index: 2; pointer-events: none; background: linear-gradient(to top, var(--bg) 12%, rgba(255,255,255,0) 100%); }
 
-/* ---- ヒーロー背景：常時グラデーションの帯が波打つ ---- */
+/* ---- ヒーロー背景：色とりどりの矩形が交わり、また離れる ---- */
 .hero-aura {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  overflow: hidden; background: #EEF7FA; transition: transform .5s var(--ease);
+  overflow: hidden; background: linear-gradient(135deg, #EAF5F8 0%, #EEF3FB 60%, #F3FAFB 100%);
+  transition: transform .5s var(--ease);
 }
-/* 3枚の帯を縦に重ね、それぞれ横グラデ＋横スクロール＋縦の波でうねらせる。
-   各帯は画面より大きくとってあるので、常に画面全体が帯で埋まる。 */
-.hero-aura .wave {
-  position: absolute; left: -25%; width: 150%; height: 150%;
-  will-change: transform;
-  background-repeat: repeat-x; background-size: 55% 100%;
-  mask-repeat: repeat-x; -webkit-mask-repeat: repeat-x;
-  mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
+.hero-aura .shard {
+  position: absolute; display: block;
+  mix-blend-mode: screen;            /* 重なると光が混ざって別の色になる */
+  filter: blur(14px);                /* 縁をやわらげ、硬い四角にしすぎない */
+  will-change: transform, opacity;
 }
-/* 上下方向の波形マスク（sinカーブ）で帯の縁がうねる */
-.hero-aura .w1 {
-  top: -34%;
-  background-image: linear-gradient(90deg,
-    rgba(43,184,206,.85) 0%, rgba(63,203,168,.80) 26%, rgba(79,168,232,.82) 52%,
-    rgba(150,232,222,.80) 74%, rgba(43,184,206,.85) 100%);
-  -webkit-mask-image: radial-gradient(120% 60% at 50% 40%, #000 55%, transparent 78%);
-  mask-image: radial-gradient(120% 60% at 50% 40%, #000 55%, transparent 78%);
-  animation: drift1 26s linear infinite, sway1 7s ease-in-out infinite;
-}
-.hero-aura .w2 {
-  top: 8%;
-  background-image: linear-gradient(90deg,
-    rgba(63,203,168,.78) 0%, rgba(79,168,232,.80) 30%, rgba(126,157,232,.72) 60%,
-    rgba(43,184,206,.82) 100%);
-  -webkit-mask-image: radial-gradient(130% 55% at 50% 50%, #000 52%, transparent 80%);
-  mask-image: radial-gradient(130% 55% at 50% 50%, #000 52%, transparent 80%);
-  animation: drift2 34s linear infinite, sway2 9s ease-in-out infinite;
-}
-.hero-aura .w3 {
-  top: 42%;
-  background-image: linear-gradient(90deg,
-    rgba(79,168,232,.72) 0%, rgba(150,232,222,.80) 34%, rgba(43,184,206,.82) 66%,
-    rgba(63,203,168,.78) 100%);
-  -webkit-mask-image: radial-gradient(140% 58% at 50% 60%, #000 55%, transparent 82%);
-  mask-image: radial-gradient(140% 58% at 50% 60%, #000 55%, transparent 82%);
-  animation: drift3 30s linear infinite, sway3 8s ease-in-out infinite;
-}
-/* 横スクロール：背景を右→左へ流す（背景1枚分でループ＝継ぎ目なし） */
-@keyframes drift1 { from { background-position: 0 0; } to { background-position: -55% 0; } }
-@keyframes drift2 { from { background-position: 0 0; } to { background-position: 55% 0; } }
-@keyframes drift3 { from { background-position: 0 0; } to { background-position: -55% 0; } }
-/* 縦の波打ち：帯全体を上下に揺らしつつ、うねりで傾ける */
-@keyframes sway1 {
-  0%,100% { transform: translateY(0) skewY(0deg); }
-  50%     { transform: translateY(5vh) skewY(-2.4deg); }
-}
-@keyframes sway2 {
-  0%,100% { transform: translateY(0) skewY(0deg); }
-  50%     { transform: translateY(-5vh) skewY(2.2deg); }
-}
-@keyframes sway3 {
-  0%,100% { transform: translateY(0) skewY(0deg); }
-  50%     { transform: translateY(4vh) skewY(-2.0deg); }
-}
-@media (prefers-reduced-motion: reduce) { .hero-aura .wave { animation: none; } }
+.hero-aura .s0 { top:-4%; left:44%; width:40vmax; height:28vmax; border-radius:46px; background:linear-gradient(135deg, rgba(43,184,206,0.36), rgba(73,204,221,0.25)); animation:sh0 38s ease-in-out -1s infinite; }
+.hero-aura .s1 { top:1%; left:24%; width:43vmax; height:26vmax; border-radius:30px; background:linear-gradient(135deg, rgba(63,203,168,0.35), rgba(93,223,183,0.24)); animation:sh1 38s ease-in-out -3s infinite; }
+.hero-aura .s2 { top:61%; left:-1%; width:31vmax; height:31vmax; border-radius:14px; background:linear-gradient(135deg, rgba(79,168,232,0.39), rgba(109,188,247,0.27)); animation:sh2 24s ease-in-out -17s infinite; }
+.hero-aura .s3 { top:63%; left:68%; width:35vmax; height:27vmax; border-radius:14px; background:linear-gradient(135deg, rgba(150,232,222,0.41), rgba(180,252,237,0.29)); animation:sh3 37s ease-in-out -22s infinite; }
+.hero-aura .s4 { top:30%; left:48%; width:51vmax; height:41vmax; border-radius:46px; background:linear-gradient(135deg, rgba(126,157,232,0.51), rgba(156,177,247,0.36)); animation:sh4 31s ease-in-out -9s infinite; }
+.hero-aura .s5 { top:33%; left:57%; width:39vmax; height:40vmax; border-radius:30px; background:linear-gradient(135deg, rgba(52,199,188,0.39), rgba(82,219,203,0.27)); animation:sh5 22s ease-in-out -3s infinite; }
+.hero-aura .s6 { top:-5%; left:47%; width:34vmax; height:39vmax; border-radius:8px; background:linear-gradient(135deg, rgba(96,214,224,0.48), rgba(126,234,239,0.34)); animation:sh6 38s ease-in-out -25s infinite; }
+.hero-aura .s7 { top:1%; left:2%; width:48vmax; height:38vmax; border-radius:30px; background:linear-gradient(135deg, rgba(120,180,238,0.47), rgba(150,200,253,0.33)); animation:sh7 22s ease-in-out -1s infinite; }
+.hero-aura .s8 { top:34%; left:43%; width:44vmax; height:33vmax; border-radius:30px; background:linear-gradient(135deg, rgba(43,184,206,0.4), rgba(73,204,221,0.28)); animation:sh8 39s ease-in-out -3s infinite; }
+.hero-aura .s9 { top:40%; left:44%; width:34vmax; height:31vmax; border-radius:30px; background:linear-gradient(135deg, rgba(63,203,168,0.35), rgba(93,223,183,0.24)); animation:sh9 34s ease-in-out -12s infinite; }
+@keyframes sh0 { 0%,100% { transform:translate(0,0) rotate(-24deg) scale(1); } 33% { transform:translate(10vw,-3vh) rotate(-60deg) scale(0.84); } 66% { transform:translate(-6vw,-2vh) rotate(-6deg) scale(1.16); } }
+@keyframes sh1 { 0%,100% { transform:translate(0,0) rotate(7deg) scale(1); } 33% { transform:translate(-8vw,-13vh) rotate(40deg) scale(1.06); } 66% { transform:translate(4vw,-9vh) rotate(-9deg) scale(0.94); } }
+@keyframes sh2 { 0%,100% { transform:translate(0,0) rotate(26deg) scale(1); } 33% { transform:translate(-15vw,3vh) rotate(57deg) scale(1.17); } 66% { transform:translate(9vw,2vh) rotate(11deg) scale(0.83); } }
+@keyframes sh3 { 0%,100% { transform:translate(0,0) rotate(12deg) scale(1); } 33% { transform:translate(-18vw,-13vh) rotate(51deg) scale(0.89); } 66% { transform:translate(10vw,-9vh) rotate(-7deg) scale(1.11); } }
+@keyframes sh4 { 0%,100% { transform:translate(0,0) rotate(1deg) scale(1); } 33% { transform:translate(-7vw,-5vh) rotate(-8deg) scale(0.84); } 66% { transform:translate(4vw,-3vh) rotate(6deg) scale(1.16); } }
+@keyframes sh5 { 0%,100% { transform:translate(0,0) rotate(18deg) scale(1); } 33% { transform:translate(10vw,10vh) rotate(-1deg) scale(1.14); } 66% { transform:translate(-6vw,7vh) rotate(28deg) scale(0.86); } }
+@keyframes sh6 { 0%,100% { transform:translate(0,0) rotate(14deg) scale(1); } 33% { transform:translate(-2vw,5vh) rotate(18deg) scale(1.07); } 66% { transform:translate(1vw,3vh) rotate(12deg) scale(0.93); } }
+@keyframes sh7 { 0%,100% { transform:translate(0,0) rotate(-11deg) scale(1); } 33% { transform:translate(22vw,3vh) rotate(22deg) scale(1.25); } 66% { transform:translate(-13vw,2vh) rotate(-27deg) scale(0.75); } }
+@keyframes sh8 { 0%,100% { transform:translate(0,0) rotate(-27deg) scale(1); } 33% { transform:translate(9vw,-13vh) rotate(-40deg) scale(1.15); } 66% { transform:translate(-5vw,-9vh) rotate(-20deg) scale(0.85); } }
+@keyframes sh9 { 0%,100% { transform:translate(0,0) rotate(27deg) scale(1); } 33% { transform:translate(13vw,1vh) rotate(4deg) scale(1.17); } 66% { transform:translate(-7vw,0vh) rotate(39deg) scale(0.83); } }
+@media (prefers-reduced-motion: reduce) { .hero-aura .shard { animation-duration: 0s; } }
 
 /* =========================================================
    マーキー（明色バンドで抜き差し）
