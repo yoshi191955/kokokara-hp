@@ -25,7 +25,13 @@
       setMenu(!document.body.classList.contains("menu-open"));
     });
     overlay.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () { setMenu(false); });
+      a.addEventListener("click", function () {
+        var href = a.getAttribute("href") || "";
+        var cur = location.pathname.split("/").pop() || "index.html";
+        /* 別ページへ遷移するリンクは閉じない（遷移するまでメニューを保持）。
+           同じページ・ページ内アンカーのときだけ閉じる。 */
+        if (href === "" || href.charAt(0) === "#" || href === cur) setMenu(false);
+      });
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") setMenu(false);

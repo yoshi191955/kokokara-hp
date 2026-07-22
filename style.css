@@ -443,7 +443,7 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
    ========================================================= */
 .site-footer { background: #06232B; color: #EAF4F7; padding: clamp(40px, 6vh, 64px) 0 36px; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
 .footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .015em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; padding-right: .12em; }
-.footer-top { display: flex; align-items: center; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.14); }
+.footer-top { display: flex; justify-content: flex-end; align-items: center; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .footer-brand { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); }
 .footer-brand img { width: clamp(60px, 8.5vw, 104px); height: clamp(60px, 8.5vw, 104px); border-radius: clamp(14px, 2vw, 24px); }
 .footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(38px, 8vw, 96px); line-height: .9; color: #EAF4F7; }
