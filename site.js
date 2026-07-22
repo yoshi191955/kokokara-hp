@@ -77,6 +77,26 @@
     probe.src = m[1];
   })();
 
+  /* ---- 背景動画を確実に再生（autoplayブロック対策） ---- */
+  (function () {
+    var vids = document.querySelectorAll("video[autoplay]");
+    if (!vids.length) return;
+    vids.forEach(function (v) {
+      v.muted = true; v.defaultMuted = true; v.setAttribute("muted", "");
+      function tryPlay() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      tryPlay();
+      v.addEventListener("canplay", tryPlay, { once: true });
+      v.addEventListener("loadeddata", tryPlay, { once: true });
+    });
+    /* 一部ブラウザは最初のユーザー操作まで待つため、その時点でも再生を試みる */
+    var kick = function () {
+      vids.forEach(function (v) { if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } });
+    };
+    document.addEventListener("pointerdown", kick, { once: true });
+    document.addEventListener("touchstart", kick, { once: true });
+    document.addEventListener("scroll", kick, { once: true, passive: true });
+  })();
+
   /* ---- 現在の年 ---- */
   var y = document.querySelector("[data-year]");
   if (y) y.textContent = new Date().getFullYear();

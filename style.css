@@ -84,9 +84,9 @@ body.menu-open .menu-btn .txt-close { display: inline; }
 /* =========================================================
    フルスクリーン・メニュー
    ========================================================= */
-.menu-overlay { position: fixed; inset: 0; z-index: 55; background: var(--bg); transform: translateY(-101%); transition: transform .6s var(--ease); display: flex; flex-direction: column; padding-top: var(--header-h); visibility: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.menu-overlay { position: fixed; inset: 0; z-index: 55; background: var(--bg); transform: translateY(-101%); transition: transform .6s var(--ease); display: flex; flex-direction: column; padding-top: calc(var(--header-h) - 12px); visibility: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 body.menu-open .menu-overlay { transform: none; visibility: visible; }
-.menu-overlay .container { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: stretch; padding-block: clamp(14px, 3vh, 30px) clamp(14px, 3vh, 30px); max-width: 1280px; width: 100%; }
+.menu-overlay .container { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; padding-block: clamp(8px, 1.5vh, 16px) clamp(10px, 1.8vh, 18px); max-width: 1280px; width: 100%; }
 
 .menu-back {
   align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
@@ -98,7 +98,7 @@ body.menu-open .menu-overlay { transform: none; visibility: visible; }
 .menu-back:hover { background: var(--text); border-color: var(--text); color: var(--bg); }
 .menu-back .mb-ico { font-family: var(--font-en); font-size: 15px; line-height: 1; }
 
-.menu-list { list-style: none; flex: 1 1 auto; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; column-gap: clamp(30px, 6vw, 100px); border-top: 1px solid var(--line); }
+.menu-list { list-style: none; flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(0, 1fr); column-gap: clamp(30px, 6vw, 100px); border-top: 1px solid var(--line); }
 .menu-list li { overflow: hidden; border-bottom: 1px solid var(--line); }
 
 .menu-list a { display: flex; align-items: center; height: 100%; gap: clamp(14px, 1.6vw, 24px); padding: 0 6px; transform: translateY(110%); transition: transform .55s var(--ease), color .3s var(--ease), background .25s var(--ease); color: var(--text); }
