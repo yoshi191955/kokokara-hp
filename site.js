@@ -36,10 +36,9 @@
   var backBtn = document.querySelector(".menu-back");
   if (backBtn) {
     backBtn.addEventListener("click", function () {
+      /* メニューはオーバーレイなので「前のページ」＝開く直前に見ていた今のページ。
+         履歴を遡るとホーム等へ飛ぶため、メニューを閉じて元のページに戻す。 */
       setMenu(false);
-      /* 履歴があれば戻る。無い場合（直接開かれた等）はトップへ */
-      if (window.history.length > 1) window.history.back();
-      else window.location.href = "index.html";
     });
   }
 
