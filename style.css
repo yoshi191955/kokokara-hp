@@ -393,8 +393,8 @@ a.stmt-card { transition: transform .4s var(--ease); }
 .member-name { font-family: var(--font-jp); font-weight: 900; font-size: 20px; margin-top: 8px; }
 
 /* ---------- 協賛CTA（05）── 鮮やかオレンジのバンド ---------- */
-.cta-band { background: var(--grad); color: var(--on-accent); border-radius: 32px; padding: clamp(40px, 6vw, 84px); position: relative; overflow: hidden; min-height: clamp(300px, 40vw, 440px); }
-.cta-band::before { content: ""; position: absolute; right: -10%; bottom: -60%; width: 55%; height: 180%; background: radial-gradient(circle, rgba(255,255,255,.25), transparent 60%); }
+.cta-band { background: #0B687F; color: var(--on-accent); border-radius: 32px; padding: clamp(40px, 6vw, 84px); position: relative; overflow: hidden; min-height: clamp(300px, 40vw, 440px); }
+.cta-band::before { display: none; }
 .cta-eyebrow { position: relative; font-family: var(--font-en); font-weight: 800; font-size: 12px; letter-spacing: .16em; color: rgba(255,255,255,.78); text-transform: uppercase; }
 .cta-band h2 { position: relative; font-family: var(--font-jp); font-weight: 900; font-size: clamp(26px, 3.8vw, 46px); line-height: 1.3; margin: 16px 0 18px; }
 .cta-band p { position: relative; color: rgba(255,255,255,.88); max-width: 640px; margin-bottom: 30px; }
