@@ -112,7 +112,7 @@
             </div>
           </div>
           <div class="statement-visual reveal d2">
-            <div class="stmt-card">
+            <a class="stmt-card" href="about.html" aria-label="私たちについて（ABOUT）を見る">
               <span class="glow" aria-hidden="true"></span>
               <span class="watermark" aria-hidden="true">KOKOKARA</span>
               <div class="stmt-bg" aria-hidden="true">
@@ -161,7 +161,7 @@
                 <span>KOKOKARA</span>
                 <span>Kansai / Japan</span>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>
@@ -257,6 +257,76 @@
       </div>
     </div>
 
+    <div class="modal" id="mc-sakaguchi" role="dialog" aria-modal="true" aria-labelledby="mc-sakaguchi-name">
+      <div class="modal-panel meishi">
+        <button class="modal-close" data-modal-close aria-label="閉じる">&times;</button>
+        <div class="meishi-head">
+          <div class="meishi-avatar" data-initial="坂"></div>
+          <div class="meishi-id">
+            <p class="meishi-name" id="mc-sakaguchi-name">坂口 慶成</p>
+            <p class="meishi-roma">準備中</p>
+            <span class="meishi-role">Co-Representative ／ 共同代表</span>
+          </div>
+        </div>
+        <dl class="meishi-info">
+          <div><dt>担当</dt><dd>全体統括・協賛企業との窓口</dd></div>
+          <div><dt>所属</dt><dd>準備中</dd></div>
+          <div><dt>ひとこと</dt><dd>就活が不安な人ほど、最初の一歩をここで踏み出してほしい。</dd></div>
+        </dl>
+        <div class="meishi-foot">
+          <div class="meishi-qr" aria-hidden="true">QR<br />準備中</div>
+          <a class="btn" href="https://line.me/R/ti/p/@113crihp">団体に問い合わせる <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="mc-tahara" role="dialog" aria-modal="true" aria-labelledby="mc-tahara-name">
+      <div class="modal-panel meishi">
+        <button class="modal-close" data-modal-close aria-label="閉じる">&times;</button>
+        <div class="meishi-head">
+          <div class="meishi-avatar" data-initial="田"></div>
+          <div class="meishi-id">
+            <p class="meishi-name" id="mc-tahara-name">田原 明日翔</p>
+            <p class="meishi-roma">準備中</p>
+            <span class="meishi-role">Co-Representative ／ 共同代表</span>
+          </div>
+        </div>
+        <dl class="meishi-info">
+          <div><dt>担当</dt><dd>イベント企画・当日運営</dd></div>
+          <div><dt>所属</dt><dd>準備中</dd></div>
+          <div><dt>ひとこと</dt><dd>肩書きを外して話せる場を、毎回本気でつくっています。</dd></div>
+        </dl>
+        <div class="meishi-foot">
+          <div class="meishi-qr" aria-hidden="true">QR<br />準備中</div>
+          <a class="btn" href="https://line.me/R/ti/p/@113crihp">団体に問い合わせる <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="mc-kadota" role="dialog" aria-modal="true" aria-labelledby="mc-kadota-name">
+      <div class="modal-panel meishi">
+        <button class="modal-close" data-modal-close aria-label="閉じる">&times;</button>
+        <div class="meishi-head">
+          <div class="meishi-avatar" data-initial="門"></div>
+          <div class="meishi-id">
+            <p class="meishi-name" id="mc-kadota-name">門田 寛大</p>
+            <p class="meishi-roma">準備中</p>
+            <span class="meishi-role">Vice-Representative ／ 副代表</span>
+          </div>
+        </div>
+        <dl class="meishi-info">
+          <div><dt>担当</dt><dd>育成プログラムの設計</dd></div>
+          <div><dt>所属</dt><dd>準備中</dd></div>
+          <div><dt>ひとこと</dt><dd>社会に出てから効く力を、在学中に積み上げられます。</dd></div>
+        </dl>
+        <div class="meishi-foot">
+          <div class="meishi-qr" aria-hidden="true">QR<br />準備中</div>
+          <a class="btn" href="https://line.me/R/ti/p/@113crihp">団体に問い合わせる <span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+
     <!-- 03 イベント -->
     <section class="section" id="events">
       <div class="container">
@@ -282,20 +352,23 @@
           <h2 class="sec-title">運営メンバー</h2>
         </div>
         <div class="members">
-          <div class="member-card reveal d1">
+          <div class="member-card reveal d1" data-modal-open="mc-sakaguchi" role="button" tabindex="0" aria-label="坂口 慶成のプロフィールを見る">
             <div class="member-avatar">坂</div>
             <span class="member-role">Co-Representative</span>
             <p class="member-name">坂口 慶成</p>
+            <span class="member-more">プロフィール →</span>
           </div>
-          <div class="member-card reveal d2">
+          <div class="member-card reveal d2" data-modal-open="mc-tahara" role="button" tabindex="0" aria-label="田原 明日翔のプロフィールを見る">
             <div class="member-avatar">田</div>
             <span class="member-role">Co-Representative</span>
             <p class="member-name">田原 明日翔</p>
+            <span class="member-more">プロフィール →</span>
           </div>
-          <div class="member-card reveal d3">
+          <div class="member-card reveal d3" data-modal-open="mc-kadota" role="button" tabindex="0" aria-label="門田 寛大のプロフィールを見る">
             <div class="member-avatar">門</div>
             <span class="member-role">Vice-Representative</span>
             <p class="member-name">門田 寛大</p>
+            <span class="member-more">プロフィール →</span>
           </div>
         </div>
       </div>
@@ -309,6 +382,7 @@
           <h2>「新しい就活の形」を、<br />一緒につくりませんか。</h2>
           <p>ココカラは、企業と学生をつなぐ交流会を毎月開催しています。<br />学生と本音で出会いたい企業さまを募集しています。</p>
           <a class="btn" href="sponsors.html">協賛企業一覧を見る <span class="arrow">→</span></a>
+          <img class="cta-clark" src="assets/clark.png" alt="" aria-hidden="true" />
         </div>
       </div>
     </section>
