@@ -660,8 +660,8 @@ body.menu-open .menu-list li:nth-child(10) a { transition-delay: .42s; }
 .card-bg.card-photo {
   opacity: 1;
   background-image: var(--img);
-  background-size: 88% auto;
-  background-position: center 8%;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
