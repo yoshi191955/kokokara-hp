@@ -796,8 +796,8 @@ a.stmt-card { transition: transform .4s var(--ease); }
 
 /* 協賛CTA右側のクラーク博士（左の見出しを指さす） */
 .cta-clark {
-  position: absolute; right: clamp(48px, 13vw, 240px); bottom: clamp(24px, 5vw, 72px);
-  width: clamp(180px, 23vw, 320px); height: auto; z-index: 2;
+  position: absolute; left: 74%; top: 50%; transform: translate(-50%, -50%);
+  width: clamp(170px, 21vw, 300px); height: auto; z-index: 2;
   pointer-events: none; filter: drop-shadow(0 12px 24px rgba(6,50,60,.28));
 }
 @media (max-width: 900px) { .cta-clark { display: none; } }
