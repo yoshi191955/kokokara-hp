@@ -444,20 +444,42 @@ a.stmt-card { transition: transform .4s var(--ease); }
 /* =========================================================
    フッター
    ========================================================= */
-.site-footer { background: #06232B; color: #EAF4F7; padding: clamp(72px, 11vh, 130px) 0 0; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
+.site-footer { background: #06232B; color: #EAF4F7; padding: 0; position: relative; z-index: 5; overflow: hidden; border-top: 0; min-height: calc(100dvh - var(--header-h)); display: flex; flex-direction: column; }
 .footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .015em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; padding-right: .12em; }
-.footer-top { display: flex; justify-content: center; align-items: center; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.14); }
-.footer-main { display: flex; justify-content: space-between; align-items: flex-end; gap: clamp(30px, 5vw, 80px); flex-wrap: wrap; padding-bottom: clamp(40px, 6vh, 72px); }
+/* フッター全体を縦フレックスに。上段が余白を吸収し、SNS・規約・著作権を最下部へ */
+.site-footer .container.footer-shell { flex: 1 1 auto; display: flex; flex-direction: column; padding-top: clamp(60px, 9vh, 116px); }
+
+/* 上段: ブランド + ナビ列 */
+.footer-main { flex: 1 1 auto; display: flex; justify-content: space-between; align-items: flex-start; gap: clamp(32px, 5vw, 90px); flex-wrap: wrap; padding-bottom: clamp(40px, 6vh, 80px); }
 .footer-brand { display: flex; align-items: center; gap: clamp(16px, 2.2vw, 30px); }
 .footer-brand img { width: clamp(66px, 9vw, 118px); height: clamp(66px, 9vw, 118px); border-radius: clamp(16px, 2.2vw, 28px); }
 .footer-brand-text { display: flex; flex-direction: column; }
-.footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(42px, 9vw, 112px); line-height: .88; color: #EAF4F7; }
-.footer-tagline { color: rgba(234,244,247,.72); margin-top: 14px; font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; line-height: 1.7; max-width: 34em; }
-.footer-nav { display: flex; flex-wrap: wrap; gap: 10px 8px; align-content: flex-end; max-width: 460px; }
-.footer-nav a { font-family: var(--font-en); font-weight: 700; font-size: 13px; letter-spacing: .1em; padding: 9px 16px; border: 1px solid rgba(255,255,255,.24); border-radius: 100px; color: rgba(234,244,247,.78); transition: .25s var(--ease); text-transform: uppercase; }
-.footer-nav a:hover { background: #EAF4F7; color: #06232B; border-color: #EAF4F7; }
-.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 24px 0 32px; margin-top: 0; border-top: 1px solid rgba(255,255,255,.14); color: rgba(234,244,247,.55); font-size: 13px; }
-.footer-bottom .en { letter-spacing: .06em; }
+.footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(40px, 8vw, 100px); line-height: .88; color: #EAF4F7; }
+.footer-tagline { color: rgba(234,244,247,.72); margin-top: 14px; font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; line-height: 1.7; max-width: 30em; }
+
+/* ナビ列（Rohm風の複数カラム） */
+.footer-cols { display: flex; gap: clamp(28px, 4vw, 72px); flex-wrap: wrap; }
+.footer-col { display: flex; flex-direction: column; gap: 13px; min-width: 118px; }
+.footer-col-title { font-family: var(--font-en); font-weight: 800; font-size: 12px; letter-spacing: .18em; color: rgba(234,244,247,.5); margin: 0 0 3px; text-transform: uppercase; }
+.footer-col a { color: rgba(234,244,247,.82); font-weight: 700; font-size: 14.5px; transition: color .25s var(--ease); }
+.footer-col a:hover { color: #fff; }
+
+/* 中段: Follow Us + SNSアイコン */
+.footer-social { display: flex; align-items: center; justify-content: center; gap: clamp(16px, 2.5vw, 30px); padding: clamp(26px, 4vh, 44px) 0; border-top: 1px solid rgba(255,255,255,.14); flex-wrap: wrap; }
+.footer-social-label { font-family: var(--font-en); font-weight: 800; font-size: 15px; letter-spacing: .12em; color: #EAF4F7; }
+.footer-social-icons { display: flex; align-items: center; gap: clamp(10px, 1.4vw, 16px); }
+.sns-ic { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.24); color: #EAF4F7; transition: .25s var(--ease); }
+.sns-ic svg { width: 19px; height: 19px; fill: currentColor; display: block; }
+.sns-ic:hover { background: #EAF4F7; color: #06232B; border-color: #EAF4F7; transform: translateY(-2px); }
+
+/* 下段: ユーティリティリンク */
+.footer-utility { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 0; padding-bottom: clamp(16px, 2.4vh, 24px); }
+.footer-utility a { color: rgba(234,244,247,.7); font-size: 13px; font-weight: 700; padding: 0 clamp(12px, 1.4vw, 20px); position: relative; transition: color .25s var(--ease); }
+.footer-utility a:not(:last-child)::after { content: ""; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 12px; background: rgba(255,255,255,.22); }
+.footer-utility a:hover { color: #fff; }
+
+/* コピーライト */
+.footer-copy { text-align: center; padding-bottom: clamp(24px, 4vh, 40px); color: rgba(234,244,247,.5); font-size: 12.5px; letter-spacing: .05em; }
 
 /* =========================================================
    リビール
@@ -487,6 +509,8 @@ a.stmt-card { transition: transform .4s var(--ease); }
   .hero-marks { display: none; }
   .hero-foot { flex-direction: column; align-items: stretch; gap: 18px; }
   .hero-scroll { display: none; }
+  .footer-main { flex-direction: column; align-items: flex-start; gap: clamp(28px, 5vh, 44px); }
+  .footer-cols { gap: 28px 40px; }
 }
 @media (max-width: 520px) {
   .stats { grid-template-columns: 1fr; gap: 22px; text-align: left; }
