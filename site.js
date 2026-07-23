@@ -49,7 +49,7 @@
   }
 
   /* ---- リビール演出 ---- */
-  var targets = document.querySelectorAll(".reveal");
+  var targets = document.querySelectorAll(".reveal, .cta-copy, .cta-clark");
   if ("IntersectionObserver" in window && !reduce) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {

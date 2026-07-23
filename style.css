@@ -20,7 +20,7 @@
   --on-accent: #FFFFFF;
   --max: 1320px;
   --pad: clamp(20px, 5vw, 92px);
-  --header-h: 78px;
+  --header-h: 100px;
   --ease: cubic-bezier(.22, 1, .36, 1);
   --font-jp: "Zen Kaku Gothic New", "Noto Sans JP", system-ui, sans-serif;
   --font-body: "Noto Sans JP", system-ui, -apple-system, sans-serif;
@@ -61,23 +61,23 @@ body::before {
   border-bottom-color: var(--line);
 }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.brand { display: flex; align-items: center; gap: 11px; z-index: 65; }
-.brand img { width: 34px; height: 34px; border-radius: 9px; }
-.brand-name { font-family: var(--font-jp); font-weight: 900; font-size: 16px; letter-spacing: .02em; color: var(--text); }
+.brand { display: flex; align-items: center; gap: 14px; z-index: 65; }
+.brand img { width: 46px; height: 46px; border-radius: 12px; }
+.brand-name { font-family: var(--font-jp); font-weight: 900; font-size: 22px; letter-spacing: .02em; color: var(--text); }
 
-.header-right { display: flex; align-items: center; gap: 22px; z-index: 65; }
-.nav-inline { display: flex; align-items: center; gap: 4px; }
-.nav-inline a { font-family: var(--font-en); font-weight: 700; font-size: 12px; letter-spacing: .13em; padding: 8px 14px; border-radius: 100px; color: var(--text-70); transition: color .25s var(--ease); }
+.header-right { display: flex; align-items: center; gap: 28px; z-index: 65; }
+.nav-inline { display: flex; align-items: center; gap: 6px; }
+.nav-inline a { font-family: var(--font-en); font-weight: 700; font-size: 15px; letter-spacing: .13em; padding: 10px 17px; border-radius: 100px; color: var(--text-70); transition: color .25s var(--ease); }
 .nav-inline a:hover, .nav-inline a.active { color: var(--text); }
 
-.menu-btn { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; background: none; border: 0; font-family: var(--font-en); font-weight: 800; font-size: 12px; letter-spacing: .14em; color: var(--text); }
-.menu-btn .bars { position: relative; width: 26px; height: 12px; }
-.menu-btn .bars span { position: absolute; left: 0; width: 26px; height: 2px; background: var(--text); transition: .35s var(--ease); }
-.menu-btn .bars span:nth-child(1) { top: 2px; }
-.menu-btn .bars span:nth-child(2) { top: 9px; }
+.menu-btn { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; background: none; border: 0; font-family: var(--font-en); font-weight: 800; font-size: 15px; letter-spacing: .14em; color: var(--text); }
+.menu-btn .bars { position: relative; width: 32px; height: 15px; }
+.menu-btn .bars span { position: absolute; left: 0; width: 32px; height: 2.5px; background: var(--text); transition: .35s var(--ease); }
+.menu-btn .bars span:nth-child(1) { top: 3px; }
+.menu-btn .bars span:nth-child(2) { top: 11px; }
 .menu-btn .txt-close { display: none; }
-body.menu-open .menu-btn .bars span:nth-child(1) { top: 5px; transform: rotate(45deg); }
-body.menu-open .menu-btn .bars span:nth-child(2) { top: 5px; transform: rotate(-45deg); }
+body.menu-open .menu-btn .bars span:nth-child(1) { top: 7px; transform: rotate(45deg); }
+body.menu-open .menu-btn .bars span:nth-child(2) { top: 7px; transform: rotate(-45deg); }
 body.menu-open .menu-btn .txt-open { display: none; }
 body.menu-open .menu-btn .txt-close { display: inline; }
 
@@ -444,17 +444,19 @@ a.stmt-card { transition: transform .4s var(--ease); }
 /* =========================================================
    フッター
    ========================================================= */
-.site-footer { background: #06232B; color: #EAF4F7; padding: clamp(40px, 6vh, 64px) 0 36px; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
+.site-footer { background: #06232B; color: #EAF4F7; padding: clamp(72px, 11vh, 130px) 0 0; position: relative; z-index: 5; overflow: hidden; border-top: 0; }
 .footer-word { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .015em; font-size: clamp(60px, 18vw, 270px); line-height: .8; color: rgba(255,255,255,.06); pointer-events: none; margin-bottom: -.1em; white-space: nowrap; padding-right: .12em; }
 .footer-top { display: flex; justify-content: center; align-items: center; padding-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.14); }
-.footer-brand { display: flex; align-items: center; gap: clamp(14px, 2vw, 26px); }
-.footer-brand img { width: clamp(60px, 8.5vw, 104px); height: clamp(60px, 8.5vw, 104px); border-radius: clamp(14px, 2vw, 24px); }
-.footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(38px, 8vw, 96px); line-height: .9; color: #EAF4F7; }
-.footer-tagline { color: rgba(234,244,247,.82); margin-top: 14px; font-size: clamp(15px, 1.6vw, 17px); font-weight: 700; }
-.footer-nav { display: flex; flex-wrap: wrap; gap: 8px 6px; }
-.footer-nav a { font-family: var(--font-en); font-weight: 700; font-size: 12.5px; letter-spacing: .1em; padding: 8px 15px; border: 1px solid rgba(255,255,255,.24); border-radius: 100px; color: rgba(234,244,247,.78); transition: .25s var(--ease); text-transform: uppercase; }
+.footer-main { display: flex; justify-content: space-between; align-items: flex-end; gap: clamp(30px, 5vw, 80px); flex-wrap: wrap; padding-bottom: clamp(40px, 6vh, 72px); }
+.footer-brand { display: flex; align-items: center; gap: clamp(16px, 2.2vw, 30px); }
+.footer-brand img { width: clamp(66px, 9vw, 118px); height: clamp(66px, 9vw, 118px); border-radius: clamp(16px, 2.2vw, 28px); }
+.footer-brand-text { display: flex; flex-direction: column; }
+.footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(42px, 9vw, 112px); line-height: .88; color: #EAF4F7; }
+.footer-tagline { color: rgba(234,244,247,.72); margin-top: 14px; font-size: clamp(14px, 1.5vw, 17px); font-weight: 700; line-height: 1.7; max-width: 34em; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 10px 8px; align-content: flex-end; max-width: 460px; }
+.footer-nav a { font-family: var(--font-en); font-weight: 700; font-size: 13px; letter-spacing: .1em; padding: 9px 16px; border: 1px solid rgba(255,255,255,.24); border-radius: 100px; color: rgba(234,244,247,.78); transition: .25s var(--ease); text-transform: uppercase; }
 .footer-nav a:hover { background: #EAF4F7; color: #06232B; border-color: #EAF4F7; }
-.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 26px; color: rgba(234,244,247,.55); font-size: 13px; }
+.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 24px 0 32px; margin-top: 0; border-top: 1px solid rgba(255,255,255,.14); color: rgba(234,244,247,.55); font-size: 13px; }
 .footer-bottom .en { letter-spacing: .06em; }
 
 /* =========================================================
@@ -468,7 +470,10 @@ a.stmt-card { transition: transform .4s var(--ease); }
    レスポンシブ
    ========================================================= */
 @media (max-width: 900px) {
-  :root { --header-h: 66px; }
+  :root { --header-h: 80px; }
+  .brand img { width: 40px; height: 40px; border-radius: 11px; }
+  .brand-name { font-size: 19px; }
+  .menu-btn { font-size: 14px; }
   .nav-inline { display: none; }
   .menu-list { grid-template-columns: 1fr; }
   .menu-list .jp-lbl { font-size: 12px; }
@@ -792,6 +797,19 @@ a.stmt-card { transition: transform .4s var(--ease); }
 @media (max-width: 480px) {
   .meishi-foot { flex-direction: column; align-items: stretch; }
   .meishi-qr { margin: 0 auto; }
+}
+
+
+/* 協賛CTA：文章は左から、博士は右からスライドイン（ゆっくり止まる） */
+.cta-copy { position: relative; z-index: 1; opacity: 0; transform: translateX(-70px); transition: opacity 1s ease, transform 1.3s var(--ease); }
+.cta-copy.in { opacity: 1; transform: none; }
+.cta-clark { transition: opacity 1s ease, transform 1.3s var(--ease); }
+.cta-clark:not(.in) { opacity: 0; transform: translate(calc(-50% + 110px), -50%); }
+.cta-clark.in { opacity: 1; transform: translate(-50%, -50%); }
+@media (prefers-reduced-motion: reduce) {
+  .cta-copy, .cta-clark { transition: none; opacity: 1; }
+  .cta-copy { transform: none; }
+  .cta-clark { transform: translate(-50%, -50%); }
 }
 
 /* 協賛CTA右側のクラーク博士（左の見出しを指さす） */
