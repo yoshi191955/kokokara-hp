@@ -61,35 +61,31 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
-  /* ---- 協賛CTA：スライドイン完了後に静止画→動画へ切替 ---- */
+  /* ---- 協賛CTA：スライドイン完了後にポスター→動画再生（同一要素で寸法完全一致） ---- */
   var clark = document.querySelector(".cta-clark");
-  if (clark) {
-    var clarkVideo = clark.querySelector(".cta-clark-video");
-    if (clarkVideo && !reduce && "IntersectionObserver" in window) {
-      var clarkSwapped = false;
-      var swapToVideo = function () {
-        if (clarkSwapped) return;
-        clarkSwapped = true;
-        clark.classList.add("play");
-        var p = clarkVideo.play();
-        if (p && p.catch) { p.catch(function () {}); }
-      };
-      clark.addEventListener("transitionend", function (ev) {
-        if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
-          swapToVideo();
+  if (clark && clark.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
+    var clarkPlayed = false;
+    var playClark = function () {
+      if (clarkPlayed) return;
+      clarkPlayed = true;
+      var p = clark.play();
+      if (p && p.catch) { p.catch(function () {}); }
+    };
+    clark.addEventListener("transitionend", function (ev) {
+      if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
+        playClark();
+      }
+    });
+    /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
+    var clarkFallbackIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          clarkFallbackIO.unobserve(e.target);
+          setTimeout(playClark, 1600);
         }
       });
-      /* 保険：万一transitionendが来なくてもinから1.6s後に切替 */
-      var clarkFallbackIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            clarkFallbackIO.unobserve(e.target);
-            setTimeout(swapToVideo, 1600);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-      clarkFallbackIO.observe(clark);
-    }
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    clarkFallbackIO.observe(clark);
   }
 
   /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
