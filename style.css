@@ -62,7 +62,7 @@ body::before {
 }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: flex; align-items: center; gap: 14px; z-index: 65; }
-.brand img { width: 46px; height: 46px; border-radius: 12px; }
+.brand img { height: clamp(54px, 6vw, 66px); width: auto; border-radius: 0; }
 .brand-name { font-family: var(--font-jp); font-weight: 900; font-size: 22px; letter-spacing: .02em; color: var(--text); }
 
 .header-right { display: flex; align-items: center; gap: 28px; z-index: 65; }
@@ -483,7 +483,7 @@ a.stmt-card { transition: transform .4s var(--ease); }
    ========================================================= */
 @media (max-width: 900px) {
   :root { --header-h: 80px; }
-  .brand img { width: 40px; height: 40px; border-radius: 11px; }
+  .brand img { height: 48px; width: auto; border-radius: 0; }
   .brand-name { font-size: 19px; }
   .menu-btn { font-size: 14px; }
   .nav-inline { display: none; }
@@ -832,4 +832,10 @@ a.stmt-card { transition: transform .4s var(--ease); }
   width: clamp(170px, 21vw, 300px); height: auto; z-index: 2;
   pointer-events: none; filter: drop-shadow(0 12px 24px rgba(6,50,60,.28));
 }
+/* 静止画（初期）と動画（スライドイン完了後に切替）を重ねる */
+.cta-clark-img { display: block; width: 100%; height: auto; transition: opacity .55s ease; }
+.cta-clark-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .55s ease; border-radius: 6px; }
+.cta-clark.play .cta-clark-img { opacity: 0; }
+.cta-clark.play .cta-clark-video { opacity: 1; }
+.cta-clark.play { filter: none; }
 @media (max-width: 900px) { .cta-clark { display: none; } }

@@ -61,6 +61,37 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
+  /* ---- 協賛CTA：スライドイン完了後に静止画→動画へ切替 ---- */
+  var clark = document.querySelector(".cta-clark");
+  if (clark) {
+    var clarkVideo = clark.querySelector(".cta-clark-video");
+    if (clarkVideo && !reduce && "IntersectionObserver" in window) {
+      var clarkSwapped = false;
+      var swapToVideo = function () {
+        if (clarkSwapped) return;
+        clarkSwapped = true;
+        clark.classList.add("play");
+        var p = clarkVideo.play();
+        if (p && p.catch) { p.catch(function () {}); }
+      };
+      clark.addEventListener("transitionend", function (ev) {
+        if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
+          swapToVideo();
+        }
+      });
+      /* 保険：万一transitionendが来なくてもinから1.6s後に切替 */
+      var clarkFallbackIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            clarkFallbackIO.unobserve(e.target);
+            setTimeout(swapToVideo, 1600);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      clarkFallbackIO.observe(clark);
+    }
+  }
+
   /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
      assets/mbti/ に1枚でも画像があれば .has-art を付けて画像表示に切り替える。
      画像が無い間はタイプ名のテキスト表示のまま（表示は壊れない）。 */
