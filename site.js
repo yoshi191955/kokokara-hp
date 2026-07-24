@@ -61,49 +61,41 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
-  /* ---- 協賛CTA：ポスターと動画を0フレーム目で一致させたままクロスフェード→フェード後に再生開始 ---- */
+  /* ---- 協賛CTA：最初から動画1本。先頭フレームで一時停止表示→スライドイン後に再生（入替なし） ---- */
   var clark = document.querySelector(".cta-clark");
-  if (clark && !reduce && "IntersectionObserver" in window) {
-    var clarkVideo = clark.querySelector(".cta-clark-video");
-    if (clarkVideo) {
-      /* 一時停止状態でも先頭フレームを描画させておく（クロスフェード先を用意） */
-      var clarkPainted = false;
-      var paintFirst = function () {
-        if (clarkPainted) return;
-        clarkPainted = true;
-        try { clarkVideo.currentTime = 0.04; } catch (e) {}
-      };
-      if (clarkVideo.readyState >= 1) { paintFirst(); }
-      clarkVideo.addEventListener("loadedmetadata", paintFirst);
+  if (clark && clark.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
+    /* 一時停止のまま先頭フレームを描画させておく */
+    var clarkPainted = false;
+    var paintFirst = function () {
+      if (clarkPainted) return;
+      clarkPainted = true;
+      try { clark.currentTime = 0.04; } catch (e) {}
+    };
+    if (clark.readyState >= 1) { paintFirst(); }
+    clark.addEventListener("loadedmetadata", paintFirst);
 
-      var clarkStarted = false;
-      var startClark = function () {
-        if (clarkStarted) return;
-        clarkStarted = true;
-        /* まず0フレーム目同士でクロスフェード（両者同一なので滑らか） */
-        clark.classList.add("playing");
-        /* フェード完了後に動画のアニメーションを再生開始 */
-        setTimeout(function () {
-          var p = clarkVideo.play();
-          if (p && p.catch) { p.catch(function () {}); }
-        }, 520);
-      };
-      clark.addEventListener("transitionend", function (ev) {
-        if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
-          startClark();
+    var clarkStarted = false;
+    var playClark = function () {
+      if (clarkStarted) return;
+      clarkStarted = true;
+      var p = clark.play();
+      if (p && p.catch) { p.catch(function () {}); }
+    };
+    clark.addEventListener("transitionend", function (ev) {
+      if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
+        playClark();
+      }
+    });
+    /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
+    var clarkFallbackIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          clarkFallbackIO.unobserve(e.target);
+          setTimeout(playClark, 1600);
         }
       });
-      /* 保険：万一transitionendが来なくてもinから1.6s後に開始 */
-      var clarkFallbackIO = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            clarkFallbackIO.unobserve(e.target);
-            setTimeout(startClark, 1600);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-      clarkFallbackIO.observe(clark);
-    }
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    clarkFallbackIO.observe(clark);
   }
 
   /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
