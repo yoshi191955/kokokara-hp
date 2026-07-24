@@ -61,31 +61,44 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
-  /* ---- 協賛CTA：スライドイン完了後にポスター→動画へ。動画が実際に再生開始してから切替 ---- */
+  /* ---- 協賛CTA：ポスターと動画を0フレーム目で一致させたままクロスフェード→フェード後に再生開始 ---- */
   var clark = document.querySelector(".cta-clark");
   if (clark && !reduce && "IntersectionObserver" in window) {
     var clarkVideo = clark.querySelector(".cta-clark-video");
     if (clarkVideo) {
-      /* 動画が実際にフレームを描き始めてからポスターを隠す（空白防止） */
-      clarkVideo.addEventListener("playing", function () { clark.classList.add("playing"); });
-      var clarkPlayed = false;
-      var playClark = function () {
-        if (clarkPlayed) return;
-        clarkPlayed = true;
-        var p = clarkVideo.play();
-        if (p && p.catch) { p.catch(function () {}); }
+      /* 一時停止状態でも先頭フレームを描画させておく（クロスフェード先を用意） */
+      var clarkPainted = false;
+      var paintFirst = function () {
+        if (clarkPainted) return;
+        clarkPainted = true;
+        try { clarkVideo.currentTime = 0.04; } catch (e) {}
+      };
+      if (clarkVideo.readyState >= 1) { paintFirst(); }
+      clarkVideo.addEventListener("loadedmetadata", paintFirst);
+
+      var clarkStarted = false;
+      var startClark = function () {
+        if (clarkStarted) return;
+        clarkStarted = true;
+        /* まず0フレーム目同士でクロスフェード（両者同一なので滑らか） */
+        clark.classList.add("playing");
+        /* フェード完了後に動画のアニメーションを再生開始 */
+        setTimeout(function () {
+          var p = clarkVideo.play();
+          if (p && p.catch) { p.catch(function () {}); }
+        }, 520);
       };
       clark.addEventListener("transitionend", function (ev) {
         if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
-          playClark();
+          startClark();
         }
       });
-      /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
+      /* 保険：万一transitionendが来なくてもinから1.6s後に開始 */
       var clarkFallbackIO = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting) {
             clarkFallbackIO.unobserve(e.target);
-            setTimeout(playClark, 1600);
+            setTimeout(startClark, 1600);
           }
         });
       }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
