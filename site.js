@@ -61,31 +61,36 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
-  /* ---- 協賛CTA：スライドイン完了後にポスター→動画再生（同一要素で寸法完全一致） ---- */
+  /* ---- 協賛CTA：スライドイン完了後にポスター→動画へ。動画が実際に再生開始してから切替 ---- */
   var clark = document.querySelector(".cta-clark");
-  if (clark && clark.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
-    var clarkPlayed = false;
-    var playClark = function () {
-      if (clarkPlayed) return;
-      clarkPlayed = true;
-      var p = clark.play();
-      if (p && p.catch) { p.catch(function () {}); }
-    };
-    clark.addEventListener("transitionend", function (ev) {
-      if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
-        playClark();
-      }
-    });
-    /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
-    var clarkFallbackIO = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          clarkFallbackIO.unobserve(e.target);
-          setTimeout(playClark, 1600);
+  if (clark && !reduce && "IntersectionObserver" in window) {
+    var clarkVideo = clark.querySelector(".cta-clark-video");
+    if (clarkVideo) {
+      /* 動画が実際にフレームを描き始めてからポスターを隠す（空白防止） */
+      clarkVideo.addEventListener("playing", function () { clark.classList.add("playing"); });
+      var clarkPlayed = false;
+      var playClark = function () {
+        if (clarkPlayed) return;
+        clarkPlayed = true;
+        var p = clarkVideo.play();
+        if (p && p.catch) { p.catch(function () {}); }
+      };
+      clark.addEventListener("transitionend", function (ev) {
+        if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
+          playClark();
         }
       });
-    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-    clarkFallbackIO.observe(clark);
+      /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
+      var clarkFallbackIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            clarkFallbackIO.unobserve(e.target);
+            setTimeout(playClark, 1600);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+      clarkFallbackIO.observe(clark);
+    }
   }
 
   /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
