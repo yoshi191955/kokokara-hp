@@ -63,6 +63,7 @@
 
   /* ---- 協賛CTA：最初から動画1本。先頭フレームで一時停止表示→スライドイン後に再生（入替なし） ---- */
   var clark = document.querySelector(".cta-clark");
+  var ctaBg = document.querySelector(".cta-bg");
   if (clark && clark.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
     /* 一時停止のまま先頭フレームを描画させておく */
     var clarkPainted = false;
@@ -80,6 +81,12 @@
       clarkStarted = true;
       var p = clark.play();
       if (p && p.catch) { p.catch(function () {}); }
+      /* 背景のパリ動画もCLRKと同じ瞬間に動き出す（スライドイン+1.3s） */
+      if (ctaBg && ctaBg.tagName === "VIDEO") {
+        try { ctaBg.currentTime = 0; } catch (e) {}
+        var pb = ctaBg.play();
+        if (pb && pb.catch) { pb.catch(function () {}); }
+      }
     };
     clark.addEventListener("transitionend", function (ev) {
       if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
