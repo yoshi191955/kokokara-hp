@@ -61,48 +61,37 @@
     targets.forEach(function (t) { t.classList.add("in"); });
   }
 
-  /* ---- 協賛CTA：最初から動画1本。先頭フレームで一時停止表示→スライドイン後に再生（入替なし） ---- */
-  var clark = document.querySelector(".cta-clark");
+  /* ---- 協賛CTA：背景動画（パリ＋博士が一体）を先頭フレームで静止 → スライドイン(1.3s)後に再生 ---- */
   var ctaBg = document.querySelector(".cta-bg");
-  if (clark && clark.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
-    /* 一時停止のまま先頭フレームを描画させておく */
-    var clarkPainted = false;
-    var paintFirst = function () {
-      if (clarkPainted) return;
-      clarkPainted = true;
-      try { clark.currentTime = 0.04; } catch (e) {}
+  if (ctaBg && ctaBg.tagName === "VIDEO" && !reduce && "IntersectionObserver" in window) {
+    /* 一時停止のまま先頭フレームを表示 */
+    var bgPainted = false;
+    var paintBgFirst = function () {
+      if (bgPainted) return;
+      bgPainted = true;
+      try { ctaBg.pause(); ctaBg.currentTime = 0; } catch (e) {}
     };
-    if (clark.readyState >= 1) { paintFirst(); }
-    clark.addEventListener("loadedmetadata", paintFirst);
+    if (ctaBg.readyState >= 1) { paintBgFirst(); }
+    ctaBg.addEventListener("loadedmetadata", paintBgFirst);
 
-    var clarkStarted = false;
-    var playClark = function () {
-      if (clarkStarted) return;
-      clarkStarted = true;
-      var p = clark.play();
+    var bgStarted = false;
+    var playCtaBg = function () {
+      if (bgStarted) return;
+      bgStarted = true;
+      try { ctaBg.currentTime = 0; } catch (e) {}
+      var p = ctaBg.play();
       if (p && p.catch) { p.catch(function () {}); }
-      /* 背景のパリ動画もCLRKと同じ瞬間に動き出す（スライドイン+1.3s） */
-      if (ctaBg && ctaBg.tagName === "VIDEO") {
-        try { ctaBg.currentTime = 0; } catch (e) {}
-        var pb = ctaBg.play();
-        if (pb && pb.catch) { pb.catch(function () {}); }
-      }
     };
-    clark.addEventListener("transitionend", function (ev) {
-      if (ev.target === clark && ev.propertyName === "transform" && clark.classList.contains("in")) {
-        playClark();
-      }
-    });
-    /* 保険：万一transitionendが来なくてもinから1.6s後に再生 */
-    var clarkFallbackIO = new IntersectionObserver(function (entries) {
+    /* テキストのスライドイン(1.3s)完了に合わせて動き出す */
+    var ctaBgIO = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
-          clarkFallbackIO.unobserve(e.target);
-          setTimeout(playClark, 1600);
+          ctaBgIO.unobserve(e.target);
+          setTimeout(playCtaBg, 1300);
         }
       });
     }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
-    clarkFallbackIO.observe(clark);
+    ctaBgIO.observe(ctaBg);
   }
 
   /* ---- MBTIキャラ画像の有無を判定して画像モードへ切替 ----
