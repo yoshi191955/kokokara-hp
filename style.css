@@ -451,7 +451,7 @@ a.stmt-card { transition: transform .4s var(--ease); }
 /* 上段: ブランド（左） + Follow Us/SNS（右） */
 .footer-main { display: flex; justify-content: space-between; align-items: center; gap: clamp(26px, 4vw, 56px); flex-wrap: wrap; padding-bottom: clamp(26px, 4vh, 40px); }
 .footer-brand { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 22px); }
-.footer-brand img { width: clamp(64px, 7vw, 92px); height: auto; object-fit: contain; }
+.footer-brand img { width: clamp(120px, 13vw, 176px); height: auto; object-fit: contain; }
 .footer-brand-text { display: flex; flex-direction: column; }
 .footer-kk { font-family: var(--font-en); font-weight: 900; font-style: italic; letter-spacing: .01em; font-size: clamp(30px, 4.4vw, 52px); line-height: .9; color: #EAF4F7; }
 .footer-tagline { color: rgba(234,244,247,.72); margin-top: 8px; font-size: clamp(13px, 1.3vw, 15px); font-weight: 700; line-height: 1.65; max-width: 30em; }
