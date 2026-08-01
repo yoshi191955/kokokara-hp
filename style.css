@@ -430,6 +430,7 @@ a.stmt-card { transition: transform .4s var(--ease); }
 .event-card { border: 1px solid var(--line); border-radius: 26px; padding: clamp(22px, 3vw, 34px); background: var(--panel); transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s; display: flex; flex-direction: column; }
 .event-card:hover { transform: translateY(-6px); box-shadow: 0 22px 44px rgba(12,30,36,.10); border-color: var(--line-2); }
 .event-status { align-self: flex-start; font-family: var(--font-jp); font-weight: 900; font-size: 13px; color: #fff; background: var(--grad); padding: 7px 15px; border-radius: 100px; margin-bottom: 18px; }
+.event-status--done { background: #64748b; }
 .event-title { font-family: var(--font-jp); font-weight: 900; font-size: clamp(21px, 2.6vw, 28px); margin-bottom: 18px; }
 .event-poster { border-radius: 16px; margin-bottom: 22px; width: 100%; object-fit: cover; border: 1px solid var(--line); }
 .event-apply { margin-top: auto; align-self: flex-start; }

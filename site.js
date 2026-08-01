@@ -364,6 +364,42 @@
     }
   })();
 
+  /* ---- 開催済ページ：開催日を過ぎたイベントを events.json から自動掲載 ---- */
+  (function () {
+    var box = document.querySelector("[data-events-past]");
+    if (!box) return;
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+      });
+    }
+    function emptyNotice() {
+      box.classList.remove("events-grid");
+      box.innerHTML = '<div class="notice-box reveal in"><span class="notice-badge">Past Events</span>' +
+        '<h2>開催済のイベントはまだありません</h2><p>イベント終了後、こちらに掲載していきます。</p></div>';
+    }
+    function render(list) {
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var past = (list || []).map(function (e) { e._d = new Date(e.date); return e; })
+        .filter(function (e) { return !isNaN(e._d) && e._d < today; })
+        .sort(function (a, b) { return b._d - a._d; });
+      if (!past.length) { emptyNotice(); return; }
+      box.classList.add("events-grid");
+      box.innerHTML = past.map(function (e, i) {
+        var title = (e.emoji ? e.emoji + " " : "") + esc(e.title || "イベント");
+        var img = e.square || e.poster || "";
+        return '<article class="event-card reveal in d' + ((i % 4) + 1) + '">' +
+          '<span class="event-status event-status--done">開催済</span>' +
+          '<h2 class="event-title">' + title + '</h2>' +
+          '<img class="event-poster" src="' + esc(img) + '" alt="' + esc(e.title || "イベントポスター") + '" loading="lazy" /></article>';
+      }).join("");
+    }
+    fetch("events.json", { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (data) { render(Array.isArray(data) ? data : (data && data.events) || []); })
+      .catch(function () { emptyNotice(); });
+  })();
+
   /* =====================================================
      ヒーロー: 光の帯（CSSアニメーション）
      描画はGPUに任せ、JSはカーソルのわずかな視差だけを担当する。
