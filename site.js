@@ -346,6 +346,24 @@
       .catch(function () { /* 取得失敗時はHTMLの静的フォールバックを維持 */ });
   })();
 
+  /* ---- EVENTページ：開催日を過ぎた「募集中」カードは自動で非表示（HOMEと同じ挙動） ---- */
+  (function () {
+    var grid = document.querySelector(".events-grid");
+    if (!grid) return;
+    var cards = grid.querySelectorAll(".event-card[data-date]");
+    if (!cards.length) return;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var shown = 0;
+    Array.prototype.forEach.call(cards, function (card) {
+      var d = new Date(card.getAttribute("data-date"));
+      if (isNaN(d) || d < today) { card.parentNode && card.parentNode.removeChild(card); }
+      else { shown++; }
+    });
+    if (shown === 0 && !grid.querySelector(".event-card")) {
+      grid.innerHTML = '<p class="event-empty">現在募集中のイベントはありません。次回の公開をお楽しみに！</p>';
+    }
+  })();
+
   /* =====================================================
      ヒーロー: 光の帯（CSSアニメーション）
      描画はGPUに任せ、JSはカーソルのわずかな視差だけを担当する。
