@@ -79,6 +79,185 @@
 
     <section class="section events-section">
       <div class="container">
+        <div class="events-grid" id="events-grid" aria-live="polite">
+          <p class="events-loading" style="grid-column:1/-1;opacity:.6;">読み込み中…</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-fall" aria-hidden="true"></div>
+    <div class="container footer-shell">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <img src="assets/icon-white.png" alt="学生団体ココカラ" />
+          <div class="footer-brand-text">
+            <span class="footer-kk">KOKOKARA</span>
+            <p class="footer-tagline">新しい就活、ここから。関西の学生がつくる、就活コミュニティ。</p>
+          </div>
+        </div>
+        <div class="footer-social">
+          <span class="footer-social-label">Follow Us</span>
+          <div class="footer-social-icons">
+            <a href="#" class="sns-ic" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+            <a href="#" class="sns-ic" aria-label="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a>
+            <a href="#" class="sns-ic" aria-label="LINE"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.038 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-5.99zM7.615 12.803H5.25a.632.632 0 0 1-.631-.631V7.463a.632.632 0 0 1 1.262 0v4.078h1.734a.631.631 0 0 1 0 1.262zm2.466-.631a.632.632 0 0 1-1.263 0V7.463a.632.632 0 0 1 1.263 0zm5.678 0a.63.63 0 0 1-.432.598.65.65 0 0 1-.199.031.62.62 0 0 1-.512-.256l-2.417-3.286v2.913a.631.631 0 1 1-1.262 0V7.463a.63.63 0 0 1 .432-.598.65.65 0 0 1 .195-.031c.202 0 .388.097.507.253l2.422 3.293V7.463a.632.632 0 0 1 1.263 0zm3.815-2.937a.63.63 0 0 1 0 1.262h-1.734v1.114h1.734a.631.631 0 0 1 0 1.262h-2.365a.633.633 0 0 1-.63-.631V7.463a.634.634 0 0 1 .63-.632h2.365a.632.632 0 0 1 0 1.263h-1.734v1.114h1.734z"/></svg></a>
+            <a href="#" class="sns-ic" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+            <a href="#" class="sns-ic" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <nav class="footer-utility" aria-label="ユーティリティ">
+          <a href="https://line.me/R/ti/p/@113crihp">お問い合わせ</a>
+          <a href="privacy.html">プライバシーポリシー</a>
+          <a href="#">利用規約</a>
+          <a href="#">サイトマップ</a>
+        </nav>
+        <div class="footer-copy">&copy; <span data-year>2026</span> KOKOKARA. All Rights Reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ▼ スプレッドシート連携: 募集中イベントをJSONPで取得して自動描画 -->
+  <script>
+  (function () {
+    // GAS Web App の /exec URL（デプロイURL）。差し替える場合はここだけ変更。
+    var GAS_EXEC_URL = "https://script.google.com/macros/s/AKfycbznc0dICsGVCcRx9nWc_ZJGVRBqb39G26IHRNZax7gp_ZYoa-wE2Ripgglyea68FaZ7/exec";
+
+    var grid = document.getElementById("events-grid");
+    function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+    function render(events){
+      if(!events || !events.length){
+        grid.innerHTML = '<p style="grid-column:1/-1;opacity:.7;">現在募集中のイベントはありません。次回の開催をお楽しみに🌱</p>';
+        return;
+      }
+      var html = "";
+      events.forEach(function(e, i){
+        var statusTxt = (e.status === "締切") ? "🔒 締切" : "🔥 募集中！！";
+        var poster = e.posterUrl
+          ? '<img class="event-poster" src="'+esc(e.posterUrl)+'" alt="'+esc(e.dateLabel+" "+e.name)+' ポスター" loading="lazy" />'
+          : '';
+        var applyBtn = e.applyUrl
+          ? '<a class="btn event-apply" href="'+esc(e.applyUrl)+'" target="_blank" rel="noopener">参加申込フォームはこちら <span class="arrow">→</span></a>'
+          : '<span class="btn event-apply" style="opacity:.5;pointer-events:none;">申込フォーム準備中</span>';
+        var meta = '<p class="event-meta" style="opacity:.8;font-size:.9rem;margin:.2rem 0 .6rem;">'
+          + esc(e.dateLabel) + '（' + esc(e.start) + '〜' + esc(e.end) + '）／ ' + esc(e.location) + ' ／ ' + esc(e.feeLabel)
+          + '</p>';
+        html += ''
+          + '<article class="event-card reveal in d'+((i%3)+1)+'">'
+          +   '<span class="event-status">'+statusTxt+'</span>'
+          +   '<h2 class="event-title">'+esc(e.name)+'</h2>'
+          +   meta
+          +   poster
+          +   applyBtn
+          + '</article>';
+      });
+      grid.innerHTML = html;
+    }
+
+    // JSONP（GASのdoGetは callback パラメータでJSONPを返す設計）
+    var cbName = "__cocokaraEvents_" + Math.floor(Math.random()*1e9);
+    window[cbName] = function(data){
+      try { render((data && data.events) ? data.events : []); }
+      catch(err){ grid.innerHTML = '<p style="grid-column:1/-1;opacity:.7;">読み込みに失敗しました。時間をおいて再度お試しください。</p>'; }
+      delete window[cbName];
+    };
+    var s = document.createElement("script");
+    s.src = GAS_EXEC_URL + "?action=public_events&callback=" + cbName;
+    s.onerror = function(){ grid.innerHTML = '<p style="grid-column:1/-1;opacity:.7;">読み込みに失敗しました。</p>'; };
+    document.body.appendChild(s);
+  })();
+  </script>
+
+  <script src="site.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>イベント申込（募集中）｜学生団体ココカラ</title>
+  <meta name="description" content="学生団体ココカラの募集中イベント一覧。参加申込はこちらから。" />
+  <link rel="icon" href="assets/icon-r.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,800;0,900;1,900&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="site-header scrolled">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/logo-lockup.png" alt="学生団体ココカラ ロゴ" />
+        <span class="brand-name">学生団体ココカラ</span>
+      </a>
+      <div class="header-right">
+        <nav class="nav-inline" aria-label="ナビゲーション">
+          <a href="index.html">HOME</a>
+          <a href="about.html">ABOUT</a>
+          <a href="events.html" class="active">EVENT</a>
+          <a href="sponsors.html">SPONSOR</a>
+          <a href="join.html">JOIN</a>
+        </nav>
+        <button class="menu-btn" aria-label="メニュー" aria-expanded="false">
+          <span class="bars"><span></span><span></span></span>
+          <span class="txt-open">MENU</span><span class="txt-close">CLOSE</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="menu-overlay" id="menu">
+    <div class="container">
+      <button class="menu-back" type="button">
+        <span class="mb-ico" aria-hidden="true">&#8592;</span> 前のページに戻る
+      </button>
+      <ul class="menu-list">
+        <li><a href="index.html"><span class="idx">01</span><span class="en-lbl">HOME</span><span class="jp-lbl">ホーム</span></a></li>
+        <li><a href="about.html"><span class="idx">02</span><span class="en-lbl">ABOUT</span><span class="jp-lbl">私たちについて</span></a></li>
+        <li><a href="events.html"><span class="idx">03</span><span class="en-lbl">EVENT</span><span class="jp-lbl">イベント申込</span></a></li>
+        <li><a href="member.html"><span class="idx">04</span><span class="en-lbl">MEMBER</span><span class="jp-lbl">運営メンバー</span></a></li>
+        <li><a href="voice.html"><span class="idx">05</span><span class="en-lbl">VOICE</span><span class="jp-lbl">参加者の声</span></a></li>
+        <li><a href="sponsors.html"><span class="idx">06</span><span class="en-lbl">SPONSOR</span><span class="jp-lbl">協賛企業</span></a></li>
+        <li><a href="join.html"><span class="idx">07</span><span class="en-lbl">JOIN</span><span class="jp-lbl">メンバー募集</span></a></li>
+        <li><a href="faq.html"><span class="idx">08</span><span class="en-lbl">FAQ</span><span class="jp-lbl">よくある質問</span></a></li>
+        <li><a href="news.html"><span class="idx">09</span><span class="en-lbl">NEWS</span><span class="jp-lbl">お知らせ</span></a></li>
+        <li><a href="https://line.me/R/ti/p/@113crihp"><span class="idx">10</span><span class="en-lbl">CONTACT</span><span class="jp-lbl">公式LINEで問い合わせ</span></a></li>
+      </ul>
+      <div class="menu-foot">
+        <span class="en">STUDENT COMMUNITY KOKOKARA — KANSAI / JAPAN</span>
+        <span>お問い合わせは <a href="https://line.me/R/ti/p/@113crihp">公式LINE</a> から</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">03 — Events</span>
+        <h1>イベント申込</h1>
+        <span class="en-big" aria-hidden="true">EVENTS</span>
+        <p>ココカラの交流イベント一覧です。気になるイベントに申し込んでみよう！</p>
+      </div>
+    </section>
+
+    <div class="container">
+      <nav class="event-tabs" aria-label="イベント表示切り替え">
+        <a href="events.html" class="active">募集中</a>
+        <a href="events-past.html">開催済</a>
+      </nav>
+    </div>
+
+    <section class="section events-section">
+      <div class="container">
         <div class="events-grid">
 
           <article class="event-card reveal d1" data-date="2026-07-10">
