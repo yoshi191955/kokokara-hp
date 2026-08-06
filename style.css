@@ -839,3 +839,17 @@ a.stmt-card { transition: transform .4s var(--ease); }
   background: transparent;
 }
 @media (max-width: 900px) { .cta-clark { display: none; } }
+
+/* ============================================================
+   スマホ表示 最適化（追記）: 横スクロール防止 + 特大要素の縮小
+   ============================================================ */
+html { overflow-x: hidden; overflow-x: clip; }
+@media (max-width: 480px) {
+  .hero-wordmark        { font-size: 17vw; }
+  .footer-word          { font-size: 16vw; }
+  .stmt-card .watermark { font-size: 12vw; }
+  .page-hero .en-big    { font-size: clamp(36px, 11vw, 60px); }
+  .page-hero h1         { font-size: clamp(28px, 6.6vw, 40px); }
+  .activity-num         { font-size: clamp(42px, 11vw, 70px); }
+  .brand-name           { white-space: nowrap; }
+}
