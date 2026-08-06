@@ -10,6 +10,51 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,800;0,900;1,900&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ▼ 募集中イベント: 2×2 マトリックス表示 */
+    #events-grid.events-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      grid-auto-rows:1fr;
+      gap:1.5rem;
+      align-items:stretch;
+    }
+    #events-grid .event-card{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+      box-sizing:border-box;
+    }
+    #events-grid .event-card .event-poster{
+      width:100%;
+      max-height:260px;
+      object-fit:contain;
+      border-radius:12px;
+      margin:.4rem 0 .8rem;
+    }
+    #events-grid .event-card .event-apply{ margin-top:auto; }
+    /* Coming soon プレースホルダー枠 */
+    #events-grid .event-empty{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:240px;
+      background:#ececed;
+      border:1px solid #e0e0e2;
+      border-radius:16px;
+      color:#9a9aa2;
+    }
+    #events-grid .event-empty .coming-soon{
+      font-family:'Archivo', sans-serif;
+      font-weight:600;
+      font-size:1.15rem;
+      letter-spacing:.02em;
+    }
+    @media (max-width:640px){
+      #events-grid.events-grid{ grid-template-columns:1fr; grid-auto-rows:auto; }
+      #events-grid .event-empty{ min-height:160px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -79,6 +124,7 @@
 
     <section class="section events-section">
       <div class="container">
+        <!-- ▼ 募集中イベントは GAS(スプレッドシート)から自動取得して 2×2 で描画されます -->
         <div class="events-grid" id="events-grid" aria-live="polite">
           <p class="events-loading" style="grid-column:1/-1;opacity:.6;">読み込み中…</p>
         </div>
@@ -122,7 +168,7 @@
     </div>
   </footer>
 
-  <!-- ▼ スプレッドシート連携: 募集中イベントをJSONPで取得して自動描画 -->
+  <!-- ▼ スプレッドシート連携: 募集中イベントをJSONPで取得して 2×2 マトリックスで自動描画 -->
   <script>
   (function () {
     // GAS Web App の /exec URL（デプロイURL）。差し替える場合はここだけ変更。
@@ -131,32 +177,40 @@
     var grid = document.getElementById("events-grid");
     function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
 
+    function eventCard(e, i){
+      var statusTxt = (e.status === "締切") ? "🔒 締切" : "🔥 募集中！！";
+      var poster = e.posterUrl
+        ? '<img class="event-poster" src="'+esc(e.posterUrl)+'" alt="'+esc(e.dateLabel+" "+e.name)+' ポスター" loading="lazy" />'
+        : '';
+      var applyBtn = e.applyUrl
+        ? '<a class="btn event-apply" href="'+esc(e.applyUrl)+'" target="_blank" rel="noopener">参加申込フォームはこちら <span class="arrow">→</span></a>'
+        : '<span class="btn event-apply" style="opacity:.5;pointer-events:none;">申込フォーム準備中</span>';
+      var meta = '<p class="event-meta" style="opacity:.8;font-size:.9rem;margin:.2rem 0 .6rem;">'
+        + esc(e.dateLabel) + '（' + esc(e.start) + '〜' + esc(e.end) + '）／ ' + esc(e.location) + ' ／ ' + esc(e.feeLabel)
+        + '</p>';
+      return ''
+        + '<article class="event-card reveal in d'+((i%3)+1)+'">'
+        +   '<span class="event-status">'+statusTxt+'</span>'
+        +   '<h2 class="event-title">'+esc(e.name)+'</h2>'
+        +   meta
+        +   poster
+        +   applyBtn
+        + '</article>';
+    }
+    function emptyCard(){
+      return '<article class="event-card event-empty" aria-hidden="true">'
+        +   '<span class="coming-soon">Coming soon...</span>'
+        + '</article>';
+    }
+
     function render(events){
-      if(!events || !events.length){
-        grid.innerHTML = '<p style="grid-column:1/-1;opacity:.7;">現在募集中のイベントはありません。次回の開催をお楽しみに🌱</p>';
-        return;
-      }
+      events = events || [];
+      // 2×2 マトリックス（最低4枠、イベントが多い場合は偶数に切り上げて枠を拡張）
+      var cellCount = Math.max(4, Math.ceil(events.length / 2) * 2);
       var html = "";
-      events.forEach(function(e, i){
-        var statusTxt = (e.status === "締切") ? "🔒 締切" : "🔥 募集中！！";
-        var poster = e.posterUrl
-          ? '<img class="event-poster" src="'+esc(e.posterUrl)+'" alt="'+esc(e.dateLabel+" "+e.name)+' ポスター" loading="lazy" />'
-          : '';
-        var applyBtn = e.applyUrl
-          ? '<a class="btn event-apply" href="'+esc(e.applyUrl)+'" target="_blank" rel="noopener">参加申込フォームはこちら <span class="arrow">→</span></a>'
-          : '<span class="btn event-apply" style="opacity:.5;pointer-events:none;">申込フォーム準備中</span>';
-        var meta = '<p class="event-meta" style="opacity:.8;font-size:.9rem;margin:.2rem 0 .6rem;">'
-          + esc(e.dateLabel) + '（' + esc(e.start) + '〜' + esc(e.end) + '）／ ' + esc(e.location) + ' ／ ' + esc(e.feeLabel)
-          + '</p>';
-        html += ''
-          + '<article class="event-card reveal in d'+((i%3)+1)+'">'
-          +   '<span class="event-status">'+statusTxt+'</span>'
-          +   '<h2 class="event-title">'+esc(e.name)+'</h2>'
-          +   meta
-          +   poster
-          +   applyBtn
-          + '</article>';
-      });
+      for(var i = 0; i < cellCount; i++){
+        html += events[i] ? eventCard(events[i], i) : emptyCard();
+      }
       grid.innerHTML = html;
     }
 
