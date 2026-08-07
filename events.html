@@ -45,7 +45,14 @@
       border-radius:12px;
       margin:.6rem 0 .8rem;
     }
-    #events-grid .event-card .event-apply{ margin-top:auto; }
+    #events-grid .event-card .event-apply{
+      margin-top:auto;
+      display:flex;
+      width:100%;
+      align-self:stretch;
+      justify-content:center;
+      box-sizing:border-box;
+    }
     /* Coming soon プレースホルダー枠 */
     #events-grid .event-empty{
       grid-column:auto;   /* style.css の .event-empty{grid-column:1/-1} を打ち消す */
