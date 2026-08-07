@@ -297,27 +297,19 @@
      開催日を過ぎたイベントは自動で表示から外れる。
      イベントに "square"（1:1画像パス）があればそれを正方形で表示する。 */
   (function () {
+    // HOMEのイベントプレビュー：GAS(public_events)から動的取得（events.htmlと同じSSOT）
     var box = document.querySelector("[data-event-preview]");
-    var ENDPOINT = ""; // ← ここに GAS の /exec URL を入れると全て動的化
-    var LIMIT = box ? parseInt(box.getAttribute("data-limit") || "2", 10) : 2;
+    if (!box) return;
+    var GAS_EXEC_URL = "https://script.google.com/macros/s/AKfycbznc0dICsGVCcRx9nWc_ZJGVRBqb39G26IHRNZax7gp_ZYoa-wE2Ripgglyea68FaZ7/exec";
+    var LIMIT = parseInt(box.getAttribute("data-limit") || "2", 10);
     function esc(s) {
-      return String(s).replace(/[&<>"']/g, function (c) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
       });
     }
-    function setStat(key, val) {
-      if (val === null || val === undefined || val === "") return;
-      var el = document.querySelector('[data-stat="' + key + '"]');
-      if (!el) return;
-      var tv = parseInt(val, 10);
-      if (isNaN(tv)) { el.textContent = String(val); return; }
-      el.setAttribute("data-target", tv);
-      if (statsShown) countUp(el, tv, 900); else el.textContent = "0";
-    }
-    function renderEvents(list) {
-      if (!box || !Array.isArray(list)) return;
+    function renderPreview(list) {
       var today = new Date(); today.setHours(0, 0, 0, 0);
-      var up = list
+      var up = (Array.isArray(list) ? list : [])
         .filter(function (e) { var d = new Date(e.date); return !isNaN(d) && d >= today; })
         .sort(function (a, b) { return new Date(a.date) - new Date(b.date); })
         .slice(0, LIMIT);
@@ -326,24 +318,24 @@
         box.innerHTML = '<p class="event-empty">次回イベントは近日公開予定です。お楽しみに！</p>';
         return;
       }
+      box.classList.remove("is-empty");
       box.innerHTML = up.map(function (e, i) {
-        var img = e.square || e.poster;            // square(1:1)があれば優先
-        var sq = e.square ? " is-square" : "";       // 1:1表示用クラス
-        return '<a href="' + esc(e.url || "events.html") + '" class="reveal d' + (i + 1) + ' in' + sq + '">' +
-               '<img src="' + esc(img) + '" alt="' + esc(e.title || "イベントポスター") + '" loading="lazy" /></a>';
+        var img = e.posterUrl || e.poster || e.square || "";
+        var name = e.name || e.title || "イベントポスター";
+        return '<a href="events.html" class="reveal d' + (i + 1) + ' in">' +
+               '<img src="' + esc(img) + '" alt="' + esc(name) + '" loading="lazy" /></a>';
       }).join("");
     }
-    fetch(ENDPOINT || "events.json", { cache: "no-store" })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        var events = Array.isArray(data) ? data : (data && data.events) || [];
-        renderEvents(events);
-        if (data && !Array.isArray(data)) {
-          setStat("members", data.members);
-          setStat("sponsors", data.sponsors);
-        }
-      })
-      .catch(function () { /* 取得失敗時はHTMLの静的フォールバックを維持 */ });
+    var cbName = "__cocokaraHomeEvents_" + Math.floor(Math.random() * 1e9);
+    window[cbName] = function (data) {
+      try { renderPreview((data && data.events) ? data.events : []); }
+      catch (e) { /* noop */ }
+      delete window[cbName];
+    };
+    var s = document.createElement("script");
+    s.src = GAS_EXEC_URL + "?action=public_events&callback=" + cbName;
+    s.onerror = function () { /* 取得失敗時はHTMLの静的フォールバックを維持 */ };
+    document.body.appendChild(s);
   })();
 
   /* ---- EVENTページ：開催日を過ぎた「募集中」カードは自動で非表示（HOMEと同じ挙動） ---- */
